@@ -15,99 +15,99 @@ import { Route as CounterRouteImport } from './routes/counter'
 import { Route as LoginRouteImport } from './routes/login'
 
 const IndexRoute = IndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
-    id: '/about',
-    path: '/about',
-    getParentRoute: () => rootRouteImport,
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const CounterRoute = CounterRouteImport.update({
-    id: '/counter',
-    path: '/counter',
-    getParentRoute: () => rootRouteImport,
+  id: '/counter',
+  path: '/counter',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
-    id: '/login',
-    path: '/login',
-    getParentRoute: () => rootRouteImport,
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
-    '/': typeof IndexRoute
-    '/about': typeof AboutRoute
-    '/counter': typeof CounterRoute
-    '/login': typeof LoginRoute
+  '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/counter': typeof CounterRoute
+  '/login': typeof LoginRoute
 }
 export interface FileRoutesByTo {
-    '/': typeof IndexRoute
-    '/about': typeof AboutRoute
-    '/counter': typeof CounterRoute
-    '/login': typeof LoginRoute
+  '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/counter': typeof CounterRoute
+  '/login': typeof LoginRoute
 }
 export interface FileRoutesById {
-    __root__: typeof rootRouteImport
-    '/': typeof IndexRoute
-    '/about': typeof AboutRoute
-    '/counter': typeof CounterRoute
-    '/login': typeof LoginRoute
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/counter': typeof CounterRoute
+  '/login': typeof LoginRoute
 }
 export interface FileRouteTypes {
-    fileRoutesByFullPath: FileRoutesByFullPath
-    fullPaths: '/' | '/about' | '/counter' | '/login'
-    fileRoutesByTo: FileRoutesByTo
-    to: '/' | '/about' | '/counter' | '/login'
-    id: '__root__' | '/' | '/about' | '/counter' | '/login'
-    fileRoutesById: FileRoutesById
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths: '/' | '/about' | '/counter' | '/login'
+  fileRoutesByTo: FileRoutesByTo
+  to: '/' | '/about' | '/counter' | '/login'
+  id: '__root__' | '/' | '/about' | '/counter' | '/login'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-    IndexRoute: typeof IndexRoute
-    AboutRoute: typeof AboutRoute
-    CounterRoute: typeof CounterRoute
-    LoginRoute: typeof LoginRoute
+  IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  CounterRoute: typeof CounterRoute
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
-    interface FileRoutesByPath {
-        '/': {
-            id: '/'
-            path: '/'
-            fullPath: '/'
-            preLoaderRoute: typeof IndexRouteImport
-            parentRoute: typeof rootRouteImport
-        }
-        '/about': {
-            id: '/about'
-            path: '/about'
-            fullPath: '/about'
-            preLoaderRoute: typeof AboutRouteImport
-            parentRoute: typeof rootRouteImport
-        }
-        '/counter': {
-            id: '/counter'
-            path: '/counter'
-            fullPath: '/counter'
-            preLoaderRoute: typeof CounterRouteImport
-            parentRoute: typeof rootRouteImport
-        }
-        '/login': {
-            id: '/login'
-            path: '/login'
-            fullPath: '/login'
-            preLoaderRoute: typeof LoginRouteImport
-            parentRoute: typeof rootRouteImport
-        }
+  interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/counter': {
+      id: '/counter'
+      path: '/counter'
+      fullPath: '/counter'
+      preLoaderRoute: typeof CounterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+  }
 }
 
 const rootRouteChildren: RootRouteChildren = {
-    IndexRoute: IndexRoute,
-    AboutRoute: AboutRoute,
-    CounterRoute: CounterRoute,
-    LoginRoute: LoginRoute,
+  IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  CounterRoute: CounterRoute,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
-    ._addFileChildren(rootRouteChildren)
-    ._addFileTypes<FileRouteTypes>()
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
