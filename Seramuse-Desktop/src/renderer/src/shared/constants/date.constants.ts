@@ -1,0 +1,4 @@
+export const DATE_FORMAT_API = 'YYYY-MM-DD';
+export const DATETIME_FORMAT_API = 'YYYY-MM-DD HH:mm:ss';
+export const DATE_FORMAT_DISPLAY = 'DD/MM/YYYY';
+export const DATETIME_FORMAT_DISPLAY = 'DD/MM/YYYY HH:mm';

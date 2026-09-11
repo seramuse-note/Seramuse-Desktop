@@ -1,0 +1,39 @@
+import { createRootRoute, Link, Outlet } from '@tanstack/react-router';
+import '@/shared/lib/i18n';
+import { environment } from '@renderer/shared/lib/environment';
+import { TanStackRouterDevtools } from '@tanstack/router-devtools';
+import { Toaster } from '@renderer/shared/components/ui/Toaster';
+const RootComponent = () => {
+    return (
+        <div className="flex min-h-screen flex-col bg-gray-100 text-gray-800">
+            <header className="flex items-center justify-between border-b bg-white px-6 py-3 shadow-sm">
+                <Link to="/" className="text-lg font-bold text-blue-600">
+                    Knowledge Lib
+                </Link>
+                <nav className="flex items-center gap-4">
+                    <Link to="/" className="text-sm font-medium hover:text-blue-600">
+                        Home
+                    </Link>
+                    <Link to="/counter" className="text-sm font-medium hover:text-blue-600">
+                        Counter
+                    </Link>
+                    <Link to="/about" className="text-sm font-medium hover:text-blue-600">
+                        About
+                    </Link>
+                    <Link to="/login" className="text-sm font-medium hover:text-blue-600">
+                        Login
+                    </Link>
+                </nav>
+            </header>
+            <main className="flex flex-1 flex-col items-center justify-center p-6">
+                <Outlet />
+            </main>
+            <Toaster />
+            {environment.isDev ? <TanStackRouterDevtools /> : null}
+        </div>
+    );
+};
+
+export const Route = createRootRoute({
+    component: RootComponent,
+});
