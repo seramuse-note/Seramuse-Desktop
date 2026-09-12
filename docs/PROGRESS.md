@@ -9,8 +9,8 @@
 
 | Giai đoạn | Tên Phase | Số bước | Trạng thái | Đánh giá / Ghi chú |
 | :---: | :--- | :---: | :---: | :--- |
-| **Phase 1** | **Quản lý Dữ liệu Cốt lõi (Store & Slice)** | 3 | 🟡 **Đang thực hiện** | Bắt đầu từ Type Definitions và Redux Slice |
-| **Phase 2** | **Bố cục 2 Cột (Split-Pane Layout)** | 2 | ⚪ Chưa bắt đầu | Sidebar danh sách + Vùng hiển thị chính |
+| **Phase 1** | **Quản lý Dữ liệu Cốt lõi (Store & Slice)** | 3 | 🟢 **Hoàn thành** | Đã định nghĩa types, slice reducers và kết nối root store |
+| **Phase 2** | **Bố cục 2 Cột (Split-Pane Layout)** | 2 | 🟡 **Đang thực hiện** | Sidebar danh sách + Vùng hiển thị chính |
 | **Phase 3** | **Đồng bộ Soạn thảo Cơ bản** | 2 | ⚪ Chưa bắt đầu | Controlled Components (Title Input & Content Textarea) |
 | **Phase 4** | **Tích hợp Tiptap Rich-Text Editor** | 3 | ⚪ Chưa bắt đầu | Headless Editor v3 + Xử lý bẫy con trỏ nhảy |
 | **Phase 5** | **Cây Thư mục & Tổ chức Tri thức** | 2 | ⚪ Chưa bắt đầu | Folder Tree + Quản lý tags & status |
@@ -22,32 +22,49 @@
 
 ### 🟢 PHASE 1: QUẢN LÝ DỮ LIỆU CỐT LÕI (CORE DATA & STORE)
 
-- [ ] **Bước 1.1: Định nghĩa Data Model (`types.ts`)**
-  - **Trạng thái:** 🟡 **ĐANG THỰC HIỆN (IN PROGRESS)**
+- [x] **Bước 1.1: Định nghĩa Data Model (`types.ts`)**
+  - **Trạng thái:** 🟢 **HOÀN THÀNH**
   - **File:** `src/renderer/src/features/notes/types.ts`
-  - **Mục tiêu:** 
-    - Định nghĩa interface `Note` (id, title, content, createdAt, updatedAt).
-    - Định nghĩa interface `NotesState` dùng `Record<string, Note>` để tối ưu $O(1)$.
-  - **Tiêu chí nghiệm thu (AC):** File tồn tại, không có lỗi TypeScript cú pháp.
+  - **Kết quả:** Đã định nghĩa interface `Note` và `NoteState` với cấu trúc `Record<string, Note>` tối ưu $O(1)$.
 
 ---
 
-- [ ] **Bước 1.2: Xây dựng Redux Slice (`notesSlice.ts`)**
-  - **Trạng thái:** ⚪ Chưa bắt đầu (Kế tiếp sau Bước 1.1)
+- [x] **Bước 1.2: Xây dựng Redux Slice (`notesSlice.ts`)**
+  - **Trạng thái:** 🟢 **HOÀN THÀNH**
   - **File:** `src/renderer/src/features/notes/notesSlice.ts`
-  - **Mục tiêu:**
-    - Khởi tạo initial state với một vài ghi chú mẫu (seed note).
-    - Viết các action reducers: `createNote`, `selectNote`, `updateNoteTitle`, `updateNoteContent`, `deleteNote`.
-  - **Tiêu chí nghiệm thu (AC):** Export đầy đủ actions và reducer.
+  - **Kết quả:** Đã hoàn thành các actions: `createNote`, `selectNote`, `updateNoteTitle`, `updateNoteContent`, `deleteNote` kèm xử lý an toàn `activeNoteId`.
 
 ---
 
-- [ ] **Bước 1.3: Đăng ký Slice vào Root Store (`store.ts`)**
-  - **Trạng thái:** ⚪ Chưa bắt đầu
+- [x] **Bước 1.3: Đăng ký Slice vào Root Store (`store.ts`)**
+  - **Trạng thái:** 🟢 **HOÀN THÀNH**
   - **File:** `src/renderer/src/app/store.ts`
+  - **Kết quả:** Đã đăng ký `notesReducer` vào Root Store, `typecheck` vượt qua 100%.
+
+---
+
+### 🟡 PHASE 2: BỐ CỤC 2 CỘT (SPLIT-PANE LAYOUT)
+
+- [ ] **Bước 2.1: Xây dựng Component Sidebar (`Sidebar.tsx`)**
+  - **Trạng thái:** 🟡 **ĐANG THỰC HIỆN (IN PROGRESS)**
+  - **File:** `src/renderer/src/features/notes/components/Sidebar.tsx`
   - **Mục tiêu:**
-    - Import `notesReducer` và gắn vào `configureStore({ reducer: { counter, notes } })`.
-  - **Tiêu chí nghiệm thu (AC):** `npm run typecheck` vượt qua 100%, Redux DevTools nhận diện slice `notes`.
+    - Lấy danh sách ghi chú từ Store bằng `Object.values(state.notes.notes)`.
+    - Nút bấm `+ Ghi chú mới` gọi `dispatch(createNote(''))`.
+    - Click vào từng dòng ghi chú gọi `dispatch(selectNote(note.id))`.
+    - Highlight ghi chú đang được chọn dựa trên `activeNoteId`.
+  - **Tiêu chí nghiệm thu (AC):** Render danh sách note không lỗi, bấm chọn đổi highlight rõ ràng.
+
+---
+
+- [ ] **Bước 2.2: Ghép vào Layout Trang Chủ (`Home.tsx`)**
+  - **Trạng thái:** ⚪ Chưa bắt đầu
+  - **File:** `src/renderer/src/features/home/Home.tsx`
+  - **Mục tiêu:**
+    - Tạo bố cục Flexbox 2 cột (`h-screen w-screen flex overflow-hidden`).
+    - Cột trái: `<Sidebar />` cố định chiều rộng.
+    - Cột phải: Vùng làm việc chính hiển thị tạm tiêu đề của note đang chọn.
+  - **Tiêu chí nghiệm thu (AC):** Giao diện chia 2 cột rõ ràng, responsive chiều cao toàn màn hình.
 
 ---
 
