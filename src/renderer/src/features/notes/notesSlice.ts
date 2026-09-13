@@ -51,10 +51,11 @@ const notesSlice = createSlice({
         const remainingIds = Object.keys(state.notes)
         state.activeNoteId = remainingIds.length > 0 ? remainingIds[0] : null
       }
-    },
+    }
   }
 })
 
-export const { selectNote, createNote, updateNoteTitle, updateNoteContent, deleteNote } = notesSlice.actions
+export const { selectNote, createNote, updateNoteTitle, updateNoteContent, deleteNote } =
+  notesSlice.actions
 
 export default notesSlice.reducer

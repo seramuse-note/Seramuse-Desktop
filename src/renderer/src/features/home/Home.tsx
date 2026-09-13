@@ -1,24 +1,28 @@
-import { environment } from '@/shared/lib/environment'
-import { Link } from '@tanstack/react-router'
-import { BookOpen } from 'lucide-react'
+import { useAppSelector } from '@/app/hooks'
+import { Sidebar } from '../notes/components/Sidebar'
+import { NoteEditor } from '../notes/components/NoteEditor'
 
 export const Home = () => {
+  const activeNoteId = useAppSelector((state) => state.notes.activeNoteId)
+  const activeNote = useAppSelector((state) =>
+    activeNoteId ? state.notes.notes[activeNoteId] : null
+  )
+  // tại sao h-[calc(100vh-53px)] mà k h-full, nen dùng cái nào hơn hay tùy hoàn cảnh
   return (
-    <div className="flex flex-col items-center gap-4 text-center">
-      <BookOpen className="h-16 w-16 text-blue-600" />
-      <h1 className="text-4xl font-bold">
-        {environment.mode === 'production' ? 'Knowledge Lib' : 'Knowledge Lib (dev)'}
-      </h1>
-      <p className="max-w-md text-gray-600">
-        Trang chủ của ứng dụng Knowledge Library. Khởi động với TanStack Router + Vite + React +
-        TypeScript.
-      </p>
-      <Link
-        to="/counter"
-        className="mt-2 rounded-lg bg-blue-600 px-5 py-2 text-white hover:bg-blue-700"
-      >
-        Đi tới Counter
-      </Link>
+    <div className="flex h-[calc(100vh-53px)] w-full  overflow-hidden bg-white">
+      <Sidebar />
+
+      <main className="flex-1 flex flex-col overflow-y-auto">
+        {activeNote ? (
+          <NoteEditor activeNote={activeNote} />
+        ) : (
+          <div className="flex flex-1 flex-col  items-center justify-center text-neutral-400 text-sm">
+            <p className="text-center">
+              Chọn một ghi chú ở danh sách bên trái hoặc tạo ghi chú mới.
+            </p>
+          </div>
+        )}
+      </main>
     </div>
   )
 }

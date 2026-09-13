@@ -25,7 +25,7 @@ const RootComponent = () => {
           </Link>
         </nav>
       </header>
-      <main className="flex flex-1 flex-col items-center justify-center p-6">
+      <main className="flex flex-1 flex-col justify-center ">
         <Outlet />
       </main>
       <Toaster />
