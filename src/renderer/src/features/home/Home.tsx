@@ -7,9 +7,8 @@ export const Home = () => {
   const activeNote = useAppSelector((state) =>
     activeNoteId ? state.notes.notes[activeNoteId] : null
   )
-  // tại sao h-[calc(100vh-53px)] mà k h-full, nen dùng cái nào hơn hay tùy hoàn cảnh
   return (
-    <div className="flex h-[calc(100vh-53px)] w-full  overflow-hidden bg-white">
+    <div className="flex h-full w-full  overflow-hidden bg-white">
       <Sidebar />
 
       <main className="flex-1 flex flex-col overflow-y-auto">

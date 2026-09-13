@@ -13,8 +13,8 @@
 | **Phase 1** | **Quản lý Dữ liệu Cốt lõi (Store & Slice)** |    3    | 🟢 **Hoàn thành** | Đã định nghĩa types, slice reducers và kết nối root store |
 | **Phase 2** | **Bố cục 2 Cột (Split-Pane Layout)**        |    2    | 🟢 **Hoàn thành** | Sidebar danh sách + Vùng hiển thị chính                   |
 | **Phase 3** | **Đồng bộ Soạn thảo Cơ bản**                |    1    | 🟢 **Hoàn thành** | Controlled Components (Title Input & Content Textarea)    |
-| **Phase 4** | **Tích hợp Tiptap Rich-Text Editor**        |    3    | 🟡 **Tiếp theo**  | Headless Editor v3 + Xử lý bẫy con trỏ nhảy               |
-| **Phase 5** | **Cây Thư mục & Tổ chức Tri thức**          |    2    |  ⚪ Chưa bắt đầu  | Folder Tree + Quản lý tags & status                       |
+| **Phase 4** | **Tích hợp Tiptap Rich-Text Editor**        |    3    | 🟢 **Hoàn thành** | Headless Editor v3 + key remounting + autofocus           |
+| **Phase 5** | **Cây Thư mục & Tổ chức Tri thức**          |    2    | 🟡 **Tiếp theo**  | Folder Tree + Quản lý tags & status                       |
 | **Phase 6** | **Tính năng Nâng cao (Kanban & Graph)**     |    3    |  ⚪ Chưa bắt đầu  | Notion Kanban board + Obsidian SVG Knowledge Graph        |
 
 ---
@@ -66,6 +66,30 @@
   - **Trạng thái:** 🟢 **HOÀN THÀNH**
   - **File:** `src/renderer/src/features/notes/components/NoteEditor.tsx`
   - **Kết quả:** Đã đồng bộ real-time Title input và Content textarea với Redux Store.
+  - **Ghi chú kỹ thuật:** Đã ghi nhận tip về **Debounce khi tích hợp Persistence/IPC** vào `STEP_BY_STEP_GUIDE.md` để áp dụng khi làm tính năng lưu đĩa/database.
+
+---
+
+### 🟢 PHASE 4: TÍCH HỢP RICH-TEXT VỚI TIPTAP V3
+
+- [x] **Bước 4.1: Cấu hình Headless Tiptap Editor (`TiptapEditor.tsx`)**
+  - **Trạng thái:** 🟢 **HOÀN THÀNH**
+  - **File:** `src/renderer/src/features/notes/components/TiptapEditor.tsx`
+  - **Kết quả:** Đã tích hợp `@tiptap/react`, `StarterKit` và extension `Placeholder`. Hỗ trợ đầy đủ các cú pháp Markdown (Headings, Lists, Blockquote, Code block).
+
+---
+
+- [x] **Bước 4.2: Cơ chế Reset Vòng đời & Giải quyết Triệt để Bẫy Con trỏ Nhảy (`NoteEditor.tsx`)**
+  - **Trạng thái:** 🟢 **HOÀN THÀNH**
+  - **File:** `src/renderer/src/features/notes/components/NoteEditor.tsx`
+  - **Kết quả:** Áp dụng kỹ thuật `key={activeNote.id}` để unmount/mount sạch sẽ giữa các ghi chú, loại bỏ hoàn toàn bẫy lỗi con trỏ nhảy và cô lập lịch sử Undo/Redo cho từng bài viết.
+
+---
+
+- [x] **Bước 4.3: Tối ưu Trải nghiệm Soạn thảo (Autofocus & UX)**
+  - **Trạng thái:** 🟢 **HOÀN THÀNH**
+  - **File:** `src/renderer/src/features/notes/components/TiptapEditor.tsx`
+  - **Kết quả:** Kích hoạt `autofocus: 'end'` giúp con trỏ tự động nhấp nháy sẵn sàng ở cuối ghi chú khi chuyển note mà không cần click chuột.
 
 ---
 

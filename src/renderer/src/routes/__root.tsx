@@ -5,7 +5,7 @@ import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 
 const RootComponent = () => {
   return (
-    <div className="flex min-h-screen flex-col bg-gray-100 text-gray-800">
+    <div className="flex  h-screen flex-col bg-gray-100 text-gray-800">
       <header className="flex items-center justify-between border-b bg-white px-6 py-3 shadow-sm">
         <Link to="/" className="text-lg font-bold text-blue-600">
           Knowledge Lib

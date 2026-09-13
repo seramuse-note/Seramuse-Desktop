@@ -134,8 +134,17 @@ Trước khi dùng các thư viện soạn thảo phức tạp như Tiptap, hãy
   * `<input>` cho tiêu đề: `value={activeNote.title}`, `onChange={(e) => dispatch(updateNoteTitle({ id: activeNote.id, title: e.target.value }))}`.
   * `<textarea>` cho nội dung: `value={activeNote.content}`, `onChange={(e) => dispatch(updateNoteContent({ id: activeNote.id, content: e.target.value }))}`.
 
-> **Bài học quan trọng về Controlled Components:**  
-> Bạn sẽ quan sát thấy rằng khi gõ vào `<input>`, tiêu đề ở Sidebar cũng lập tức thay đổi theo thời gian thực! Đó là sức mạnh của Single Source of Truth trong Redux.
+> **Bài học quan trọng về Controlled Components & In-Memory Sync:**  
+> Bạn sẽ quan sát thấy rằng khi gõ vào `<input>`, tiêu đề ở Sidebar cũng lập tức thay đổi theo thời gian thực! Đó là sức mạnh của Single Source of Truth trong Redux khi dữ liệu đang được lưu trữ trực tiếp trên RAM.
+
+> [!TIP]
+> **Kinh nghiệm & Hướng dẫn kỹ thuật: Debounce khi tích hợp Lưu trữ (Persistence / SQLite / IPC)**  
+> * **Vấn đề:** Hiện tại việc cập nhật diễn ra tức thời vì chỉ lưu trên RAM (Redux Store). Sau này khi chuyển sang lưu trữ bền vững (ghi file Markdown/JSON vào ổ cứng hoặc gửi qua Electron IPC tới Main process / SQLite Database), nếu mỗi phím gõ (`onChange`) đều gọi ghi đĩa sẽ gây nghẽn I/O (Disk thrashing), giảm giật lag và hao pin.
+> * **Giải pháp tối ưu:**
+>   1. **Giao diện (UI State):** Tiếp tục cập nhật tức thời trên Redux RAM để Sidebar & Editor luôn phản hồi mượt mà không có độ trễ.
+>   2. **Tầng lưu trữ (Persistence Layer):** Áp dụng kỹ thuật **Debounce** (thông qua custom hook `useDebounce` hoặc Redux listener middleware) đợi người dùng ngưng gõ khoảng 300ms – 500ms mới kích hoạt lệnh ghi đĩa/gửi IPC.
+>   3. **Cơ chế an toàn (Safety Flush):** Tự động ép lưu ngay lập tức (flush) khi người dùng chuyển sang ghi chú khác hoặc khi đóng ứng dụng để không bị mất dữ liệu.
+> * **Lộ trình:** AI sẽ chủ động nhắc nhở và hướng dẫn bạn tự tay code chi tiết kỹ thuật này khi bước vào giai đoạn kết nối Lưu trữ/IPC.
 
 **Tiêu chí nghiệm thu Giai đoạn 3:**
 - Gõ đổi tên ở ô tiêu đề -> Tiêu đề ở danh sách Sidebar đổi theo ngay lập tức.
