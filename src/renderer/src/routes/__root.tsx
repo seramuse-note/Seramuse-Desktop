@@ -14,9 +14,6 @@ const RootComponent = () => {
           <Link to="/" className="text-sm font-medium hover:text-blue-600">
             Home
           </Link>
-          <Link to="/counter" className="text-sm font-medium hover:text-blue-600">
-            Counter
-          </Link>
           <Link to="/about" className="text-sm font-medium hover:text-blue-600">
             About
           </Link>
@@ -25,7 +22,7 @@ const RootComponent = () => {
           </Link>
         </nav>
       </header>
-      <main className="flex flex-1 flex-col justify-center ">
+      <main className="flex flex-1 flex-col justify-center items-center ">
         <Outlet />
       </main>
       <Toaster />

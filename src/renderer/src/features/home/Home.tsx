@@ -8,7 +8,7 @@ export const Home = () => {
     activeNoteId ? state.notes.notes[activeNoteId] : null
   )
   return (
-    <div className="flex h-full w-full  overflow-hidden bg-white">
+    <div className="flex h-full  w-full overflow-hidden bg-white">
       <Sidebar />
 
       <main className="flex-1 flex flex-col overflow-y-auto">
