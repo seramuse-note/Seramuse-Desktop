@@ -1,10 +1,19 @@
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
-import { createFolder, createNote, deleteNote, selectNote } from '../notesSlice'
-import { FileText, FolderPlus, Plus, Trash2 } from 'lucide-react'
+import { createFolder, createNote, deleteNote, selectNote, setActiveView } from '../notesSlice'
+import { Columns3, FileText, FolderPlus, Network, Plus, Trash2 } from 'lucide-react'
 import { FolderItem } from './FolderItem'
+import { ViewMode } from '../types'
+
+const navItems = [
+  { mode: ViewMode.DOCUMENT, label: 'Tài liệu', icon: FileText },
+  { mode: ViewMode.KANBAN, label: 'Kanban', icon: Columns3 },
+  { mode: ViewMode.GRAPH, label: 'Graph', icon: Network }
+]
 
 export const Sidebar = () => {
   const dispatch = useAppDispatch()
+
+  const activeView = useAppSelector((state) => state.notes.activeView)
 
   const notes = useAppSelector((state) => state.notes.notes)
   const folders = useAppSelector((state) => state.notes.folders)
@@ -22,13 +31,14 @@ export const Sidebar = () => {
     e.stopPropagation()
     dispatch(deleteNote(noteId))
   }
+
   return (
     <aside className="flex h-full w-64 flex-col border-r border-neutral-200 bg-neutral-50 select-none">
       <div className="p-3 border-b border-neutral-200 flex gap-2">
         <button
           onClick={() => dispatch(createNote())}
-          className="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-pink-600 px-2.5 py-1.5
-          text-xs font-medium text-white shadow-sm hover:bg-pink-700 transition-colors duration-150"
+          className="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-2.5 py-1.5
+          text-xs font-medium text-white shadow-sm hover:bg-blue-700 transition-colors duration-150"
         >
           <Plus className="w-3.5 h-3.5" /> <span>Ghi chú</span>
         </button>
@@ -44,6 +54,28 @@ export const Sidebar = () => {
       </div>
 
       <div className="flex-1 overflow-y-auto p-2 space-y-3">
+        <div className="space-y-1">
+          <div className="px-2 text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">
+            Góc nhìn
+          </div>
+          {navItems.map((item) => (
+            <button
+              key={item.mode}
+              onClick={() => dispatch(setActiveView(item.mode))}
+              className={`w-full flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors cursor-pointer ${
+                activeView === item.mode
+                  ? 'bg-blue-100 text-blue-900'
+                  : 'text-neutral-700 hover:bg-neutral-200/60'
+              }`}
+            >
+              <item.icon
+                className={`h-3.5 w-3.5 ${activeView === item.mode ? 'text-blue-600' : 'text-neutral-500'}`}
+              />
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </div>
+
         {isEmptyWorkspace && (
           <div className="p-4 text-center text-xs text-neutral-400">
             Chưa có ghi chú nào. Bấm nút phía trên để tạo mới.
@@ -87,14 +119,14 @@ export const Sidebar = () => {
                   className={`group  flex items-center justify-between gap-2 rounded-md px-3 py-1.5 text-xs cursor-pointer transition-colors
                   ${
                     isActive
-                      ? 'bg-pink-100 text-pink-900 font-medium'
+                      ? 'bg-blue-100 text-blue-900 font-medium'
                       : 'text-neutral-700 hover:bg-neutral-200/70'
                   }
                 `}
                 >
                   <div className="flex  items-center gap-2 truncate">
                     <FileText
-                      className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-pink-600' : 'text-neutral-500'}`}
+                      className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-blue-600' : 'text-neutral-500'}`}
                     />
                     <span className="truncate">{note.title || 'Untitled Note'}</span>
                   </div>

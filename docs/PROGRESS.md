@@ -114,6 +114,27 @@
 
 ---
 
+### 🟡 PHASE 6: TÍNH NĂNG NÂNG CAO (KANBAN & GRAPH VIEW)
+
+- [x] **Bước 6.1: Xây dựng Bảng Kanban Chuẩn Notion (`KanbanView.tsx`, `KanbanColumn.tsx`, `KanbanCard.tsx`)**
+  - **Trạng thái:** 🟢 **HOÀN THÀNH**
+  - **File:** `KanbanView.tsx`, `KanbanColumn.tsx`, `KanbanCard.tsx`, `notesSlice.ts`, `types.ts`
+  - **Kết quả:**
+    - Tích hợp enum `ViewMode` (`DOCUMENT`, `KANBAN`, `GRAPH`) và chuyển đổi góc nhìn mượt mà trên Sidebar.
+    - Cấu trúc 3 cột trực quan (`TODO`, `IN_PROGRESS`, `DONE`) với cơ chế phòng vệ dữ liệu `(n.status || NoteStatus.TODO)` tương thích ngược 100%.
+    - Tạo ghi chú mới trực tiếp tại từng cột mà không bị nhảy giao diện (giữ nguyên mạch tư duy lên kế hoạch).
+    - Tích hợp **Native HTML5 Drag & Drop (Zero-Dependency)**: Sử dụng `dataTransfer` với `effectAllowed = 'move'` và `dropEffect = 'move'`.
+    - Xử lý triệt để bẫy xung đột CSS Class bằng toán tử điều kiện và hiệu ứng viền phát sáng (`ring-2 ring-blue-500/20`) khi kéo thả qua cột.
+    - Click vào bất kỳ thẻ nào để chuyển mượt sang chế độ soạn thảo tài liệu (`selectNote`).
+
+---
+
+- [ ] **Bước 6.2: Xây dựng Bản đồ Tri thức Obsidian SVG Knowledge Graph (`GraphView.tsx`)**
+  - **Trạng thái:** 🟡 **TIẾP THEO**
+  - **Mục tiêu:** Quét liên kết 2 chiều Wiki-links (`[[Tên trang]]`), dựng sơ đồ đồ thị mạng lưới bằng SVG Canvas thuần, hỗ trợ rê chuột làm sáng liên kết và click để điều hướng nhanh.
+
+---
+
 ## TÀI LIỆU THAM KHẢO TRONG THƯ MỤC `/docs`
 
 - 📖 [CURRENT_STATE.md](file:///d:/seramuse/Seramuse-Desktop/docs/CURRENT_STATE.md): Lưu trữ toàn bộ tính năng, UI và logic của bản vibe-code để tham khảo ý tưởng.

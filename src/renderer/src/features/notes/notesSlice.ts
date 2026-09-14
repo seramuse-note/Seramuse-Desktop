@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { Folder, Note, NoteState, NoteStatus } from './types'
+import { Folder, Note, NoteState, NoteStatus, ViewMode } from './types'
 
 const initialState: NoteState = {
   notes: {},
   folders: {},
-  activeNoteId: null
+  activeNoteId: null,
+  activeView: ViewMode.DOCUMENT
 }
 
 const notesSlice = createSlice({
@@ -13,18 +14,25 @@ const notesSlice = createSlice({
   reducers: {
     selectNote(state, action: PayloadAction<string>) {
       state.activeNoteId = action.payload
+      state.activeView = ViewMode.DOCUMENT
     },
 
     createNote(
       state,
-      action: PayloadAction<{ content?: string; folderId?: string } | string | undefined>
+      action: PayloadAction<
+        { content?: string; folderId?: string; status?: NoteStatus } | string | undefined
+      >
     ) {
       const id = crypto.randomUUID()
       const now = new Date().toISOString()
 
+      const folderId = typeof action.payload === 'object' ? action.payload?.folderId : undefined
       const content =
         typeof action.payload === 'string' ? action.payload : action.payload?.content || ''
-      const folderId = typeof action.payload === 'object' ? action.payload?.folderId : undefined
+      const status =
+        typeof action.payload === 'object' && action.payload?.status
+          ? action.payload.status
+          : NoteStatus.TODO
 
       const newNote: Note = {
         id,
@@ -33,7 +41,7 @@ const notesSlice = createSlice({
         folderId,
         createdAt: now,
         updatedAt: now,
-        status: NoteStatus.TODO,
+        status,
         tags: []
       }
       state.notes[id] = newNote
@@ -137,20 +145,8 @@ const notesSlice = createSlice({
       }
     },
 
-    clearNoteStatus(state, action: PayloadAction<string>) {
-      const id = action.payload
-      const note = state.notes[id]
-      if (note) {
-        note.status = NoteStatus.TODO
-      }
-    },
-
-    clearNoteTags(state, action: PayloadAction<string>) {
-      const id = action.payload
-      const note = state.notes[id]
-      if (note) {
-        note.tags = []
-      }
+    setActiveView(state, action: PayloadAction<ViewMode>) {
+      state.activeView = action.payload
     }
   }
 })
@@ -168,7 +164,8 @@ export const {
   moveNoteToFolder,
   updateNoteStatus,
   addNoteTag,
-  removeNoteTag
+  removeNoteTag,
+  setActiveView
 } = notesSlice.actions
 
 export default notesSlice.reducer

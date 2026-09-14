@@ -7,17 +7,17 @@ const RootComponent = () => {
   return (
     <div className="flex  h-screen flex-col bg-gray-100 text-gray-800">
       <header className="flex items-center justify-between border-b bg-white px-6 py-3 shadow-sm">
-        <Link to="/" className="text-lg font-bold text-pink-600">
-          Knowledge Lib
+        <Link to="/" className="text-lg font-bold text-blue-600">
+          Seramuse
         </Link>
         <nav className="flex items-center gap-4">
-          <Link to="/" className="text-sm font-medium hover:text-pink-600">
+          <Link to="/" className="text-sm font-medium hover:text-blue-600">
             Home
           </Link>
-          <Link to="/about" className="text-sm font-medium hover:text-pink-600">
+          <Link to="/about" className="text-sm font-medium hover:text-blue-600">
             About
           </Link>
-          <Link to="/login" className="text-sm font-medium hover:text-pink-600">
+          <Link to="/login" className="text-sm font-medium hover:text-blue-600">
             Login
           </Link>
         </nav>

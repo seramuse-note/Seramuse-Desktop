@@ -4,6 +4,12 @@ export enum NoteStatus {
   DONE = 'Done'
 }
 
+export enum ViewMode {
+  DOCUMENT = 'Document',
+  KANBAN = 'Kanban',
+  GRAPH = 'Graph'
+}
+
 export interface Note {
   id: string
   title: string
@@ -26,4 +32,5 @@ export interface NoteState {
   notes: Record<string, Note>
   folders: Record<string, Folder>
   activeNoteId: string | null
+  activeView: ViewMode
 }

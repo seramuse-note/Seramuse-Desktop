@@ -64,7 +64,7 @@ export const LoginForm = () => {
         <button
           type="submit"
           disabled={isSaveDisabled}
-          className="rounded bg-pink-600 p-2 font-medium text-white hover:bg-pink-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded bg-blue-600 p-2 font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {trans('Login')}
         </button>
