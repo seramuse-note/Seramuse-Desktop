@@ -14,8 +14,8 @@
 | **Phase 2** | **Bố cục 2 Cột (Split-Pane Layout)**        |    2    | 🟢 **Hoàn thành** | Sidebar danh sách + Vùng hiển thị chính                   |
 | **Phase 3** | **Đồng bộ Soạn thảo Cơ bản**                |    1    | 🟢 **Hoàn thành** | Controlled Components (Title Input & Content Textarea)    |
 | **Phase 4** | **Tích hợp Tiptap Rich-Text Editor**        |    3    | 🟢 **Hoàn thành** | Headless Editor v3 + key remounting + autofocus           |
-| **Phase 5** | **Cây Thư mục & Tổ chức Tri thức**          |    2    | 🟡 **Tiếp theo**  | Folder Tree + Quản lý tags & status                       |
-| **Phase 6** | **Tính năng Nâng cao (Kanban & Graph)**     |    3    |  ⚪ Chưa bắt đầu  | Notion Kanban board + Obsidian SVG Knowledge Graph        |
+| **Phase 5** | **Cây Thư mục & Bảng Thuộc tính Tri thức**  |    2    | 🟢 **Hoàn thành** | Folder Tree + Status Enum + Notion Properties Table + Tags |
+| **Phase 6** | **Tính năng Nâng cao (Kanban & Graph)**     |    3    | 🟡 **Tiếp theo**  | Notion Kanban board + Obsidian SVG Knowledge Graph        |
 
 ---
 
@@ -90,6 +90,27 @@
   - **Trạng thái:** 🟢 **HOÀN THÀNH**
   - **File:** `src/renderer/src/features/notes/components/TiptapEditor.tsx`
   - **Kết quả:** Kích hoạt `autofocus: 'end'` giúp con trỏ tự động nhấp nháy sẵn sàng ở cuối ghi chú khi chuyển note mà không cần click chuột.
+
+---
+
+### 🟢 PHASE 5: CÂY THƯ MỤC & BẢNG THUỘC TÍNH TRI THỨC (NOTION PROPERTIES)
+
+- [x] **Bước 5.1: Xây dựng Cây Thư mục Phân cấp (`FolderItem.tsx`)**
+  - **Trạng thái:** 🟢 **HOÀN THÀNH**
+  - **File:** `src/renderer/src/features/notes/components/FolderItem.tsx`, `notesSlice.ts`
+  - **Kết quả:** Đã hoàn thành tạo thư mục, đóng/mở thư mục, đổi tên inline khi double-click, xóa thư mục và lọc hiển thị ghi chú theo `folderId`.
+
+---
+
+- [x] **Bước 5.2: Xây dựng Bảng Thuộc tính Chuẩn Notion (`NoteProperties.tsx`)**
+  - **Trạng thái:** 🟢 **HOÀN THÀNH**
+  - **File:** `src/renderer/src/features/notes/components/NoteProperties.tsx`, `types.ts`, `notesSlice.ts`
+  - **Kết quả:** 
+    - Đã định nghĩa enum `NoteStatus` (`To Do`, `In Progress`, `Done`) và trường `tags: string[]`.
+    - Custom Dropdown bo tròn (`rounded-md`, `shadow-lg`) với logic bắt sự kiện click outside thông minh qua `useRef` và `useEffect` + cleanup function.
+    - Áp dụng cơ chế phòng vệ dữ liệu `safeTags` / `safeStatus` chống sập app khi mở note cũ.
+    - Quản lý nhãn dán (tags) dạng pill tag, thêm nhanh bằng `Enter`, xóa thẻ tức thời và tối ưu chiều cao chống đẩy vùng soạn thảo.
+  - **Tài liệu nghiên cứu:** Đã lưu trữ chuyên đề **"Bóc tách Inline Hashtags chuẩn Obsidian & Hóa giải 6 Bẫy Regex"** vào `STEP_BY_STEP_GUIDE.md` để làm tư liệu nâng cấp.
 
 ---
 

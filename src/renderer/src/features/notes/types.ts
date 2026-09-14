@@ -1,3 +1,9 @@
+export enum NoteStatus {
+  TODO = 'To Do',
+  IN_PROGRESS = 'In Progress',
+  DONE = 'Done'
+}
+
 export interface Note {
   id: string
   title: string
@@ -5,6 +11,8 @@ export interface Note {
   createdAt: string
   updatedAt: string
   folderId?: string
+  status: NoteStatus
+  tags: string[]
 }
 
 export interface Folder {

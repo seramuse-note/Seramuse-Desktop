@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import type { Folder, Note, NoteState } from './types'
+import { Folder, Note, NoteState, NoteStatus } from './types'
 
 const initialState: NoteState = {
   notes: {},
@@ -32,7 +32,9 @@ const notesSlice = createSlice({
         content,
         folderId,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
+        status: NoteStatus.TODO,
+        tags: []
       }
       state.notes[id] = newNote
       state.activeNoteId = id
@@ -108,6 +110,47 @@ const notesSlice = createSlice({
       if (note) {
         note.folderId = folderId
       }
+    },
+
+    updateNoteStatus(state, action: PayloadAction<{ id: string; status: NoteStatus }>) {
+      const { id, status } = action.payload
+      if (state.notes[id]) {
+        state.notes[id].status = status
+        state.notes[id].updatedAt = new Date().toISOString()
+      }
+    },
+
+    addNoteTag(state, action: PayloadAction<{ id: string; tag: string }>) {
+      const { id, tag } = action.payload
+      const note = state.notes[id]
+      if (note) {
+        note.tags.push(tag)
+        note.updatedAt = new Date().toISOString()
+      }
+    },
+
+    removeNoteTag(state, action: PayloadAction<{ id: string; tag: string }>) {
+      const { id, tag } = action.payload
+      const note = state.notes[id]
+      if (note) {
+        note.tags = note.tags.filter((t) => t !== tag)
+      }
+    },
+
+    clearNoteStatus(state, action: PayloadAction<string>) {
+      const id = action.payload
+      const note = state.notes[id]
+      if (note) {
+        note.status = NoteStatus.TODO
+      }
+    },
+
+    clearNoteTags(state, action: PayloadAction<string>) {
+      const id = action.payload
+      const note = state.notes[id]
+      if (note) {
+        note.tags = []
+      }
     }
   }
 })
@@ -122,7 +165,10 @@ export const {
   toggleFolder,
   updateFolderName,
   deleteFolder,
-  moveNoteToFolder
+  moveNoteToFolder,
+  updateNoteStatus,
+  addNoteTag,
+  removeNoteTag
 } = notesSlice.actions
 
 export default notesSlice.reducer

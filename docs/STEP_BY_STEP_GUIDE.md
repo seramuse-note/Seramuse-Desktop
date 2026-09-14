@@ -190,21 +190,78 @@ const editor = useEditor({
 
 ---
 
-## GIAI ĐOẠN 5: TỔ CHỨC CÂY THƯ MỤC & TAGS (NOTION-LIKE)
+## GIAI ĐOẠN 5: TỔ CHỨC CÂY THƯ MỤC & THUỘC TÍNH TRI THỨC (NOTION PROPERTIES)
 
-Nâng cấp Sidebar từ danh sách phẳng (Flat List) thành cây thư mục (Hierarchical Tree).
+Nâng cấp Sidebar từ danh sách phẳng (Flat List) thành cây thư mục (Hierarchical Tree) và trang bị bảng thuộc tính (Properties Table) chuẩn Notion.
 
-1. Thêm `Folder` vào `types.ts`:
-   ```typescript
-   export interface Folder {
-     id: string
-     name: string
-     isOpen: boolean
-   }
-   // Trong Note, thêm trường: folderId?: string
-   ```
-2. Thêm action `createFolder`, `toggleFolder` vào slice.
-3. Render thư mục lồng ghi chú: Lọc các ghi chú có `folderId === folder.id` để render bên trong thư mục tương ứng.
+### 5.1. Cây Thư mục Phân cấp (`FolderItem.tsx`)
+1. Định nghĩa `Folder` trong `types.ts` và gán `folderId?: string` trong `Note`.
+2. Bổ sung các reducers: `createFolder`, `toggleFolder`, `updateFolderName`, `deleteFolder`, `moveNoteToFolder`.
+3. Render thư mục lồng ghi chú: Lọc các ghi chú có `note.folderId === folder.id` bên trong từng thư mục.
+
+### 5.2. Bảng Thuộc tính Chuẩn Notion (`NoteProperties.tsx`)
+1. **Trạng thái công việc (`NoteStatus` Enum):** `TODO = 'To Do'`, `IN_PROGRESS = 'In Progress'`, `DONE = 'Done'`.
+2. **Custom Dropdown bo tròn:** 
+   - Thay thế thẻ `<select>` mặc định của hệ điều hành bằng `<button>` và popup menu `<div>` bo góc `rounded-lg`, đổ bóng `shadow-lg`.
+   - Sử dụng `useRef` và `useEffect` bắt sự kiện `mousedown` trên `document` để tự động đóng menu khi click ra ngoài (`!dropdownRef.current?.contains(event.target)`).
+   - Tự động gỡ bỏ sự kiện (`removeEventListener`) trong hàm cleanup khi menu đóng để tối ưu CPU.
+3. **Phòng vệ Dữ liệu (Defensive Fallback):**
+   - Áp dụng `safeTags = note.tags || []` và `safeStatus = note.status || NoteStatus.TODO` để bảo vệ ứng dụng không bị crash trắng trang khi mở lại các ghi chú cũ trong bộ nhớ.
+4. **Quản lý Thẻ (Tags):** Hỗ trợ thêm thẻ qua phím `Enter` và xóa thẻ tức thời.
+
+---
+
+### 5.3. CHUYÊN ĐỀ KỸ THUẬT: BÓC TÁCH INLINE HASHTAGS CHUẨN OBSIDIAN & HÓA GIẢI 6 BẪY REGEX
+
+*(Tài liệu tham khảo chuyên sâu dùng khi triển khai tính năng tự động quét `#hashtag` trực tiếp từ bài viết Tiptap)*
+
+#### 6 Bẫy Regex kinh điển khi bóc tách Hashtags:
+1. **Bẫy URL & Dính chữ:** `site.com#section` ➔ Dấu `#` bị dính với ký tự phía trước.
+   * *Giải pháp:* Trước `#` bắt buộc phải là đầu dòng hoặc khoảng trắng `(?:^|\s)`.
+2. **Bẫy Tiêu đề Markdown:** `# Heading` ➔ Dấu `#` theo sau là khoảng trắng.
+   * *Giải pháp:* Ngay sau `#` không được là khoảng trắng `#(?!\s)`.
+3. **Bẫy Mã màu CSS & Số thuần:** `#ffffff`, `#123` ➔ Không phải là tag quản lý.
+   * *Giải pháp:* Tag bắt buộc phải chứa ít nhất một chữ cái `(?=.*[\p{L}])` và loại trừ mã màu hex.
+4. **Bẫy Khối Code:** `const a = '#test'` nằm trong thẻ `<code>` hoặc `<pre>`.
+   * *Giải pháp:* Dùng `DOMParser` bóc bỏ toàn bộ `<code>` và `<pre>` trước khi quét regex.
+5. **Bẫy Tiếng Việt có dấu:** `\w` trong regex chỉ nhận tiếng Anh, gõ `#kếhoạch` sẽ bị cụt thành `#k`.
+   * *Giải pháp:* Dùng Unicode Property Escapes: `\p{L}` (bắt mọi chữ cái tiếng Việt/quốc tế) kèm cờ `u`.
+6. **Bẫy Thẻ phân cấp (Nested Tag):** Obsidian hỗ trợ dạng lồng `#frontend/react/electron`.
+   * *Giải pháp:* Cho phép dấu gạch chéo `/` nằm giữa các từ `(?:\/[\p{L}\p{N}_]+)*`.
+
+#### Công thức Regex chuẩn Unicode:
+```typescript
+/(?:^|\s)#(?!\s)(?=.*[\p{L}])([\p{L}\p{N}_]+(?:\/[\p{L}\p{N}_]+)*)/gu
+```
+
+#### Hàm bóc tách hoàn chỉnh (`extractHashtagsFromHtml`):
+```typescript
+export function extractHashtagsFromHtml(htmlContent: string): string[] {
+  if (!htmlContent) return []
+
+  // 1. Dùng DOMParser loại bỏ code blocks
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(htmlContent, 'text/html')
+  doc.querySelectorAll('pre, code').forEach((el) => el.remove())
+  const plainText = doc.body.textContent || ''
+
+  // 2. Chạy Regex hóa giải bẫy
+  const hashtagRegex = /(?:^|\s)#(?!\s)(?=.*[\p{L}])([\p{L}\p{N}_]+(?:\/[\p{L}\p{N}_]+)*)/gu
+  const matches = plainText.matchAll(hashtagRegex)
+  const tags = new Set<string>()
+
+  // 3. Lọc bỏ mã màu Hex 3 hoặc 6 ký tự
+  for (const match of matches) {
+    const tag = match[1]
+    const isHexColor = /^[0-9a-fA-F]{3}$|^[0-9a-fA-F]{6}$/.test(tag)
+    if (!isHexColor) {
+      tags.add(tag)
+    }
+  }
+
+  return Array.from(tags)
+}
+```
 
 ---
 

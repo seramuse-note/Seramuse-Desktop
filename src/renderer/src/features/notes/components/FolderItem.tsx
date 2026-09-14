@@ -82,7 +82,7 @@ export const FolderItem = ({ folder, notes, activeNoteId }: FolderItemProps) => 
                 }
               }}
               onClick={(e) => e.stopPropagation()}
-              className="px-1 text-xs font-medium border border-blue-400 rounded outline-none bg-white w-full text-neutral-800"
+              className="px-1 text-xs font-medium border border-pink-400 rounded outline-none bg-white w-full text-neutral-800"
             />
           ) : (
             <span
@@ -108,7 +108,7 @@ export const FolderItem = ({ folder, notes, activeNoteId }: FolderItemProps) => 
               dispatch(createNote({ folderId: folder.id }))
             }}
 
-            className="p-1 text-neutral-400 hover:text-blue-600 rounded hover:bg-neutral-200"
+            className="p-1 text-neutral-400 hover:text-pink-600 rounded hover:bg-neutral-200"
           >
             <Plus className="h-3.5 w-3.5" />
           </button>
@@ -140,13 +140,13 @@ export const FolderItem = ({ folder, notes, activeNoteId }: FolderItemProps) => 
                   onClick={() => dispatch(selectNote(note.id))}
                   className={`group flex items-center justify-between gap-2 rounded-md px-2.5 py-1.5 text-xs cursor-pointer transition-colors ${
                     isActive
-                      ? 'bg-blue-100 text-blue-900 font-medium'
+                      ? 'bg-pink-100 text-pink-900 font-medium'
                       : 'text-neutral-700 hover:bg-neutral-200/70'
                   }`}
                 >
                   <div className="flex  items-center gap-2 truncate">
                     <FileText
-                      className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-blue-600' : 'text-neutral-500'}`}
+                      className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-pink-600' : 'text-neutral-500'}`}
                     />
                     <span className="truncate">{note.title || 'Untitled Note'}</span>
                   </div>

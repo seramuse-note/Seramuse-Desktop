@@ -2,6 +2,7 @@ import { Note } from '../types'
 import { useAppDispatch } from '@/app/hooks'
 import { updateNoteContent, updateNoteTitle } from '../notesSlice'
 import { TipTapEditor } from './TiptapEditor'
+import { NoteProperties } from './NoteProperties'
 
 interface NoteEditorProps {
   activeNote: Note
@@ -27,6 +28,8 @@ export const NoteEditor = ({ activeNote }: NoteEditorProps) => {
         <span>Tạo lúc: {new Date(activeNote.createdAt).toLocaleDateString('vi-VN')}</span>
         <span>Cập nhật: {new Date(activeNote.updatedAt).toLocaleDateString('vi-VN')}</span>
       </div>
+
+      <NoteProperties note={activeNote} />
 
       <TipTapEditor
         key={activeNote.id}

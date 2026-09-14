@@ -27,8 +27,8 @@ export const Sidebar = () => {
       <div className="p-3 border-b border-neutral-200 flex gap-2">
         <button
           onClick={() => dispatch(createNote())}
-          className="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-2.5 py-1.5
-          text-xs font-medium text-white shadow-sm hover:bg-blue-700 transition-colors duration-150"
+          className="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-pink-600 px-2.5 py-1.5
+          text-xs font-medium text-white shadow-sm hover:bg-pink-700 transition-colors duration-150"
         >
           <Plus className="w-3.5 h-3.5" /> <span>Ghi chú</span>
         </button>
@@ -87,14 +87,14 @@ export const Sidebar = () => {
                   className={`group  flex items-center justify-between gap-2 rounded-md px-3 py-1.5 text-xs cursor-pointer transition-colors
                   ${
                     isActive
-                      ? 'bg-blue-100 text-blue-900 font-medium'
+                      ? 'bg-pink-100 text-pink-900 font-medium'
                       : 'text-neutral-700 hover:bg-neutral-200/70'
                   }
                 `}
                 >
                   <div className="flex  items-center gap-2 truncate">
                     <FileText
-                      className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-blue-600' : 'text-neutral-500'}`}
+                      className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-pink-600' : 'text-neutral-500'}`}
                     />
                     <span className="truncate">{note.title || 'Untitled Note'}</span>
                   </div>
