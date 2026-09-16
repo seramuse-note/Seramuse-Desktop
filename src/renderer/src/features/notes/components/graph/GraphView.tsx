@@ -1,6 +1,5 @@
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Note } from '../../types'
 import { selectNote } from '../../notesSlice'
 
 interface GraphNote {
@@ -25,7 +24,6 @@ export const GraphView = () => {
   const dispatch = useAppDispatch()
 
   const notes = useAppSelector((state) => state.notes.notes)
-  const noteList: Note[] = useMemo(() => Object.values(notes), [notes])
 
   const activeNoteId = useAppSelector((state) => state.notes.activeNoteId)
 
@@ -56,15 +54,15 @@ export const GraphView = () => {
   }, [])
 
   const graphNodes: GraphNote[] = useMemo(() => {
-    const total = Object.keys(noteList).length
+    const total = Object.keys(notes).length
     if (total === 0) return []
 
     const centerX = dimensions.width / 2
     const centerY = dimensions.height / 2
     const radius = Math.min(centerX, centerY) * 0.65
 
-    return Object.keys(noteList).map((noteId, index) => {
-      const note = noteList[noteId]
+    return Object.keys(notes).map((noteId, index) => {
+      const note = notes[noteId]
       const angle = (index / total) * 2 * Math.PI - Math.PI / 2
       const x = centerX + radius * Math.cos(angle)
       const y = centerY + radius * Math.sin(angle)
@@ -76,7 +74,7 @@ export const GraphView = () => {
         radius: note.id === activeNoteId ? 18 : 14
       }
     })
-  }, [noteList, activeNoteId, dimensions])
+  }, [notes, activeNoteId, dimensions])
 
   const graphEdges: GraphEdge[] = useMemo(() => {
     const edges: GraphEdge[] = []
@@ -84,8 +82,8 @@ export const GraphView = () => {
 
     for (let i = 0; i < graphNodes.length; i++) {
       for (let j = i + 1; j < graphNodes.length; j++) {
-        const noteA = noteList[graphNodes[i].id]
-        const noteB = noteList[graphNodes[j].id]
+        const noteA = notes[graphNodes[i].id]
+        const noteB = notes[graphNodes[j].id]
 
         if (!noteA || !noteB) continue
 
@@ -115,7 +113,7 @@ export const GraphView = () => {
       }
     }
     return edges
-  }, [graphNodes, noteList])
+  }, [graphNodes, notes])
 
   return (
     <div
