@@ -15,7 +15,7 @@
 | **Phase 3** | **Đồng bộ Soạn thảo Cơ bản**                |    1    | 🟢 **Hoàn thành** | Controlled Components (Title Input & Content Textarea)    |
 | **Phase 4** | **Tích hợp Tiptap Rich-Text Editor**        |    3    | 🟢 **Hoàn thành** | Headless Editor v3 + key remounting + autofocus           |
 | **Phase 5** | **Cây Thư mục & Bảng Thuộc tính Tri thức**  |    2    | 🟢 **Hoàn thành** | Folder Tree + Status Enum + Notion Properties Table + Tags |
-| **Phase 6** | **Tính năng Nâng cao (Kanban & Graph)**     |    2    | 🟡 **Tiếp theo**  | Notion Kanban board + Obsidian SVG Knowledge Graph        |
+| **Phase 6** | **Tính năng Nâng cao (Kanban & Graph)**     |    2    | 🟢 **Hoàn thành** | Notion Kanban board + Obsidian SVG Knowledge Graph        |
 
 ---
 
@@ -129,9 +129,16 @@
 
 ---
 
-- [ ] **Bước 6.2: Xây dựng Bản đồ Tri thức Obsidian SVG Knowledge Graph (`GraphView.tsx`)**
-  - **Trạng thái:** 🟡 **ĐANG THỰC HIỆN (TỰ CODE TỪNG BƯỚC)**
-  - **Mục tiêu:** Quét liên kết 2 chiều Wiki-links (`[[Tên trang]]`), dựng sơ đồ đồ thị mạng lưới bằng SVG Canvas thuần, hỗ trợ rê chuột làm sáng liên kết và click để điều hướng nhanh.
+- [x] **Bước 6.2: Xây dựng Bản đồ Tri thức Obsidian SVG Knowledge Graph (`GraphView.tsx`)**
+  - **Trạng thái:** 🟢 **HOÀN THÀNH**
+  - **File:** `GraphView.tsx`, `notesSlice.ts`, `types.ts`
+  - **Kết quả:**
+    - Tự tay cài đặt thuật toán bố trí tỏa tròn (Radial Layout) thuần lượng giác ($\Delta x = R \cdot \cos(\alpha), \Delta y = R \cdot \sin(\alpha)$).
+    - Áp dụng kỹ thuật bù góc `- Math.PI / 2` để đưa nốt đầu tiên về hướng 12 giờ chuẩn thị giác con người.
+    - Xây dựng thuật toán ghép cặp tự động tìm đường nối (`graphEdges`) theo chung thư mục hoặc chung tag, dùng `Map` tra cứu $O(1)$ và kỹ thuật vòng lặp `j = i + 1` triệt tiêu self-loop và duplicate edges.
+    - Sử dụng SVG thuần xếp lớp (Edges trước, Nodes sau) không phụ thuộc D3 hay thư viện ngoài.
+    - Hoàn thành tương tác làm sáng mạng lưới liên kết cục bộ khi hover (`isHovered`) và click mở ghi chú tức thời qua Redux `selectNote`.
+    - Đúc kết toàn bộ kiến thức vào `RADIAL_LAYOUT_AND_GRAPH_MATH.md` và `LEARNING_JOURNAL.md`.
 
 ---
 

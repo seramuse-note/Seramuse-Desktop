@@ -33,6 +33,9 @@
    * [6.1. Tại sao X dùng Cos, Y dùng Sin? (Tam giác vuông chiếu 2 trục)](#61-tại-sao-x-dùng-cos-y-dùng-sin-tam-giác-vuông-chiếu-2-trục)
    * [6.2. Trực giác đời thường vs Quy ước Toán học Quốc tế (Trục X dương)](#62-trực-giác-đời-thường-vs-quy-ước-toán-học-quốc-tế-trục-x-dương)
    * [6.3. Kỹ thuật bù góc `- Math.PI / 2` để đưa nốt về đỉnh 12 giờ](#63-kỹ-thuật-bù-góc---mathpi--2-để-đưa-nốt-về-đỉnh-12-giờ)
+   * [6.4. Thuật toán tìm và nối dây liên kết (`graphEdges`): Tại sao `j = i + 1`?](#64-thuật-toán-tìm-và-nối-dây-liên-kết-graphedges-tại-sao-j--i--1)
+   * [6.5. Bản chất xếp lớp trong SVG: Tại sao `<line>` phải vẽ trước `<circle>`?](#65-bản-chất-xếp-lớp-trong-svg-tại-sao-line-phải-vẽ-trước-circle)
+   * [6.6. Tương tác Mạng Lưới (Ego-Network Hover & Click Navigation)](#66-tương-tác-mạng-lưới-ego-network-hover--click-navigation)
 7. [Mẫu ghi nhật ký cho các tính năng tiếp theo (Template)](#7-mẫu-ghi-nhật-ký-cho-các-tính-năng-tiếp-theo-template)
 
 ---
@@ -287,6 +290,40 @@ const x = centerX + radius * Math.cos(angle)
 const y = centerY + radius * Math.sin(angle)
 ```
 *(Cộng thêm `centerX, centerY` để dời tâm đồ thị từ góc trên bên trái $(0, 0)$ ra chính giữa màn hình).*
+
+### 6.4. Thuật toán tìm và nối dây liên kết (`graphEdges`): Tại sao `j = i + 1`?
+* **Bài toán:** Cho danh sách các nốt, tìm xem nốt nào có quan hệ với nốt nào để vẽ đường nối:
+  * Hai nốt có chung thư mục (`noteA.folderId === noteB.folderId`), hoặc
+  * Có ít nhất 1 thẻ tag chung (`noteA.tags.some(t => noteB.tags.includes(t))`).
+* **Kỹ thuật tối ưu $O(1)$ với `nodeMap`:**
+  * Dùng `new Map(graphNodes.map(n => [n.id, n]))` để tạo danh bạ tra cứu tọa độ nhanh $O(1)$ thay vì dùng `.find()` quét mảng chậm chạp.
+* **Cú "Aha!" về 2 vòng lặp lồng nhau:**
+  ```ts
+  for (let i = 0; i < graphNodes.length; i++) {
+    for (let j = i + 1; j < graphNodes.length; j++) { // 👈 Bắt đầu từ i + 1
+  ```
+  * **Nếu $j = 0$:**
+    1. Khi $j = i$: Nốt $A$ trùng với nốt $B \rightarrow$ tự thấy mình chung folder với chính mình $\rightarrow$ sinh ra **đường nối tự thân (self-loop)** lãng phí!
+    2. Khi $j < i$: Đồ thị là vô hướng (A nối B cũng là B nối A), chạy từ $j = 0$ sẽ sinh ra **2 đường kẻ đè khít lên nhau** $\rightarrow$ tốn gấp đôi DOM và GPU render.
+  * **Giải pháp:** Cho $j = i + 1$ vừa **triệt tiêu self-loop**, vừa **đảm bảo mỗi cặp nốt chỉ xét đúng 1 lần duy nhất**!
+
+### 6.5. Bản chất xếp lớp trong SVG: Tại sao `<line>` phải vẽ trước `<circle>`?
+* **Điểm khác biệt chí mạng giữa HTML/CSS và SVG:**
+  * Trong CSS thông thường, ta có thể dùng `z-index: 10` để ép phần tử nổi lên trên.
+  * Trong SVG: **Không có thuộc tính `z-index`!** Thứ tự khai báo trong code quyết định thứ tự vẽ lên màn hình (Painter's Algorithm): **Cái gì viết trước sẽ nằm ở đáy, cái gì viết sau sẽ đè lên trên.**
+* **Ứng dụng thực tế:**
+  * Ta bắt buộc phải đặt `<g className="edges">` (vẽ các đường `<line>`) **TRƯỚC** `<g className="node">` (vẽ các nốt `<circle>`).
+  * Nhờ đó, các đường dây nối sẽ luồn ra phía sau lưng các nốt tròn, không bao giờ bị gạch ngang qua mặt nốt!
+
+### 6.6. Tương tác Mạng Lưới (Ego-Network Hover & Click Navigation)
+* **Nhận diện dây nối khi Hover một nốt:**
+  ```tsx
+  const isHovered = hoveredNoteId && (edge.sourceId === hoveredNoteId || edge.targetId === hoveredNoteId)
+  ```
+  * Khi di chuột vào một nốt, toàn bộ các đường liên kết nối trực tiếp với nốt đó (Ego-Network) sẽ bừng sáng (`stroke="#818cf8"`, dày hơn, opacity cao), còn các dây khác mờ đi. Giúp người dùng nhìn rõ cấu trúc liên kết tri thức cục bộ.
+* **Click mở ghi chú:**
+  * Bắt sự kiện `onClick`: dùng `e.stopPropagation()` để tránh nổi bọt sự kiện, sau đó dispatch action `selectNote(node.id)`.
+  * Redux Store lập tức cập nhật `activeNoteId` và chuyển view sang `ViewMode.DOCUMENT`, tạo trải nghiệm liền mạch từ lúc khám phá mạng đồ thị đến lúc bắt tay vào soạn thảo văn bản!
 
 ---
 
