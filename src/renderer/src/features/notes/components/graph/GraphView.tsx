@@ -121,23 +121,53 @@ export const GraphView = () => {
       className="relative h-full w-full bg-neutral-900 overflow-hidden select-none"
     >
       <svg width={dimensions.width} height={dimensions.height} className="cursor-default">
+        <defs>
+          <pattern id="dot-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="1" fill="#404040" opacity="0.4"></circle>
+          </pattern>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="6" result="blur" />
+            <feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -1" result="disco" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#dot-grid)" />
+
         <g className="edges">
           {graphEdges.map((edge) => {
             const isHovered =
               hoveredNoteId && (edge.sourceId === hoveredNoteId || edge.targetId === hoveredNoteId)
 
             return (
-              <line
-                key={edge.id}
-                x1={edge.sourceX}
-                y1={edge.sourceY}
-                x2={edge.targetX}
-                y2={edge.targetY}
-                stroke={isHovered ? '#818cf8' : '#374151'}
-                strokeWidth={isHovered ? 2 : 1}
-                strokeOpacity={isHovered ? 0.9 : 0.4}
-                className="transition-all duration-300"
-              />
+              <g key={edge.id}>
+                {isHovered && (
+                  <line
+                    x1={edge.sourceX}
+                    y1={edge.sourceY}
+                    x2={edge.targetX}
+                    y2={edge.targetY}
+                    stroke="#818cf8"
+                    strokeWidth={6}
+                    strokeOpacity={0.35}
+                    filter="url(#glow)"
+                    className="transition-all duratio-300"
+                  />
+                )}
+
+                <line
+                  x1={edge.sourceX}
+                  y1={edge.sourceY}
+                  x2={edge.targetX}
+                  y2={edge.targetY}
+                  stroke={isHovered ? '#a5b4fc' : '#334155'}
+                  strokeWidth={isHovered ? 2 : 1}
+                  strokeOpacity={isHovered ? 1 : 0.4}
+                  className="transition-all duration-300"
+                />
+              </g>
             )
           })}
         </g>
@@ -157,6 +187,17 @@ export const GraphView = () => {
                   dispatch(selectNote(node.id))
                 }}
               >
+                {(isActive || isHovered) && (
+                  <circle
+                    cx={node.x}
+                    cy={node.y}
+                    r={node.radius + 8}
+                    fill={isActive ? '#6366f1' : '#38bdf8'}
+                    opacity={0.3}
+                    filter="url(#glow)"
+                  />
+                )}
+
                 <circle
                   cx={node.x}
                   cy={node.y}

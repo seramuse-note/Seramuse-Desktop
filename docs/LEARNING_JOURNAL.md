@@ -36,6 +36,8 @@
    * [6.4. Thuật toán tìm và nối dây liên kết (`graphEdges`): Tại sao `j = i + 1`?](#64-thuật-toán-tìm-và-nối-dây-liên-kết-graphedges-tại-sao-j--i--1)
    * [6.5. Bản chất xếp lớp trong SVG: Tại sao `<line>` phải vẽ trước `<circle>`?](#65-bản-chất-xếp-lớp-trong-svg-tại-sao-line-phải-vẽ-trước-circle)
    * [6.6. Tương tác Mạng Lưới (Ego-Network Hover & Click Navigation)](#66-tương-tác-mạng-lưới-ego-network-hover--click-navigation)
+   * [6.7. Kỹ thuật Nền Lưới Điểm (Dot Matrix Grid) & Cái bẫy thẻ `<defs>`](#67-kỹ-thuật-nền-lưới-điểm-dot-matrix-grid--cái-bẫy-thẻ-defs)
+   * [6.8. Kỹ thuật Dây Nối Laser Đa Lớp (Dual-Layer Glow Lines) & Bộ Lọc Neon](#68-kỹ-thuật-dây-nối-laser-đa-lớp-dual-layer-glow-lines--bộ-lọc-neon)
 7. [Mẫu ghi nhật ký cho các tính năng tiếp theo (Template)](#7-mẫu-ghi-nhật-ký-cho-các-tính-năng-tiếp-theo-template)
 
 ---
@@ -324,6 +326,52 @@ const y = centerY + radius * Math.sin(angle)
 * **Click mở ghi chú:**
   * Bắt sự kiện `onClick`: dùng `e.stopPropagation()` để tránh nổi bọt sự kiện, sau đó dispatch action `selectNote(node.id)`.
   * Redux Store lập tức cập nhật `activeNoteId` và chuyển view sang `ViewMode.DOCUMENT`, tạo trải nghiệm liền mạch từ lúc khám phá mạng đồ thị đến lúc bắt tay vào soạn thảo văn bản!
+
+### 6.7. Kỹ thuật Nền Lưới Điểm (Dot Matrix Grid) & Cái bẫy thẻ `<defs>`
+* **Mục tiêu:** Tạo không gian canvas vô cực với các chấm ma trận tinh xảo giống Figma và Linear.
+* **Cú pháp định nghĩa trong `<defs>`:**
+  ```xml
+  <defs>
+    <pattern id="dot-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#404040" opacity="0.4" />
+    </pattern>
+  </defs>
+  ```
+* **Vẽ nền lên màn hình:**
+  ```xml
+  <rect width="100%" height="100%" fill="url(#dot-grid)" />
+  ```
+* **Cái bẫy kinh điển (SVG Pitfall):**
+  * Thẻ `<defs>` (definitions) chỉ là **kho chứa các định nghĩa trừu tượng** (patterns, filters, gradients). Bất kỳ phần tử nào nằm BÊN TRONG `<defs>` đều bị trình duyệt ẩn đi, không bao giờ được vẽ ra màn hình!
+  * 👉 **Quy tắc:** Thẻ `<rect fill="url(#dot-grid)">` **bắt buộc phải nằm NGOÀI `<defs>`** thì lưới điểm mới hiển thị.
+  * **Lưu ý cú pháp:** `id` khai báo và `url(#id)` gọi ra phải khớp nhau từng ký tự, mã màu hex phải luôn có dấu thăng `#` (`fill="#404040"` thay vì `"404040"`).
+
+### 6.8. Kỹ thuật Dây Nối Laser Đa Lớp (Dual-Layer Glow Lines) & Bộ Lọc Neon
+* **Bí kíp đồ họa Cyberpunk / Game UI:** Để một đường kẻ trông như một sợi dây laser phát sáng, ta không chỉ đổi màu đơn thuần mà vẽ **2 lớp đè lên nhau (Dual-Layer)**:
+  1. **Lớp hào quang bên ngoài (Outer Glow):** Nét dày (`strokeWidth={6}`), mờ (`strokeOpacity={0.35}`), áp dụng `filter="url(#glow)"` để tạo quầng khói phát quang sương mù.
+  2. **Lớp lõi năng lượng bên trong (Inner Core):** Nét mảnh (`strokeWidth={2}`), màu sáng rực (`strokeOpacity={1}`) tạo độ sắc nét trung tâm.
+* **Đoạn code minh họa:**
+  ```tsx
+  {isHovered && (
+    <line
+      x1={edge.sourceX} y1={edge.sourceY}
+      x2={edge.targetX} y2={edge.targetY}
+      stroke="#818cf8" strokeWidth={6} strokeOpacity={0.35}
+      filter="url(#glow)"
+    />
+  )}
+  <line
+    x1={edge.sourceX} y1={edge.sourceY}
+    x2={edge.targetX} y2={edge.targetY}
+    stroke={isHovered ? '#a5b4fc' : '#334155'}
+    strokeWidth={isHovered ? 2 : 1}
+    strokeOpacity={isHovered ? 1 : 0.4}
+  />
+  ```
+* **Bản chất của SVG Filter (`feGaussianBlur` & `feMerge`):**
+  * `<feGaussianBlur stdDeviation="6" result="blur" />`: Làm nhòe đối tượng gốc ra 6px theo mọi hướng.
+  * `<feMerge>`: Ghép lớp ảnh nhòe (`blur`) và ảnh gốc (`SourceGraphic`) đè lên nhau $\rightarrow$ Vật thể vừa có quầng hào quang vừa giữ được độ sắc cạnh ở tâm.
+* **Quầng sáng nốt tròn (Halo Circle):** Đặt thêm một `<circle>` to hơn (`node.radius + 8`) có `opacity={0.3}` và `filter="url(#glow)"` ngay sau nốt tròn khi active hoặc hover.
 
 ---
 
