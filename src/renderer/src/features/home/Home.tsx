@@ -3,6 +3,7 @@ import { Sidebar } from '../notes/components/Sidebar'
 import { NoteEditor } from '../notes/components/NoteEditor'
 import { ViewMode } from '../notes/types'
 import { KanbanView } from '../notes/components/kanban/KanbanView'
+import { GraphView } from '../notes/components/graph/GraphView'
 
 export const Home = () => {
   const activeNoteId = useAppSelector((state) => state.notes.activeNoteId)
@@ -21,7 +22,7 @@ export const Home = () => {
           {activeView === ViewMode.KANBAN ? (
             <KanbanView />
           ) : activeView === ViewMode.GRAPH ? (
-            <div className="p-8 text-neutral-500 text-sm">Chỗ này chuẩn bị gắn Graph View</div>
+            <GraphView />
           ) : activeNote ? (
             <NoteEditor activeNote={activeNote} />
           ) : (

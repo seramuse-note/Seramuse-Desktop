@@ -20,15 +20,21 @@ const notesSlice = createSlice({
     createNote(
       state,
       action: PayloadAction<
-        { content?: string; folderId?: string; status?: NoteStatus } | string | undefined
+        | { title?: string; content?: string; folderId?: string; status?: NoteStatus }
+        | string
+        | undefined
       >
     ) {
       const id = crypto.randomUUID()
       const now = new Date().toISOString()
 
-      const folderId = typeof action.payload === 'object' ? action.payload?.folderId : undefined
+      const title =
+        typeof action.payload === 'object' && action.payload?.title?.trim()
+          ? action.payload.title.trim()
+          : 'Untitled Note'
       const content =
         typeof action.payload === 'string' ? action.payload : action.payload?.content || ''
+      const folderId = typeof action.payload === 'object' ? action.payload?.folderId : undefined
       const status =
         typeof action.payload === 'object' && action.payload?.status
           ? action.payload.status
@@ -36,7 +42,7 @@ const notesSlice = createSlice({
 
       const newNote: Note = {
         id,
-        title: 'Untitled Note',
+        title,
         content,
         folderId,
         createdAt: now,

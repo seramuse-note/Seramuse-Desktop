@@ -15,7 +15,7 @@
 | **Phase 3** | **Đồng bộ Soạn thảo Cơ bản**                |    1    | 🟢 **Hoàn thành** | Controlled Components (Title Input & Content Textarea)    |
 | **Phase 4** | **Tích hợp Tiptap Rich-Text Editor**        |    3    | 🟢 **Hoàn thành** | Headless Editor v3 + key remounting + autofocus           |
 | **Phase 5** | **Cây Thư mục & Bảng Thuộc tính Tri thức**  |    2    | 🟢 **Hoàn thành** | Folder Tree + Status Enum + Notion Properties Table + Tags |
-| **Phase 6** | **Tính năng Nâng cao (Kanban & Graph)**     |    3    | 🟡 **Tiếp theo**  | Notion Kanban board + Obsidian SVG Knowledge Graph        |
+| **Phase 6** | **Tính năng Nâng cao (Kanban & Graph)**     |    2    | 🟡 **Tiếp theo**  | Notion Kanban board + Obsidian SVG Knowledge Graph        |
 
 ---
 
@@ -130,7 +130,7 @@
 ---
 
 - [ ] **Bước 6.2: Xây dựng Bản đồ Tri thức Obsidian SVG Knowledge Graph (`GraphView.tsx`)**
-  - **Trạng thái:** 🟡 **TIẾP THEO**
+  - **Trạng thái:** 🟡 **ĐANG THỰC HIỆN (TỰ CODE TỪNG BƯỚC)**
   - **Mục tiêu:** Quét liên kết 2 chiều Wiki-links (`[[Tên trang]]`), dựng sơ đồ đồ thị mạng lưới bằng SVG Canvas thuần, hỗ trợ rê chuột làm sáng liên kết và click để điều hướng nhanh.
 
 ---
