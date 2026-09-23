@@ -27,7 +27,7 @@ export const NoteEditor = ({ activeNote }: NoteEditorProps) => {
   }, [activeNote.title, activeNote.id])
 
   return (
-    <div className="flex flex-col h-full max-w-4xl w-full mx-auto p-8 gap-3">
+    <div className="flex flex-col h-full max-w-4xl w-full mx-auto p-8 pt-2 gap-3">
       {activeNote.coverUrl && (
         <CoverBanner
           currentCover={activeNote.coverUrl}
