@@ -154,10 +154,19 @@ const notesSlice = createSlice({
     setActiveView(state, action: PayloadAction<ViewMode>) {
       state.activeView = action.payload
     },
+
     updateNoteIcon(state, action: PayloadAction<{ id: string; icon: string }>) {
       const { id, icon } = action.payload
       if (state.notes[id]) {
         state.notes[id].icon = icon
+        state.notes[id].updatedAt = new Date().toISOString()
+      }
+    },
+
+    updateNoteCover(state, action: PayloadAction<{ id: string; coverUrl: string }>) {
+      const { id, coverUrl } = action.payload
+      if (state.notes[id]) {
+        state.notes[id].coverUrl = coverUrl
         state.notes[id].updatedAt = new Date().toISOString()
       }
     }
@@ -179,7 +188,8 @@ export const {
   addNoteTag,
   removeNoteTag,
   setActiveView,
-  updateNoteIcon
+  updateNoteIcon,
+  updateNoteCover
 } = notesSlice.actions
 
 export default notesSlice.reducer

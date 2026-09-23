@@ -32,12 +32,15 @@ export const KanbanCard = ({ note }: KanbanCardProps) => {
       hover:shadow-md hover:border-blue-300 transition-all duration-200 cursor-pointer select-none"
     >
       <div className="flex items-center gap-2">
-        <FileText className="w-3.5 h-3.5 text-neutral-400 shrink-0 group-hover:text-blue-600 transition-colors" />
-        <h4 className="text-xs font-semibold text-neutral-800  leading-snug line-clamp-2  overflow-hidden">
+        {note.icon ? (
+          <span className="text-sm shrink-0 leading-none">{note.icon}</span>
+        ) : (
+          <FileText className="w-3.5 h-3.5 text-neutral-400 shrink-0 group-hover:text-blue-600 transition-colors" />
+        )}
+        <h4 className="text-xs font-semibold text-neutral-800 leading-snug line-clamp-2 overflow-hidden">
           {note.title.trim() || 'Untitled Note'}
         </h4>
       </div>
-
       {safeTags.length > 0 && (
         <div className="flex flex-wrap items-center gap-1 shrink-0 p-0.5">
           {visibleTags.map((tag) => (
@@ -55,7 +58,6 @@ export const KanbanCard = ({ note }: KanbanCardProps) => {
           )}
         </div>
       )}
-
       <div className="flex items-center justify-between pt-1 border-t border-neutral-100 text-[11px] text-neutral-400">
         <div className="flex items-center gap-1">
           <Calendar className="w-3 h-3" />

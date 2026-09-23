@@ -1,4 +1,4 @@
-import { Delete, Smile } from 'lucide-react'
+import { Smile, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
 const COMMON_EMOJIS = [
@@ -60,7 +60,7 @@ export const IconPicker = ({ currentIcon, onRemoveIcon, onSelectIcon }: IconPick
         <button
           onClick={() => setIsOpen(!isOpen)}
           title="Chọn biểu tượng"
-          className="text-xl hover:opacity-80 transition-opacity cursor-pointer p-1 rounded-lg hover:bg-neutral-100"
+          className="text-2xl bg-white/90 shadow-xs border border-neutral-200/50 hover:opacity-80 transition-opacity cursor-pointer p-1 rounded-lg hover:bg-neutral-100"
         >
           {currentIcon}
         </button>
@@ -86,7 +86,7 @@ export const IconPicker = ({ currentIcon, onRemoveIcon, onSelectIcon }: IconPick
               title="Xóa biểu tượng"
               className="flex items-center gap-1 text-[11px] text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100 cursor-pointer"
             >
-              <Delete className="w-4 h-4 rotate-180" /> Xóa
+              <X className="w-3 h-3.5  shrink-0 leading-none" /> Xóa
             </button>
           </div>
           <div className="grid  grid-cols-6 gap-1.5">

@@ -15,6 +15,7 @@ export interface Note {
   title: string
   content: string
   icon?: string
+  coverUrl?: string
   createdAt: string
   updatedAt: string
   folderId?: string
