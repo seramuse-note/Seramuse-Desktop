@@ -1,8 +1,9 @@
 import { Note } from '../types'
 import { useAppDispatch } from '@/app/hooks'
-import { updateNoteContent, updateNoteTitle } from '../notesSlice'
+import { updateNoteContent, updateNoteIcon, updateNoteTitle } from '../notesSlice'
 import { TipTapEditor } from './TiptapEditor'
 import { NoteProperties } from './NoteProperties'
+import { IconPicker } from './IconPicker'
 
 interface NoteEditorProps {
   activeNote: Note
@@ -16,7 +17,12 @@ export const NoteEditor = ({ activeNote }: NoteEditorProps) => {
   }
 
   return (
-    <div className="flex flex-col h-full max-w-4xl w-full mx-auto p-8 gap-4">
+    <div className="flex flex-col h-full max-w-4xl w-full mx-auto p-8 gap-3">
+      <IconPicker
+        currentIcon={activeNote.icon || ''}
+        onSelectIcon={(icon) => dispatch(updateNoteIcon({ id: activeNote.id, icon }))}
+        onRemoveIcon={() => dispatch(updateNoteIcon({ id: activeNote.id, icon: '' }))}
+      />
       <input
         type="text"
         value={activeNote.title}
@@ -24,11 +30,6 @@ export const NoteEditor = ({ activeNote }: NoteEditorProps) => {
         onChange={(e) => dispatch(updateNoteTitle({ id: activeNote.id, title: e.target.value }))}
         className="w-full text-3xl font-bold border-none outline-none placeholder:text-neutral-300 bg-transparent"
       />
-      <div className="text-sm text-neutral-400 flex items-center gap-2 border-b border-neutral-200 pb-2">
-        <span>Tạo lúc: {new Date(activeNote.createdAt).toLocaleDateString('vi-VN')}</span>
-        <span>Cập nhật: {new Date(activeNote.updatedAt).toLocaleDateString('vi-VN')}</span>
-      </div>
-
       <NoteProperties note={activeNote} />
 
       <TipTapEditor

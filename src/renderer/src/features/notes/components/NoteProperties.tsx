@@ -83,7 +83,7 @@ export const NoteProperties = ({ note }: NotePropertiesProps) => {
   }, [isStatusDropdownOpen])
 
   return (
-    <div className="flex flex-col gap-2 py-2 text-xs border-b border-neutral-200">
+    <div className="flex flex-col gap-2 text-xs border-b border-neutral-200">
       <div className="flex items-center gap-4 min-h-8">
         <div className="flex items-center gap-1.5 w-24 text-neutral-400 shrink-0 font-medium">
           <StatusIcon className="w-3.5 h-3.5" />

@@ -14,6 +14,7 @@ export interface Note {
   id: string
   title: string
   content: string
+  icon?: string
   createdAt: string
   updatedAt: string
   folderId?: string

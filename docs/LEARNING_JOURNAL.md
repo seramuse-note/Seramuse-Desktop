@@ -38,7 +38,27 @@
    * [6.6. Tương tác Mạng Lưới (Ego-Network Hover & Click Navigation)](#66-tương-tác-mạng-lưới-ego-network-hover--click-navigation)
    * [6.7. Kỹ thuật Nền Lưới Điểm (Dot Matrix Grid) & Cái bẫy thẻ `<defs>`](#67-kỹ-thuật-nền-lưới-điểm-dot-matrix-grid--cái-bẫy-thẻ-defs)
    * [6.8. Kỹ thuật Dây Nối Laser Đa Lớp (Dual-Layer Glow Lines) & Bộ Lọc Neon](#68-kỹ-thuật-dây-nối-laser-đa-lớp-dual-layer-glow-lines--bộ-lọc-neon)
-7. [Mẫu ghi nhật ký cho các tính năng tiếp theo (Template)](#7-mẫu-ghi-nhật-ký-cho-các-tính-năng-tiếp-theo-template)
+7. [Lưu Trữ Dữ Liệu Ổ Cứng (Local-First Persistence) & Cầu Nối IPC trong Electron](#7-lưu-trữ-dữ-liệu-ổ-cứng-local-first-persistence--cầu-nối-ipc-trong-electron)
+   * [7.1. Tại sao chọn Local-First Ổ Cứng cho Người Dùng Thật?](#71-tại-sao-chọn-local-first-ổ-cứng-cho-người-dùng-thật)
+   * [7.2. Kiến Trúc 2 Thế Giới trong Electron: Main Process vs Renderer Process](#72-kiến-trúc-2-thế-giới-trong-electron-main-process-vs-renderer-process)
+   * [7.3. Cầu Nối IPC (Inter-Process Communication) & Preload Script](#73-cầu-nối-ipc-inter-process-communication--preload-script)
+   * [7.4. Hai Kỹ Thuật Bắt Buộc: Debounced Auto-Save & Store Hydration](#74-hai-kỹ-thuật-bắt-buộc-debounced-auto-save--store-hydration)
+   * [7.5. Phương Pháp "3 Không - 3 Bước" để Giữ Não Kỹ Sư khi Học Cùng AI](#75-phương-pháp-3-không---3-bước-để-giữ-não-kỹ-sư-khi-học-cùng-ai)
+8. [Phản Tỉnh Kỹ Thuật (Gibbs' Reflective Cycle): Thiết Kế IconPicker & Ranh Giới Smart vs Dumb Component](#8-phản-tỉnh-kỹ-thuật-gibbs-reflective-cycle-thiết-kế-iconpicker--ranh-giới-smart-vs-dumb-component)
+   * [8.1. Mô tả Thực tế (Description)](#81-mô-tả-thực-tế-description)
+   * [8.2. Cảm xúc Ban đầu (Feelings)](#82-cảm-xúc-ban-đầu-feelings)
+   * [8.3. Đánh giá Khách quan (Evaluation)](#83-đánh-giá-khách-quan-evaluation)
+   * [8.4. Phân tích Cốt lõi (Analysis)](#84-phân-tích-cốt-lõi-analysis)
+   * [8.5. Kết luận Rút ra (Conclusion)](#85-kết-luận-rút-ra-conclusion)
+   * [8.6. Kế hoạch Hành động (Action Plan)](#86-kế-hoạch-hành-động-action-plan)
+9. [Phản Tỉnh Kỹ Thuật (Gibbs' Reflective Cycle): Cạm Bẫy State Cục Bộ (`useState`) vs Global Store (Single Source of Truth)](#9-phản-tỉnh-kỹ-thuật-gibbs-reflective-cycle-cạm-bẫy-state-cục-bộ-usestate-vs-global-store-single-source-of-truth)
+   * [9.1. Mô tả Thực tế (Description)](#91-mô-tả-thực-tế-description)
+   * [9.2. Cảm xúc Ban đầu (Feelings)](#92-cảm-xúc-ban-đầu-feelings)
+   * [9.3. Đánh giá Khách quan (Evaluation)](#93-đánh-giá-khách-quan-evaluation)
+   * [9.4. Phân tích Cốt lõi (Analysis)](#94-phân-tích-cốt-lõi-analysis)
+   * [9.5. Kết luận Rút ra (Conclusion)](#95-kết-luận-rút-ra-conclusion)
+   * [9.6. Kế hoạch Hành động (Action Plan)](#96-kế-hoạch-hành-động-action-plan)
+10. [Mẫu ghi nhật ký cho các tính năng tiếp theo (Template)](#10-mẫu-ghi-nhật-ký-cho-các-tính-năng-tiếp-theo-template)
 
 ---
 
@@ -375,7 +395,180 @@ const y = centerY + radius * Math.sin(angle)
 
 ---
 
-## 7. MẪU GHI NHẬT KÝ CHO CÁC TÍNH NĂNG TIẾP THEO (TEMPLATE)
+## 7. Lưu Trữ Dữ Liệu Ổ Cứng (Local-First Persistence) & Cầu Nối IPC trong Electron
+
+* **File liên quan:** `src/main/index.ts`, `src/preload/index.ts`, `src/renderer/src/app/store.ts`
+* **Vấn đề cốt lõi:** Làm sao để ứng dụng Desktop lưu trữ dữ liệu vĩnh viễn trên máy người dùng mà không cần thuê server backend, không bị giới hạn dung lượng, và bảo mật tuyệt đối?
+
+### 7.1. Tại sao chọn Local-First Ổ Cứng cho Người Dùng Thật?
+
+Khi xây dựng sản phẩm đưa đến tay người dùng thật, ta phải cân nhắc 4 phương án:
+
+| Phương án | Đặc điểm | Phân tích lý do Chọn / Loại |
+| :--- | :--- | :--- |
+| **`localStorage`** | Lưu trong sandbox trình duyệt | ❌ **LOẠI BỎ NGAY:** Giới hạn ngặt nghèo ~5MB. Viết vài chục bài là tràn bộ nhớ (`QuotaExceededError`). Xóa cache trình duyệt là mất sạch dữ liệu. |
+| **Cloud Server** (PostgreSQL/NodeJS) | Dữ liệu lưu trên đám mây | ❌ **CHƯA NÊN DÙNG:** Chi phí server hàng tháng tăng theo số lượng người dùng (dễ phá sản khi chưa có doanh thu). Mất mạng Internet là ứng dụng tê liệt. |
+| **Embedded DB** (SQLite) | 1 file database `.sqlite` trên máy | ⚠️ **CÂN NHẮC SAU:** Rất mạnh nhưng việc compile native addon C++ (`better-sqlite3`) trong Electron cực kỳ dễ lỗi khi đóng gói `.exe` đa nền tảng. |
+| **Local-First File System** (JSON / Markdown) | Lưu trực tiếp vào ổ cứng máy tính | ✅ **LỰA CHỌN TỐI ƯU SỐ 1 (Chuẩn Obsidian):**<br>1. **Chi phí $0:** Máy người dùng là server, 1 triệu người dùng tiền server vẫn là 0đ.<br>2. **Dung lượng vô hạn:** Thoải mái lưu hàng trăm ngàn ghi chú theo dung lượng ổ cứng.<br>3. **Quyền riêng tư & Tin cậy:** Dữ liệu thuộc về người dùng, có thể tự backup vào Google Drive/USB.<br>4. **Tốc độ 0.1s & Offline 100%:** Không có vòng xoay chờ mạng. |
+
+### 7.2. Kiến Trúc 2 Thế Giới trong Electron: Main Process vs Renderer Process
+
+Electron chia ứng dụng thành 2 tiến trình độc lập được ngăn cách bởi bức tường bảo mật:
+
+```
+┌──────────────────────────────────────┐               ┌──────────────────────────────────────┐
+│       RENDERER PROCESS (React)       │               │        MAIN PROCESS (Node.js)        │
+│                                      │   CẦU NỐI IPC │                                      │
+│ • Chạy giao diện, Redux, sự kiện DOM │ ────────────► │ • Chạy môi trường Node.js đầy đủ     │
+│ • BỊ CẤM chạm trực tiếp vào ổ cứng   │ ◄──────────── │ • Có chìa khóa đọc/ghi ổ cứng (fs)   │
+│   (để hacker không đọc trộm máy tính)│  (Bất đồng bộ)│ • Quản lý cửa sổ sổ hệ điều hành     │
+└──────────────────────────────────────┘               └──────────────────────────────────────┘
+                   ▲                                                      │
+                   │           ┌──────────────────────────────┐           │
+                   └────────── │ PRELOAD SCRIPT (Hải quan)    │ ──────────┘
+                               │ • contextBridge              │
+                               │ • Chỉ mở các API an toàn     │
+                               └──────────────────────────────┘
+```
+
+1. **Renderer Process (`src/renderer`):** Nơi React chạy. Vì chạy trong môi trường Chromium webview, Renderer **không có quyền** gọi `fs.writeFile` trực tiếp.
+2. **Main Process (`src/main`):** Tiến trình cha chạy bằng Node.js thật. Có toàn quyền truy cập hệ điều hành qua `fs` và `app.getPath('userData')`.
+3. **Preload Script (`src/preload`):** Đóng vai trò là "cửa khẩu hải quan" an toàn. Dùng `contextBridge.exposeInMainWorld` để chỉ cho phép React gọi những hàm được cấp phép.
+
+### 7.3. Cầu Nối IPC (Inter-Process Communication) & Preload Script
+
+* **Gửi yêu cầu từ React:**
+  ```ts
+  // Renderer gọi
+  const result = await window.api.saveNotes(notesData)
+  ```
+* **Chuyển tiếp qua Preload:**
+  ```ts
+  // preload/index.ts
+  contextBridge.exposeInMainWorld('api', {
+    saveNotes: (data) => ipcRenderer.invoke('notes:save', data),
+    loadNotes: () => ipcRenderer.invoke('notes:load')
+  })
+  ```
+* **Main đón nhận và ghi ổ cứng:**
+  ```ts
+  // main/index.ts
+  ipcMain.handle('notes:save', async (_, data) => {
+    const filePath = join(app.getPath('userData'), 'seramuse-data.json')
+    await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8')
+    return { success: true }
+  })
+  ```
+* 👉 **Kết luận:** File `seramuse-data.json` chính là **Database** của ứng dụng! Không cần bất kỳ backend server hay database engine riêng biệt nào.
+
+### 7.4. Hai Kỹ Thuật Bắt Buộc: Debounced Auto-Save & Store Hydration
+
+1. **Kỹ thuật Debounced Auto-Save (Chống nghẽn ổ đĩa):**
+   * Người dùng gõ 1 câu văn dài có thể nhấn phím 50 lần trong 5 giây.
+   * Nếu mỗi lần nhấn phím mà ép ổ SSD ghi file 1 lần $\rightarrow$ App sẽ bị giật lag và hao mòn ổ cứng.
+   * **Giải pháp:** Sử dụng hàm Debounce (500ms – 1000ms). Người dùng gõ liên tục thì Redux cứ nhận trên RAM, chỉ khi họ **ngừng gõ 500ms** thì mới gom toàn bộ dữ liệu ghi xuống ổ cứng một lần duy nhất!
+2. **Kỹ thuật Store Hydration (Hồi sinh dữ liệu lúc khởi động):**
+   * Khi app vừa bật lên: Main Process đọc file `seramuse-data.json`.
+   * Gửi dữ liệu về cho React $\rightarrow$ Dispatch action `setInitialState(data)` vào Redux.
+   * Toàn bộ cây thư mục, danh sách ghi chú, trạng thái Kanban và đồ thị Graph hiện lên nguyên vẹn 100%.
+
+### 7.5. Phương Pháp "3 Không - 3 Bước" để Giữ Não Kỹ Sư khi Học Cùng AI
+
+1. **Không tự bơi mù quáng trên Google:** Tránh lạc vào các bài viết lỗi thời (như dùng `remote module` đã bị Electron khai tử vì lỗ hổng bảo mật).
+2. **Không chép code máy móc từ AI:** Luôn nắm bản đồ luồng đi (Ai gửi $\rightarrow$ Qua đâu $\rightarrow$ Ai nhận) trước khi gõ phím.
+3. **Thực hành có kiểm chứng & Cố tình làm hỏng để hiểu (Deliberate Debugging):**
+   * Gõ thử `console.log` ở cả 2 cửa sổ (DevTools của React và Terminal của Electron) để tận mắt thấy gói tin bay qua bức tường IPC.
+   * Mở thư mục Windows Explorer (`%APPDATA%/seramuse`) sờ tận tay file `seramuse-data.json`.
+
+---
+
+## 8. Phản Tỉnh Kỹ Thuật (Gibbs' Reflective Cycle): Thiết Kế IconPicker & Ranh Giới Smart vs Dumb Component
+
+* **Ngày thực hiện:** 22/09/2026
+* **File liên quan:** `src/renderer/src/features/notes/components/IconPicker.tsx`, `NoteEditor.tsx`
+* **Chủ đề:** Tái cấu trúc tư duy thiết kế Component (Component Architecture, Reusability & Single Responsibility Principle)
+
+### 8.1. Mô tả Thực tế (Description)
+Khi xây dựng tính năng chọn biểu tượng cho ghi chú (`IconPicker`), tôi đã chủ động đề xuất giải pháp: để `IconPicker` tự kết nối thẳng vào Redux Store (đọc `activeNoteId` và tự dispatch action thêm/xóa icon). Ý định ban đầu của tôi là muốn "đóng gói toàn bộ logic vào component con" để component cha (`NoteEditor`) hoàn toàn rảnh tay và sạch sẽ. Tuy nhiên, sau khi được Mentor / AI code review, giải pháp này bị chỉ ra nhiều điểm trừ nghiêm trọng về mặt kiến trúc.
+
+### 8.2. Cảm xúc Ban đầu (Feelings)
+* **Trước khi review:** Rất tự tin vì nghĩ rằng cách làm của mình đã đạt chuẩn "Clean Code" (ai làm việc nấy).
+* **Sau khi review:** Ban đầu có chút hụt hẫng vì giải pháp tâm đắc bị bác bỏ. Nhưng sau khi nghe giải thích về bài toán mở rộng trong tương lai, tôi cảm thấy hoàn toàn bị thuyết phục và có một khoảnh khắc "Aha!" mở rộng tư duy kiến trúc.
+
+### 8.3. Đánh giá Khách quan (Evaluation)
+* **Mặt tích cực (Cái được):**
+  * Đã có ý thức về tính đóng gói (Encapsulation) và chủ động đưa ra giải pháp thay vì thụ động chờ AI viết hộ.
+  * Quá trình phản biện giúp phát hiện lỗ hổng kiến trúc ngay từ giai đoạn thiết kế, tiết kiệm hàng giờ debug và refactor sau này.
+* **Mặt hạn chế (Cái chưa tốt):**
+  * **Gắn kết quá chặt (Tight Coupling):** Component bị trói cứng vào `activeNoteId` của Redux.
+  * **Khả năng tái sử dụng bằng 0 (Zero Reusability):** Không thể dùng lại bộ chọn này cho Thư mục (Folder), Nhãn dán (Tag) hay Profile User.
+  * **Vi phạm nguyên lý đơn nhiệm (Single Responsibility Principle):** Biến một UI Widget thuần túy thành một component ôm đồm nghiệp vụ (Business Logic).
+  * **Rủi ro lỗi runtime (Edge Case):** Nếu `activeNoteId` bị `null` (khi xóa hết ghi chú), component sẽ truy cập thuộc tính của `null` và làm sập (crash) trắng ứng dụng.
+
+### 8.4. Phân tích Cốt lõi (Analysis)
+* **Nguyên nhân gốc rễ:** Tôi đã nhầm lẫn giữa **"Gom gọn code"** và **"Phân tách trách nhiệm (Separation of Concerns)"**. Tôi chưa phân biệt rạch ròi ranh giới giữa **Smart Component (Container)** và **Dumb Component (Presentational)**.
+* **Bản chất vấn đề:** Các thư viện picker nổi tiếng (như DatePicker, ColorPicker) không bao giờ tự ý lưu dữ liệu vào database hay Redux. Nhiệm vụ duy nhất của một "Picker" là: **Hiển thị giao diện và trả về giá trị người dùng vừa chọn qua sự kiện `onChange`**. Việc dùng giá trị đó làm gì phải do component cha quyết định.
+
+### 8.5. Kết luận Rút ra (Conclusion)
+1. **Thiết kế UI Widget phải có tính trừu tượng:** Đã là "Picker" dùng chung thì tuyệt đối không được phụ thuộc vào dữ liệu của một đối tượng cụ thể (như `activeNoteId`).
+2. **Tư duy Dumb Component:** Nhận dữ liệu qua `props` (`currentIcon`) và phát sự kiện ra ngoài qua `callback` (`onSelectIcon`, `onRemoveIcon`). Nhờ đó, sau này tính năng đổi icon cho Thư mục hay Kanban có thể tái sử dụng 100% component này mà không phải viết lại 1 dòng code nào.
+3. **Cảnh giác với Edge Cases:** Phải luôn lường trước các trường hợp state rỗng (`null` / `undefined`) khi gắn kết component với Global State.
+
+### 8.6. Kế hoạch Hành động (Action Plan)
+* **Hành động tức thì:** Áp dụng ngay kiến trúc **Dumb Component** cho `IconPicker.tsx`: chỉ nhận `props` và phát `callback`, đưa logic dispatch Redux về đúng vị trí của nó tại component cha (`NoteEditor.tsx`).
+* **Nguyên tắc cho các tính năng tiếp theo:** Trước khi tạo bất kỳ component mới nào, luôn tự vấn bộ 3 câu hỏi:
+  1. *Component này là Smart (xử lý logic) hay Dumb (chỉ hiển thị UI)?*
+  2. *Nó có thể tái sử dụng cho đối tượng khác trong tương lai không?*
+  3. *Nó có đang ôm đồm việc của component cha không?*
+
+---
+
+## 9. Phản Tỉnh Kỹ Thuật (Gibbs' Reflective Cycle): Cạm Bẫy State Cục Bộ (`useState`) vs Global Store (Single Source of Truth)
+
+* **Ngày thực hiện:** 22/09/2026
+* **File liên quan:** [`src/renderer/src/features/notes/components/NoteEditor.tsx`](file:///d:/seramuse/Seramuse-Desktop/src/renderer/src/features/notes/components/NoteEditor.tsx), [`src/renderer/src/features/notes/notesSlice.ts`](file:///d:/seramuse/Seramuse-Desktop/src/renderer/src/features/notes/notesSlice.ts)
+* **Chủ đề:** Quản lý State trong React & Redux Toolkit (Local State vs Global State, Single Source of Truth, React Component Lifecycle & Re-render Trap)
+
+### 9.1. Mô tả Thực tế (Description)
+Khi tích hợp `IconPicker` vào giao diện của `NoteEditor.tsx`, ban đầu tôi đã sử dụng hook `useState` cục bộ bên trong `NoteEditor` để quản lý biểu tượng được chọn. 
+**Hiện tượng lỗi phát sinh:** Khi chuyển qua lại giữa các ghi chú khác nhau (ví dụ từ Note A sang Note B), biểu tượng không hề được lưu lại đúng theo từng ghi chú. Biểu tượng của ghi chú này bị rò rỉ (state bleeding) sang ghi chú kia, hoặc khi chọn icon mới rồi chuyển sang note khác quay lại thì icon bị mất/reset, không giữ được dữ liệu riêng biệt của từng note.
+
+### 9.2. Cảm xúc Ban đầu (Feelings)
+* **Trước review:** Cảm thấy tự tin vì đã tự tay gõ xong code, thấy picker bật lên và chọn được icon thì đinh ninh là mình đã hoàn thành tốt mà không cần đến review hay trợ giúp.
+* **Sau review & kiểm thử chuyển note:** Có một thoáng giật mình và nhận ra sự thiếu sót lớn. Tôi nhận ra mình đã quá vội vã dùng `useState` theo thói quen phản xạ mà quên mất rằng dự án đã có sẵn Redux Store và action `updateNoteIcon` được thiết kế chuyên biệt để quản lý dữ liệu toàn cục.
+
+### 9.3. Đánh giá Khách quan (Evaluation)
+* **Mặt tích cực (Cái được):**
+  * **Tư duy độc lập (Autonomous Mindset):** Tự suy nghĩ và tự code theo tư duy cá nhân, không hình thành thói quen thụ động dựa dẫm hay copy-paste mù quáng từ AI.
+  * **Học từ phản biện thực tế (Deliberate Practice):** Nhờ có quy trình review và góc nhìn kiểm thử ca biên (Edge Case: chuyển đổi qua lại giữa các items), tôi lập tức nhìn thấy ngay lỗi sai, hiểu được tại sao lỗi xuất hiện và sửa lại kịp thời.
+* **Mặt hạn chế (Cái chưa tốt):**
+  * **Thiếu chú ý về vòng đời Component (Component Lifecycle):** Chưa tính đến việc khi người dùng đổi ghi chú, component `NoteEditor` không hề bị unmount/mount lại mà chỉ nhận `props` mới. Dẫn đến `useState` cục bộ bị "kẹt" giá trị cũ (Stale State).
+  * **Vi phạm nguyên lý nguồn chân lý duy nhất (Dual State / Split-Brain):** Vô tình duy trì 2 nguồn dữ liệu cho cùng 1 thuộc tính: một ở Redux và một ở `useState`.
+
+### 9.4. Phân tích Cốt lõi (Analysis)
+* **Bản chất kỹ thuật (Mental Model):**
+  * **State UI tạm thời (Ephemeral / Transient UI State):** Chỉ nên dùng `useState` cho những trạng thái hiển thị mang tính nhất thời, không gắn liền với bản ghi dữ liệu (ví dụ: menu/popover đang mở hay đóng `isOpen`, tab nào đang focus, con trỏ đang hover). Vòng đời của chúng gắn chặt với component UI.
+  * **State Dữ liệu Thực thể (Persistent Domain / Entity State):** Thuộc tính của một ghi chú (`title`, `content`, `icon`, `status`, `tags`) thuộc về **Mô hình Dữ liệu (Data Model)**. Chúng bắt buộc phải nằm trong Redux Store (hoặc Database), được định danh bởi `id` của bản ghi để đảm bảo tính độc lập và bền vững (Persistence).
+* **Cái bẫy React Lifecycle kinh điển:**
+  * Khi người dùng click chọn một ghi chú khác, Redux cập nhật `activeNoteId`. `NoteEditor` nhận `activeNote` mới nhưng **DOM node của `NoteEditor` vẫn được giữ nguyên (không unmount)**.
+  * Trong React, `useState(initialValue)` **chỉ khởi tạo đúng một lần duy nhất** khi component mount lần đầu. Khi component re-render với props mới, React sẽ hoàn toàn **bỏ qua** đối số `initialValue` đó! Kết quả là state cục bộ tiếp tục giữ giá trị của note trước đó, gây ra lỗi "rò rỉ icon" giữa các note.
+
+### 9.5. Kết luận Rút ra (Conclusion)
+1. **Dữ liệu thuộc về Model phải luôn có Single Source of Truth:** Bất kỳ thuộc tính nào của `Note` đều phải được đọc trực tiếp từ `activeNote` trong Redux Store (`activeNote.icon || ''`). Không bao giờ tạo bản sao trung gian bằng `useState`.
+2. **Luồng dữ liệu một chiều rõ ràng (Unidirectional Data Flow):**
+   * **Đọc:** `activeNote.icon` từ Redux Store $\rightarrow$ truyền làm `currentIcon` cho `IconPicker`.
+   * **Ghi:** Khi người dùng chọn/xóa icon $\rightarrow$ `dispatch(updateNoteIcon({ id: activeNote.id, icon }))` cập nhật thẳng vào Redux $O(1)$.
+3. **Phân biệt rạch ròi trước khi code:** Dữ liệu này có cần tồn tại sau khi chuyển note hoặc đóng mở popup không? Nếu CÓ $\rightarrow$ Redux Store. Nếu KHÔNG $\rightarrow$ `useState`.
+
+### 9.6. Kế hoạch Hành động (Action Plan)
+* **Hành động đã hoàn thành:** Đã chỉnh sửa lại `NoteEditor.tsx`, loại bỏ hoàn toàn `useState` dư thừa, kết nối trực tiếp `activeNote.icon` và `dispatch(updateNoteIcon)`. Kiểm thử thực tế chuyển qua lại giữa 5 ghi chú khác nhau: icon hiển thị chính xác, lưu độc lập và mượt mà 100%!
+* **Nguyên tắc rèn luyện:**
+  * **Quy tắc 30 giây:** Luôn dừng lại 30 giây để phân tích phạm vi lưu trữ state (Local vs Global) trước khi quyết định viết `useState`.
+  * **Bài test chuyển đổi thực tế (Multi-item Switch Test):** Sau khi hoàn thành bất kỳ trường dữ liệu mới nào, luôn tạo ít nhất 2 items và chuyển đổi qua lại để kiểm tra tính toàn vẹn dữ liệu trước khi coi là hoàn thành.
+
+---
+
+## 10. MẪU GHI NHẬT KÝ CHO CÁC TÍNH NĂNG TIẾP THEO (TEMPLATE)
 
 ```markdown
 ## [Số]. Ngày DD/MM/YYYY: Chức năng [Tên chức năng]
