@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
+import { selectNote } from '@/shared/note/notesSlice'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { selectNote } from '../../notesSlice'
 
 interface GraphNote {
   id: string

@@ -1,11 +1,16 @@
-import { Note } from '../types'
+import { useEffect, useRef } from 'react'
 import { useAppDispatch } from '@/app/hooks'
-import { updateNoteContent, updateNoteCover, updateNoteIcon, updateNoteTitle } from '../notesSlice'
-import { TipTapEditor } from './TiptapEditor'
+import {
+  updateNoteContent,
+  updateNoteCover,
+  updateNoteIcon,
+  updateNoteTitle
+} from '../../../shared/note/notesSlice'
+import { Note } from '../../../shared/note/types'
 import { NoteProperties } from './NoteProperties'
 import { IconPicker } from './IconPicker'
+import { TipTapEditor } from './TiptapEditor'
 import { CoverBanner } from './CoverBanner'
-import { useEffect, useRef } from 'react'
 
 interface NoteEditorProps {
   activeNote: Note

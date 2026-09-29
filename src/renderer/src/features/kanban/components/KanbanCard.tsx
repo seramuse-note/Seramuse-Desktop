@@ -1,6 +1,6 @@
 import { useAppDispatch } from '@/app/hooks'
-import { Note } from '../../types'
-import { selectNote } from '../../notesSlice'
+import { selectNote } from '@/shared/note/notesSlice'
+import { Note } from '@/shared/note/types'
 import { FileText, Calendar } from 'lucide-react'
 
 interface KanbanCardProps {

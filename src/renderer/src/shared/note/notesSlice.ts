@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { Folder, Note, NoteState, NoteStatus, ViewMode } from './types'
+import { NoteState, ViewMode, NoteStatus, Folder, Note } from './types'
 
 const initialState: NoteState = {
   notes: {},

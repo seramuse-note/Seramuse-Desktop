@@ -58,7 +58,11 @@
    * [9.4. Phân tích Cốt lõi (Analysis)](#94-phân-tích-cốt-lõi-analysis)
    * [9.5. Kết luận Rút ra (Conclusion)](#95-kết-luận-rút-ra-conclusion)
    * [9.6. Kế hoạch Hành động (Action Plan)](#96-kế-hoạch-hành-động-action-plan)
-10. [Mẫu ghi nhật ký cho các tính năng tiếp theo (Template)](#10-mẫu-ghi-nhật-ký-cho-các-tính-năng-tiếp-theo-template)
+10. [Kiến Trúc Định Tuyến TanStack Router & Phân Tầng Feature-Based](#10-kiến-trúc-định-tuyến-tanstack-router--phân-tầng-feature-based)
+   * [10.1. Phân biệt Bản chất: Route ID vs. Navigation Path trong TanStack Router](#101-phân-biệt-bản-chất-route-id-vs-navigation-path-trong-tanstack-router)
+   * [10.2. Dispatcher / Gatekeeper Pattern tại Route Gốc (`/`)](#102-dispatcher--gatekeeper-pattern-tại-route-gốc-)
+   * [10.3. Bộ đệm Phân giải Module (Module Resolution Cache) của TypeScript Server](#103-bộ-đệm-phân-giải-module-module-resolution-cache-của-typescript-server)
+11. [Mẫu ghi nhật ký cho các tính năng tiếp theo (Template)](#11-mẫu-ghi-nhật-ký-cho-các-tính-năng-tiếp-theo-template)
 
 ---
 
@@ -566,9 +570,72 @@ Khi tích hợp `IconPicker` vào giao diện của `NoteEditor.tsx`, ban đầu
   * **Quy tắc 30 giây:** Luôn dừng lại 30 giây để phân tích phạm vi lưu trữ state (Local vs Global) trước khi quyết định viết `useState`.
   * **Bài test chuyển đổi thực tế (Multi-item Switch Test):** Sau khi hoàn thành bất kỳ trường dữ liệu mới nào, luôn tạo ít nhất 2 items và chuyển đổi qua lại để kiểm tra tính toàn vẹn dữ liệu trước khi coi là hoàn thành.
 
+## 10. Kiến Trúc Định Tuyến TanStack Router & Phân Tầng Feature-Based
+
+* **Ngày thực hiện:** 30/09/2026
+* **File liên quan:** [`src/renderer/src/routes/index.tsx`](file:///d:/seramuse/Seramuse-Desktop/src/renderer/src/routes/index.tsx), [`src/renderer/src/routes/home/index.tsx`](file:///d:/seramuse/Seramuse-Desktop/src/renderer/src/routes/home/index.tsx), [`src/renderer/src/routes/__root.tsx`](file:///d:/seramuse/Seramuse-Desktop/src/renderer/src/routes/__root.tsx), [`routeTree.gen.ts`](file:///d:/seramuse/Seramuse-Desktop/src/renderer/src/routeTree.gen.ts), [`tsconfig.web.json`](file:///d:/seramuse/Seramuse-Desktop/tsconfig.web.json)
+* **Chủ đề:** Type-Safe Routing (TanStack Router), File-based Routing, Gatekeeper / Dispatcher Pattern & Separation of Concerns trong Desktop App.
+
+### 10.1. Phân biệt Bản chất: Route ID vs. Navigation Path trong TanStack Router
+
+* **Rào cản / Bối rối ban đầu:**
+  Khi tạo file route `routes/home/index.tsx`, file sinh tự động `routeTree.gen.ts` xuất hiện đoạn khai báo gây nhầm lẫn:
+  - `id: '/home/'` (kèm dấu gạch chéo cuối).
+  - `path: '/home'` (không kèm dấu gạch chéo).
+  - Thuộc tính `to` của `<Link to="...">` chỉ chấp nhận `'/home'` mà từ chối `'/home/'`.
+* **Bản chất kỹ thuật (Mental Model):**
+  1. **Route ID nội bộ (`createFileRoute('/home/')`):** Gắn liền với cấu trúc cây thư mục file-system. Trong TanStack Router, bất kỳ file `index.tsx` nào nằm trong thư mục con đều được gán route ID kết thúc bằng dấu `/` để phân biệt với route lá thông thường.
+  2. **Navigation Path (`to: '/home'`):** Là chuỗi URL ngữ nghĩa dùng để điều hướng. TanStack Router loại bỏ trailing slash mặc định khi tạo Type cho `FileRoutesByTo`. Nếu gõ nhầm `<Link to="/home/">`, hệ thống type-safe sẽ chặn ngay ở lúc compile để tránh phân mảnh URL.
+  3. **Nguyên tắc vàng:** File `routeTree.gen.ts` là **Auto-generated artifact**. Tuyệt đối không sửa tay vào file này vì Vite Router Plugin sẽ tự động ghi đè mỗi khi lưu code route.
+
+### 10.2. Dispatcher / Gatekeeper Pattern tại Route Gốc (`/`)
+
+* **Bối cảnh kiến trúc:** 
+  Dự án áp dụng mô hình phân tầng:
+  - `features/`: Nghiệp vụ độc lập (`editor`, `kanban`, `graph`, `login`).
+  - `pages/`: Hợp thành giao diện màn hình hoàn chỉnh (`pages/home/HomePage.tsx`, `pages/auth/LoginPage.tsx`).
+  - `routes/`: **Tầng mỏng nhất (Thinnest layer)**, chỉ chịu trách nhiệm định tuyến, gom route guards và nhúng Page.
+* **Vấn đề khi xóa route `"/"` để chuyển sang `routes/home/index.tsx`:**
+  - Ứng dụng Desktop khi khởi động luôn trỏ về URL gốc `"/"`. Nếu không có route `"/"`, app sẽ rơi vào Not Found / màn hình trắng.
+  - Các liên kết `<Link to="/">` trên thanh điều hướng bị gãy và báo lỗi TypeScript (`Type '"/"' is not assignable to type ...`).
+* **Khoảnh khắc "Aha!" - Áp dụng Gatekeeper Pattern:**
+  Thay vì biến route `"/"` thành một trang hiển thị cụ thể, ta biến `src/renderer/src/routes/index.tsx` thành một **Trạm điều phối giao thông (Dispatcher / Gatekeeper)** không render UI:
+  ```tsx
+  // src/renderer/src/routes/index.tsx
+  import { createFileRoute, redirect } from '@tanstack/react-router'
+
+  export const Route = createFileRoute('/')({
+    beforeLoad: () => {
+      // 1. Kiểm tra trạng thái đăng nhập đồng bộ từ Local Storage (Chuẩn Local-First Desktop)
+      const isAuthenticated = Boolean(localStorage.getItem('token'))
+
+      // 2. Chuyển hướng tức thì trước khi render DOM
+      if (!isAuthenticated) {
+        throw redirect({ to: '/login' })
+      }
+      throw redirect({ to: '/home' })
+    }
+  })
+  ```
+* **Lợi ích kiến trúc:**
+  - **Zero Latency & Tránh FOUC (Flash of Unauthenticated Content):** Hook `beforeLoad` chặn render và chuyển hướng ngay trong micro-giây, giao diện mượt mà không nhấp nháy.
+  - **Single Responsibility:** `HomePage` và `LoginPage` hoàn toàn trong sạch (pure), không bị ô nhiễm logic "tự kiểm tra auth rồi tự redirect".
+
+### 10.3. Bộ đệm Phân giải Module (Module Resolution Cache) của TypeScript Server
+
+* **Rào cản:** 
+  Sau khi di chuyển file sang thư mục mới `src/renderer/src/shared/note/types.ts`, dòng lệnh `tsc` và `eslint` báo kết quả pass 100% nhưng trên IDE vẫn hiện vạch đỏ:
+  `Cannot find module '@/shared/note/types' or its corresponding type declarations`.
+* **Bản chất kỹ thuật:**
+  - TypeScript Language Server chạy ngầm trong IDE duy trì một bảng băm (In-memory Cache Map) các đường dẫn file.
+  - Khi xóa/tạo mới thư mục trong lúc IDE đang mở, cache này chưa tự động cập nhật alias `@/*` tới các file mới tạo.
+* **Cách xử lý chuẩn:**
+  1. Sử dụng lệnh `Ctrl + Shift + P` $\rightarrow$ `TypeScript: Restart TS Server` để làm mới bộ đệm phân giải module.
+  2. Đảm bảo cấu hình JSON chuẩn (loại bỏ trailing comma trong `tsconfig.web.json`).
+
 ---
 
-## 10. MẪU GHI NHẬT KÝ CHO CÁC TÍNH NĂNG TIẾP THEO (TEMPLATE)
+## 11. MẪU GHI NHẬT KÝ CHO CÁC TÍNH NĂNG TIẾP THEO (TEMPLATE)
 
 ```markdown
 ## [Số]. Ngày DD/MM/YYYY: Chức năng [Tên chức năng]

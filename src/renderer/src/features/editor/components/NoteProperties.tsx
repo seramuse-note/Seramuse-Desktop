@@ -1,8 +1,9 @@
+import { useState } from 'react'
 import { ChevronDown, Circle, Plus, Tag, X } from 'lucide-react'
-import { Note, NoteStatus } from '../types'
+import { Note, NoteStatus } from '../../../shared/note/types'
 import { useAppDispatch } from '@/app/hooks'
-import { useEffect, useRef, useState } from 'react'
-import { addNoteTag, removeNoteTag, updateNoteStatus } from '../notesSlice'
+import { addNoteTag, removeNoteTag, updateNoteStatus } from '../../../shared/note/notesSlice'
+import { useClickOutside } from '@/shared/hooks/useClickOutside'
 
 const STATUS_CONFIG: Record<
   NoteStatus,
@@ -45,7 +46,9 @@ export const NoteProperties = ({ note }: NotePropertiesProps) => {
   const [tagInput, setTagInput] = useState('')
 
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false)
-  const dropdownRef = useRef<HTMLDivElement>(null)
+  const dropdownRef = useClickOutside<HTMLDivElement>(() => {
+    setIsStatusDropdownOpen(false)
+  })
 
   const handleStatusChange = (status: NoteStatus) => {
     dispatch(updateNoteStatus({ id: note.id, status }))
@@ -64,23 +67,6 @@ export const NoteProperties = ({ note }: NotePropertiesProps) => {
   const handleRemoveTag = (tagToRemove: string) => {
     dispatch(removeNoteTag({ id: note.id, tag: tagToRemove }))
   }
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const clickInsideDropdown = dropdownRef.current?.contains(event.target as Node)
-      if (!clickInsideDropdown) {
-        setIsStatusDropdownOpen(false)
-      }
-    }
-
-    if (isStatusDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [isStatusDropdownOpen])
 
   return (
     <div className="flex flex-col gap-2 text-xs border-b border-neutral-100 pb-3">

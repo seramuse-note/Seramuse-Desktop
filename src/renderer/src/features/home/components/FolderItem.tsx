@@ -1,4 +1,4 @@
-import { Folder, Note } from '../types'
+import { Folder, Note } from '../../../shared/note/types'
 import {
   createNote,
   deleteFolder,
@@ -6,7 +6,7 @@ import {
   selectNote,
   toggleFolder,
   updateFolderName
-} from '../notesSlice'
+} from '../../../shared/note/notesSlice'
 import {
   ChevronDown,
   ChevronRight,

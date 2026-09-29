@@ -94,7 +94,7 @@ export const TipTapEditor = ({ content, onContentChange }: TiptapEditorProps) =>
           >
             <Code className="w-3.5 h-3.5" />
           </button>
-          <div className="w-[1px] h-4 bg-neutral-700 my-auto mx-0.5" />
+          <div className="w-px h-4 bg-neutral-700 my-auto mx-0.5" />
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}

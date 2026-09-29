@@ -1,7 +1,7 @@
 import { FileText, Trash2 } from 'lucide-react'
-import { Note } from '../types'
-import { deleteNote, selectNote } from '../notesSlice'
 import { useAppDispatch } from '@/app/hooks'
+import { Note } from '@/shared/note/types'
+import { deleteNote, selectNote } from '@/shared/note/notesSlice'
 
 interface NoteItemProps {
   note: Note

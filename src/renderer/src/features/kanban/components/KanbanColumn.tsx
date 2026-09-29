@@ -1,9 +1,9 @@
-import { Note, NoteStatus } from '../../types'
-import { KanbanCard } from './KanbanCard'
 import { useAppDispatch } from '@/app/hooks'
-import { createNote, updateNoteStatus } from '../../notesSlice'
 import { Circle, Plus } from 'lucide-react'
 import React, { useState } from 'react'
+import { NoteStatus, Note } from '@/shared/note/types'
+import { createNote, updateNoteStatus } from '@/shared/note/notesSlice'
+import { KanbanCard } from './KanbanCard'
 
 interface KanbanColumnProps {
   status: NoteStatus

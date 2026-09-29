@@ -1,10 +1,10 @@
-import { useAppDispatch, useAppSelector } from '@/app/hooks'
-import { createFolder, createNote, setActiveView } from '../notesSlice'
-import { Columns3, FileText, FolderPlus, Network, Plus, Search, X } from 'lucide-react'
-import { FolderItem } from './FolderItem'
-import { ViewMode } from '../types'
 import { useState } from 'react'
+import { Columns3, FileText, FolderPlus, Network, Plus, Search, X } from 'lucide-react'
+import { useAppDispatch, useAppSelector } from '@/app/hooks'
+import { ViewMode } from '@/shared/note/types'
+import { createFolder, createNote, setActiveView } from '@/shared/note/notesSlice'
 import { NoteItem } from './NoteItem'
+import { FolderItem } from './FolderItem'
 
 const navItems = [
   { mode: ViewMode.DOCUMENT, label: 'Tài liệu', icon: FileText },
@@ -66,8 +66,8 @@ export const Sidebar = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Tìm kiếm ghi chú..."
             className="w-full pl-8 pr-7 py-1 text-xs bg-white border border-neutral-200
-             rounded-md outline-none placeholder:text-neutral-400 focus:border-blue-400
-             focus:ring-1 focus:ring-blue-100 transition-all text-neutral-700"
+             rounded-md outline-none placeholder:text-neutral-400 text-neutral-700 focus:border-blue-400
+             focus:ring-1 focus:ring-blue-100 transition-all "
           />
           {searchQuery && (
             <button

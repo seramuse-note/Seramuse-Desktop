@@ -1,11 +1,11 @@
 import { useAppSelector } from '@/app/hooks'
-import { Sidebar } from '../notes/components/Sidebar'
-import { NoteEditor } from '../notes/components/NoteEditor'
-import { ViewMode } from '../notes/types'
-import { KanbanView } from '../notes/components/kanban/KanbanView'
-import { GraphView } from '../notes/components/graph/GraphView'
 import { useEffect, useState } from 'react'
 import { ChevronRight, Folder, PanelLeft } from 'lucide-react'
+import { Sidebar } from './components/Sidebar'
+import { ViewMode } from '@/shared/note/types'
+import { KanbanView } from '../kanban/components'
+import { GraphView } from '../graph/components'
+import { NoteEditor } from '../editor/components'
 
 export const Home = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)

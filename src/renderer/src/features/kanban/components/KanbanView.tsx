@@ -1,7 +1,7 @@
 import { useAppSelector } from '@/app/hooks'
-import { NoteStatus } from '../../types'
-import { KanbanColumn } from './KanbanColumn'
+import { NoteStatus } from '@/shared/note/types'
 import { Circle, Clock, CheckCircle2 } from 'lucide-react'
+import { KanbanColumn } from './KanbanColumn'
 
 const COLUMNS_CONFIG = [
   {

@@ -1,32 +1,7 @@
 import { Smile, X } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
-
-const COMMON_EMOJIS = [
-  '📝',
-  '💡',
-  '🚀',
-  '📚',
-  '🎯',
-  '🧠',
-  '⚡',
-  '🔥',
-  '💻',
-  '📌',
-  '✨',
-  '🎨',
-  '☕',
-  '❤️',
-  '🌟',
-  '🛠️',
-  '📅',
-  '📊',
-  '📂',
-  '🔖',
-  '💬',
-  '🏆',
-  '🎉',
-  '🍀'
-]
+import { useState } from 'react'
+import { useClickOutside } from '@/shared/hooks/useClickOutside'
+import { COMMON_EMOJIS } from '@/shared/constants'
 
 interface IconPickerProps {
   currentIcon?: string
@@ -36,23 +11,9 @@ interface IconPickerProps {
 
 export const IconPicker = ({ currentIcon, onRemoveIcon, onSelectIcon }: IconPickerProps) => {
   const [isOpen, setIsOpen] = useState(false)
-  const popoverRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
-        setIsOpen(false)
-      }
-    }
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [isOpen])
+  const popoverRef = useClickOutside<HTMLDivElement>(() => {
+    setIsOpen(false)
+  })
 
   return (
     <div ref={popoverRef} className="relative inline-block">

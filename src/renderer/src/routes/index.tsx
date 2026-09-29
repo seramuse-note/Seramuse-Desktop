@@ -1,6 +1,12 @@
-import { Home } from '@/features/home'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({
-  component: Home
+  beforeLoad: () => {
+    const isAuthenticated = Boolean(localStorage.getItem('token'))
+
+    if (!isAuthenticated) {
+      throw redirect({ to: '/login' })
+    }
+    throw redirect({ to: '/home' })
+  }
 })

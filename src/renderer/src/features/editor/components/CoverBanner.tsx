@@ -1,5 +1,6 @@
+import { useClickOutside } from '@/shared/hooks/useClickOutside'
 import { ImageIcon, Palette, X } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 
 export const COVER_PRESETS = [
   { id: 'sunset', label: 'Sunset Glow', bg: 'linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%)' },
@@ -36,23 +37,9 @@ interface CoverBannerProps {
 
 export const CoverBanner = ({ currentCover, onSelectCover, onRemoveCover }: CoverBannerProps) => {
   const [isOpen, setIsOpen] = useState(false)
-  const popoverRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const handleCliclkOutside = (e: MouseEvent) => {
-      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
-        setIsOpen(false)
-      }
-    }
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleCliclkOutside)
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleCliclkOutside)
-    }
-  }, [isOpen])
+  const popoverRef = useClickOutside<HTMLDivElement>(() => {
+    setIsOpen(false)
+  })
 
   return (
     <div className={`relative ${currentCover ? 'w-full' : 'w-fit'}`}>
