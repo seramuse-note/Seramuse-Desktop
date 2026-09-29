@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { Note } from '../../../shared/note/types'
 import { useAppDispatch } from '@/app/hooks'
 import {
   updateNoteContent,
@@ -6,11 +6,11 @@ import {
   updateNoteIcon,
   updateNoteTitle
 } from '../../../shared/note/notesSlice'
-import { Note } from '../../../shared/note/types'
-import { NoteProperties } from './NoteProperties'
-import { IconPicker } from './IconPicker'
+import { useEffect, useRef } from 'react'
 import { TipTapEditor } from './TiptapEditor'
+import { NoteProperties } from './NoteProperties'
 import { CoverBanner } from './CoverBanner'
+import { IconPicker } from './IconPicker'
 
 interface NoteEditorProps {
   activeNote: Note
@@ -40,7 +40,6 @@ export const NoteEditor = ({ activeNote }: NoteEditorProps) => {
           onRemoveCover={() => dispatch(updateNoteCover({ id: activeNote.id, coverUrl: '' }))}
         />
       )}
-
       <div className={`flex items-center gap-2 ${activeNote.coverUrl ? '-mt-10 z-10 pl-2' : ''}`}>
         <IconPicker
           currentIcon={activeNote.icon || ''}
@@ -56,7 +55,6 @@ export const NoteEditor = ({ activeNote }: NoteEditorProps) => {
           />
         )}
       </div>
-
       <textarea
         ref={textareaRef}
         rows={1}
@@ -71,7 +69,6 @@ export const NoteEditor = ({ activeNote }: NoteEditorProps) => {
         className="w-full text-3xl font-bold tracking-tight border-none outline-none placeholder:text-neutral-300 bg-transparent resize-none overflow-hidden leading-tight"
       />
       <NoteProperties note={activeNote} />
-
       <TipTapEditor
         key={activeNote.id}
         content={activeNote.content}
