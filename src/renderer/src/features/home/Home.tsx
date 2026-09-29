@@ -4,7 +4,7 @@ import { NoteEditor } from '../notes/components/NoteEditor'
 import { ViewMode } from '../notes/types'
 import { KanbanView } from '../notes/components/kanban/KanbanView'
 import { GraphView } from '../notes/components/graph/GraphView'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ChevronRight, Folder, PanelLeft } from 'lucide-react'
 
 export const Home = () => {
@@ -19,6 +19,20 @@ export const Home = () => {
   const activeView = useAppSelector((state) => state.notes.activeView)
   const parentFolder = activeNote?.folderId ? folders[activeNote.folderId] : null
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === '\\') {
+        e.preventDefault()
+        setIsSidebarOpen((prev) => !prev)
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
+
   return (
     <div className="flex h-full w-full overflow-hidden bg-white">
       {isSidebarOpen && <Sidebar />}
@@ -31,7 +45,7 @@ export const Home = () => {
           <div className="flex items-center gap-2.5">
             <button
               onClick={() => setIsSidebarOpen((prev) => !prev)}
-              title={isSidebarOpen ? 'Thu gọn Sidebar' : 'Mở rộng Sidebar'}
+              title={isSidebarOpen ? 'Thu gọn Sidebar (Ctrl+\\)' : 'Mở rộng Sidebar (Ctrl+\\)'}
               className="p-1.5 text-neutral-500 hover:text-neutral-800
              hover:bg-neutral-100 rounded-md transition-colors cursor-pointer"
             >
