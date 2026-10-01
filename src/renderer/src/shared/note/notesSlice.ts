@@ -12,9 +12,11 @@ const notesSlice = createSlice({
   name: 'notes',
   initialState,
   reducers: {
-    selectNote(state, action: PayloadAction<string>) {
+    selectNote(state, action: PayloadAction<string | null>) {
       state.activeNoteId = action.payload
-      state.activeView = ViewMode.DOCUMENT
+      if (action.payload) {
+        state.activeView = ViewMode.DOCUMENT
+      }
     },
 
     createNote(

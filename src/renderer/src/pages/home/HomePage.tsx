@@ -7,6 +7,7 @@ import { KanbanView } from '@/features/kanban/components'
 import { GraphView } from '@/features/graph/components'
 import { NoteEditor } from '@/features/editor/components'
 import { useAutoSave } from '@/shared/hooks'
+import { WelcomeDashboard } from '@/features/home/components/WelcomeDashboard'
 
 export const HomePage = () => {
   useAutoSave()
@@ -91,11 +92,7 @@ export const HomePage = () => {
           ) : activeNote ? (
             <NoteEditor activeNote={activeNote} />
           ) : (
-            <div className="flex flex-1 flex-col  items-center justify-center text-neutral-400 text-sm h-full">
-              <p className="text-center">
-                Chọn một ghi chú ở danh sách bên trái hoặc tạo ghi chú mới.
-              </p>
-            </div>
+            <WelcomeDashboard />
           )}
         </div>
       </main>

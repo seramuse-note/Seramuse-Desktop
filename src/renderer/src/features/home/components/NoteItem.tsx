@@ -2,6 +2,8 @@ import { FileText, Trash2 } from 'lucide-react'
 import { useAppDispatch } from '@/app/hooks'
 import { Note } from '@/shared/note/types'
 import { deleteNote, selectNote } from '@/shared/note/notesSlice'
+import { ConfirmModal } from '@/shared/components/ui/ConfirmModal'
+import { useState } from 'react'
 
 interface NoteItemProps {
   note: Note
@@ -12,15 +14,23 @@ export const NoteItem = ({ note, activeNoteId }: NoteItemProps) => {
   const dispatch = useAppDispatch()
   const isActive = activeNoteId === note.id
 
-  const handleDelete = (e: React.MouseEvent, noteId: string) => {
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false)
+
+  const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    dispatch(deleteNote(noteId))
+    setIsConfirmOpen(true)
+  }
+  const handleConfirmDelete = () => {
+    dispatch(deleteNote(note.id))
+    setIsConfirmOpen(false)
   }
 
   return (
     <div
       key={note.id}
-      onClick={() => dispatch(selectNote(note.id))}
+      onClick={() => {
+        dispatch(selectNote(isActive ? null : note.id))
+      }}
       className={`group  flex items-center justify-between gap-2 rounded-md px-3 py-1.5 text-xs cursor-pointer transition-colors
                   ${
                     isActive
@@ -41,13 +51,21 @@ export const NoteItem = ({ note, activeNoteId }: NoteItemProps) => {
       </div>
       <button
         title="Xóa ghi chú"
-        onClick={(e) => {
-          handleDelete(e, note.id)
-        }}
+        onClick={handleDeleteClick}
         className="p-1 opacity-0 group-hover:opacity-100 text-neutral-400 hover:text-red-600 rounded hover:bg-neutral-200"
       >
         <Trash2 className="h-3.5 w-3.5" />
       </button>
+
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        title="Xóa ghi chú?"
+        message={`Bạn có chắc chắn muốn xóa vĩnh viễn ghi chú "${note.title}"?\nHành động này không thể hoàn tác.`}
+        confirmText="Xóa vĩnh viễn"
+        cancelText="Hủy"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setIsConfirmOpen(false)}
+      />
     </div>
   )
 }

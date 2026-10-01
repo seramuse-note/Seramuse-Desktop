@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Columns3, FileText, FolderPlus, Network, Plus, Search, X } from 'lucide-react'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
 import { ViewMode } from '@/shared/note/types'
-import { createFolder, createNote, setActiveView } from '@/shared/note/notesSlice'
+import { createFolder, createNote, selectNote, setActiveView } from '@/shared/note/notesSlice'
 import { NoteItem } from './NoteItem'
 import { FolderItem } from './FolderItem'
 
@@ -105,7 +105,12 @@ export const Sidebar = () => {
           {navItems.map((item) => (
             <button
               key={item.mode}
-              onClick={() => dispatch(setActiveView(item.mode))}
+              onClick={() => {
+                dispatch(setActiveView(item.mode))
+                if (item.mode === ViewMode.DOCUMENT) {
+                  dispatch(selectNote(null))
+                }
+              }}
               className={`w-full flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors cursor-pointer ${
                 activeView === item.mode
                   ? 'bg-blue-100 text-blue-900'
