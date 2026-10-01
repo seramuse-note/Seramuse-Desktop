@@ -55,9 +55,7 @@ export const KanbanCard = ({ note }: KanbanCardProps) => {
             </span>
           ))}
           {remainingTagsCount > 0 && (
-            <span className="text-[10px] text-neutral-400 font-medium ">
-              +{remainingTagsCount}
-            </span>
+            <span className="text-[10px] text-neutral-400 font-medium ">+{remainingTagsCount}</span>
           )}
         </div>
       )}

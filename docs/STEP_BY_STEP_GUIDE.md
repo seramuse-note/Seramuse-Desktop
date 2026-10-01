@@ -319,6 +319,7 @@ export function extractHashtagsFromHtml(htmlContent: string): string[] {
 > **Góc nhìn Tuyển dụng (The Interview Pitch):**
 > Khi Tech Lead hỏi về quyết định kỹ thuật tâm đắc nhất trong dự án, đây là câu trả lời mẫu đạt chuẩn Senior:
 > *"Khi phát triển Kanban cho Seramuse, em đã từ chối giải pháp dùng Modal Popup hay Side Drawer thông thường. Em đã phân tích **Mô hình nhận thức (Cognitive Load)** của người dùng và nhận thấy: Tại Kanban, người dùng cần **Zero-Latency Brain Dump** (xả suy nghĩ tức thì không độ trễ). Do đó, em đã tự tay xây dựng cơ chế **Adaptive Inline Composer** theo nguyên lý **Progressive Disclosure**:
+>
 > - Nhấn `Enter` là tạo task trong 50ms mà không rời tay khỏi bàn phím.
 > - Quản lý `Focus State` và `Keyboard Navigation` (`Enter`, `Tab`, `Esc`) hoàn toàn tự nhiên.
 > - Phân tách triệt để **Ephemeral UI State** (state tạm thời ở Local Component) với **Redux Global Store** để tối ưu hiệu năng, tránh Layout Shift và tránh Re-render thừa."*
@@ -326,39 +327,40 @@ export function extractHashtagsFromHtml(htmlContent: string): string[] {
 #### 1. Bóc Tách Chi Tiết 8 Thuật Ngữ Kỹ Thuật Kèm Ví Dụ Thực Chiến
 
 1. **`Cognitive Load` (Tải lượng nhận thức / Gánh nặng tâm trí):**
-   - *Khái niệm:* Lượng tài nguyên tinh thần mà não bộ phải huy động để xử lý một tác vụ.
-   - *Thực tế:* Thay vì đập vào mắt người dùng một Modal với 4 trường (*Title, Description, Priority, Folder*) khiến não bộ mệt mỏi cân nhắc, ta chỉ đưa ra đúng 1 ô nhập tiêu đề duy nhất. Não người dùng chỉ cần tập trung trả lời câu hỏi: *"Việc cần làm lúc này là gì?"*.
+   - _Khái niệm:_ Lượng tài nguyên tinh thần mà não bộ phải huy động để xử lý một tác vụ.
+   - _Thực tế:_ Thay vì đập vào mắt người dùng một Modal với 4 trường (_Title, Description, Priority, Folder_) khiến não bộ mệt mỏi cân nhắc, ta chỉ đưa ra đúng 1 ô nhập tiêu đề duy nhất. Não người dùng chỉ cần tập trung trả lời câu hỏi: _"Việc cần làm lúc này là gì?"_.
 
 2. **`Zero-Latency Brain Dump` (Xả suy nghĩ tức thì không độ trễ):**
-   - *Khái niệm:* Đưa ý tưởng từ bộ nhớ ngắn hạn của não (Working Memory - chỉ tồn tại 15-30s) ra màn hình với độ trễ tiệm cận 0ms.
-   - *Thực tế:* Không có animation mở modal 300ms, không có spinner loading. Bấm phím là con trỏ nhấp nháy, ấn `Enter` là task chui vào danh sách trong chưa đầy 50ms.
+   - _Khái niệm:_ Đưa ý tưởng từ bộ nhớ ngắn hạn của não (Working Memory - chỉ tồn tại 15-30s) ra màn hình với độ trễ tiệm cận 0ms.
+   - _Thực tế:_ Không có animation mở modal 300ms, không có spinner loading. Bấm phím là con trỏ nhấp nháy, ấn `Enter` là task chui vào danh sách trong chưa đầy 50ms.
 
 3. **`Adaptive Inline Composer` (Trình soạn thảo thích ứng ngay tại chỗ):**
-   - *Khái niệm:* Form nhập liệu được nhúng trực tiếp (*in-situ*) vào danh sách thẻ bên trong ranh giới của cột (`KanbanColumn`), mượn luôn hình dáng, bo góc và bóng đổ của `KanbanCard`.
-   - *Thực tế:* Người dùng cảm giác như họ đang viết trực tiếp lên một tấm thẻ giấy Post-it thật dán trên bảng, không có cảm giác một "cửa sổ mới" xa lạ hiện ra.
+   - _Khái niệm:_ Form nhập liệu được nhúng trực tiếp (_in-situ_) vào danh sách thẻ bên trong ranh giới của cột (`KanbanColumn`), mượn luôn hình dáng, bo góc và bóng đổ của `KanbanCard`.
+   - _Thực tế:_ Người dùng cảm giác như họ đang viết trực tiếp lên một tấm thẻ giấy Post-it thật dán trên bảng, không có cảm giác một "cửa sổ mới" xa lạ hiện ra.
 
 4. **`Progressive Disclosure` (Tiết lộ thông tin lũy tiến):**
-   - *Khái niệm:* Nguyên lý thiết kế của Apple — *Chỉ hiển thị thông tin phức tạp khi người dùng chủ động yêu cầu*.
-   - *Mức 1 (Mặc định):* Thẻ chỉ hiện 1 dòng gõ Title cho người cần nhanh.
-   - *Mức 2 (Lũy tiến):* Khi ấn `Tab` hoặc click mở rộng, thẻ tự động "nở dọc" nhẹ nhàng để lộ thêm ô chọn Tag và ô ghi chú ngắn.
+   - _Khái niệm:_ Nguyên lý thiết kế của Apple — _Chỉ hiển thị thông tin phức tạp khi người dùng chủ động yêu cầu_.
+   - _Mức 1 (Mặc định):_ Thẻ chỉ hiện 1 dòng gõ Title cho người cần nhanh.
+   - _Mức 2 (Lũy tiến):_ Khi ấn `Tab` hoặc click mở rộng, thẻ tự động "nở dọc" nhẹ nhàng để lộ thêm ô chọn Tag và ô ghi chú ngắn.
 
 5. **`Focus State` & `Keyboard Navigation` (`Enter`, `Tab`, `Esc`):**
-   - *Ví dụ code:*
+   - _Ví dụ code:_
      ```tsx
      <input
        autoFocus
        value={title}
        onChange={(e) => setTitle(e.target.value)}
        onKeyDown={(e) => {
-         if (e.key === 'Enter') handleSaveAndContinue() // Lưu & mở tiếp ô mới
+         if (e.key === 'Enter')
+           handleSaveAndContinue() // Lưu & mở tiếp ô mới
          else if (e.key === 'Escape') setIsAdding(false) // Thoát êm đềm
        }}
      />
      ```
 
 6. **`Ephemeral UI State` vs `Redux Global Store` (Tối ưu hóa kiến trúc State):**
-   - *Bẫy của Junior:* Lưu từng chữ người dùng đang gõ dở vào Redux (`state.draftTitle = e.target.value`). Hậu quả: Gõ 10 chữ cái dispatch 10 lần, cả ứng dụng bị re-render liên tục gây giật lag.
-   - *Chuẩn mực Senior:* State tạm bợ (`title`, `isAdding`) là **Ephemeral State**, chỉ quản lý cục bộ bằng `useState`. Chỉ khi người dùng bấm `Enter` xác nhận, dữ liệu hoàn chỉnh mới được **Commit sang Redux Store**!
+   - _Bẫy của Junior:_ Lưu từng chữ người dùng đang gõ dở vào Redux (`state.draftTitle = e.target.value`). Hậu quả: Gõ 10 chữ cái dispatch 10 lần, cả ứng dụng bị re-render liên tục gây giật lag.
+   - _Chuẩn mực Senior:_ State tạm bợ (`title`, `isAdding`) là **Ephemeral State**, chỉ quản lý cục bộ bằng `useState`. Chỉ khi người dùng bấm `Enter` xác nhận, dữ liệu hoàn chỉnh mới được **Commit sang Redux Store**!
 
 7. **`Layout Shift` (Sự giật / xê dịch bố cục):**
    - Không làm co dúm bảng Kanban từ 1200px xuống 500px như Side Drawer. Thẻ mới chèn êm ái vào cột hiện tại, toàn bộ các cột khác và Sidebar **đứng yên bất động 100%**.

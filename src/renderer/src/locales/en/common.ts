@@ -97,8 +97,7 @@ export const commonEn = {
   'Press Enter to add tag': 'Press Enter to add tag',
 
   // Rich Text Editor
-  'Editor placeholder':
-    'Type something or use Markdown (# Heading, - List, > Quote)...',
+  'Editor placeholder': 'Type something or use Markdown (# Heading, - List, > Quote)...',
   'Bold (Ctrl+B)': 'Bold (Ctrl+B)',
   'Italic (Ctrl+I)': 'Italic (Ctrl+I)',
   Strikethrough: 'Strikethrough',

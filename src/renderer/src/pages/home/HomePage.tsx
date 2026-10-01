@@ -49,7 +49,9 @@ export const HomePage = () => {
           <div className="flex items-center gap-2.5">
             <button
               onClick={() => setIsSidebarOpen((prev) => !prev)}
-              title={isSidebarOpen ? t('Collapse Sidebar (Ctrl+\\)') : t('Expand Sidebar (Ctrl+\\)')}
+              title={
+                isSidebarOpen ? t('Collapse Sidebar (Ctrl+\\)') : t('Expand Sidebar (Ctrl+\\)')
+              }
               className="p-1.5 text-neutral-500 hover:text-neutral-800
              hover:bg-neutral-100 rounded-md transition-colors cursor-pointer"
             >

@@ -8,15 +8,15 @@
 
 ## BẢNG TIẾN ĐỘ TỔNG THỂ (OVERVIEW TRACKER)
 
-|  Giai đoạn  | Tên Phase                                   | Số bước |    Trạng thái     | Đánh giá / Ghi chú                                        |
-| :---------: | :------------------------------------------ | :-----: | :---------------: | :-------------------------------------------------------- |
-| **Phase 1** | **Quản lý Dữ liệu Cốt lõi (Store & Slice)** |    3    | 🟢 **Hoàn thành** | Đã định nghĩa types, slice reducers và kết nối root store |
-| **Phase 2** | **Bố cục 2 Cột (Split-Pane Layout)**        |    2    | 🟢 **Hoàn thành** | Sidebar danh sách + Vùng hiển thị chính                   |
-| **Phase 3** | **Đồng bộ Soạn thảo Cơ bản**                |    1    | 🟢 **Hoàn thành** | Controlled Components (Title Input & Content Textarea)    |
-| **Phase 4** | **Tích hợp Tiptap Rich-Text Editor**        |    3    | 🟢 **Hoàn thành** | Headless Editor v3 + key remounting + autofocus           |
-| **Phase 5** | **Cây Thư mục & Bảng Thuộc tính Tri thức**  |    2    | 🟢 **Hoàn thành** | Folder Tree + Status Enum + Notion Properties Table + Tags |
-| **Phase 6** | **Tính năng Nâng cao (Kanban & Graph)**     |    2    | 🟢 **Hoàn thành** | Notion Kanban board + Obsidian SVG Knowledge Graph        |
-| **Phase 7** | **Lưu Trữ Cục Bộ (Local-First Persistence)** |    3    | 🟢 **Hoàn thành** | Electron IPC + Debounced Auto-Save + Store Hydration      |
+|  Giai đoạn  | Tên Phase                                    | Số bước |    Trạng thái     | Đánh giá / Ghi chú                                         |
+| :---------: | :------------------------------------------- | :-----: | :---------------: | :--------------------------------------------------------- |
+| **Phase 1** | **Quản lý Dữ liệu Cốt lõi (Store & Slice)**  |    3    | 🟢 **Hoàn thành** | Đã định nghĩa types, slice reducers và kết nối root store  |
+| **Phase 2** | **Bố cục 2 Cột (Split-Pane Layout)**         |    2    | 🟢 **Hoàn thành** | Sidebar danh sách + Vùng hiển thị chính                    |
+| **Phase 3** | **Đồng bộ Soạn thảo Cơ bản**                 |    1    | 🟢 **Hoàn thành** | Controlled Components (Title Input & Content Textarea)     |
+| **Phase 4** | **Tích hợp Tiptap Rich-Text Editor**         |    3    | 🟢 **Hoàn thành** | Headless Editor v3 + key remounting + autofocus            |
+| **Phase 5** | **Cây Thư mục & Bảng Thuộc tính Tri thức**   |    2    | 🟢 **Hoàn thành** | Folder Tree + Status Enum + Notion Properties Table + Tags |
+| **Phase 6** | **Tính năng Nâng cao (Kanban & Graph)**      |    2    | 🟢 **Hoàn thành** | Notion Kanban board + Obsidian SVG Knowledge Graph         |
+| **Phase 7** | **Lưu Trữ Cục Bộ (Local-First Persistence)** |    3    | 🟢 **Hoàn thành** | Electron IPC + Debounced Auto-Save + Store Hydration       |
 
 ---
 
@@ -106,7 +106,7 @@
 - [x] **Bước 5.2: Xây dựng Bảng Thuộc tính Chuẩn Notion (`NoteProperties.tsx`)**
   - **Trạng thái:** 🟢 **HOÀN THÀNH**
   - **File:** `src/renderer/src/features/notes/components/NoteProperties.tsx`, `types.ts`, `notesSlice.ts`
-  - **Kết quả:** 
+  - **Kết quả:**
     - Đã định nghĩa enum `NoteStatus` (`To Do`, `In Progress`, `Done`) và trường `tags: string[]`.
     - Custom Dropdown bo tròn (`rounded-md`, `shadow-lg`) với logic bắt sự kiện click outside thông minh qua `useRef` và `useEffect` + cleanup function.
     - Áp dụng cơ chế phòng vệ dữ liệu `safeTags` / `safeStatus` chống sập app khi mở note cũ.

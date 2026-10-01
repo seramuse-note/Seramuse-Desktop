@@ -97,8 +97,7 @@ export const commonVi = {
   'Press Enter to add tag': 'Nhấn Enter để thêm thẻ',
 
   // Rich Text Editor
-  'Editor placeholder':
-    'Gõ nội dung hoặc dùng Markdown (# Tiêu đề, - Danh sách, > Trích dẫn)...',
+  'Editor placeholder': 'Gõ nội dung hoặc dùng Markdown (# Tiêu đề, - Danh sách, > Trích dẫn)...',
   'Bold (Ctrl+B)': 'In đậm (Ctrl+B)',
   'Italic (Ctrl+I)': 'In nghiêng (Ctrl+I)',
   Strikethrough: 'Gạch ngang',
