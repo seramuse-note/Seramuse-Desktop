@@ -17,6 +17,7 @@ import { useAppDispatch } from '@/app/hooks'
 import { useState } from 'react'
 import { ConfirmModal } from '@/shared/components/ui/ConfirmModal'
 import { NoteItem } from './NoteItem'
+import { useTranslation } from 'react-i18next'
 
 interface FolderItemProps {
   folder: Folder
@@ -25,6 +26,8 @@ interface FolderItemProps {
 }
 
 export const FolderItem = ({ folder, notes, activeNoteId }: FolderItemProps) => {
+  const { t } = useTranslation()
+
   const dispatch = useAppDispatch()
   const [isEditing, setIsEditing] = useState(false)
   const [folderName, setFolderName] = useState(folder.name)
@@ -132,7 +135,7 @@ export const FolderItem = ({ folder, notes, activeNoteId }: FolderItemProps) => 
       {isOpenFolder && (
         <div className="pl-5 space-y-0.5 mt-0.5">
           {isEmptyFolder && (
-            <div className="py-1 text-[11px] text-neutral-400 italic pl-3">Thư mục trống</div>
+            <div className="py-1 text-[11px] text-neutral-400 italic pl-3">{t('Empty Folder')}</div>
           )}
 
           {hasNotes &&
@@ -144,10 +147,10 @@ export const FolderItem = ({ folder, notes, activeNoteId }: FolderItemProps) => 
 
       <ConfirmModal
         isOpen={isConfirmFolderOpen}
-        title="Xóa thư mục?"
-        message={`Bạn có chắc chắn muốn xóa thư mục "${folder.name}" ${notes.length > 0 ? `cùng ${notes.length} ghi chú bên trong` : ''}? Hành động này không thể hoàn tác.`}
-        confirmText="Xóa thư mục"
-        cancelText="Hủy"
+        title={t('Delete folder?')}
+        message={`"${folder.name}" ${notes.length > 0 ? `(${notes.length} notes)` : ''}`}
+        confirmText={t('Delete')}
+        cancelText={t('Cancel')}
         onConfirm={handleConfirmDeleteFolder}
         onCancel={() => setIsConfirmFolderOpen(false)}
       />

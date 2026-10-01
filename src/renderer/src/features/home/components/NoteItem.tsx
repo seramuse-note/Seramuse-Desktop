@@ -4,6 +4,7 @@ import { Note } from '@/shared/note/types'
 import { deleteNote, selectNote } from '@/shared/note/notesSlice'
 import { ConfirmModal } from '@/shared/components/ui/ConfirmModal'
 import { useState } from 'react'
+import { useTranslation } from '@/shared/hooks'
 
 interface NoteItemProps {
   note: Note
@@ -11,6 +12,7 @@ interface NoteItemProps {
 }
 
 export const NoteItem = ({ note, activeNoteId }: NoteItemProps) => {
+  const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const isActive = activeNoteId === note.id
 
@@ -50,7 +52,7 @@ export const NoteItem = ({ note, activeNoteId }: NoteItemProps) => {
         <span className="truncate">{note.title || 'Untitled Note'}</span>
       </div>
       <button
-        title="Xóa ghi chú"
+        title={t('Delete note')}
         onClick={handleDeleteClick}
         className="p-1 opacity-0 group-hover:opacity-100 text-neutral-400 hover:text-red-600 rounded hover:bg-neutral-200"
       >
@@ -59,10 +61,10 @@ export const NoteItem = ({ note, activeNoteId }: NoteItemProps) => {
 
       <ConfirmModal
         isOpen={isConfirmOpen}
-        title="Xóa ghi chú?"
-        message={`Bạn có chắc chắn muốn xóa vĩnh viễn ghi chú "${note.title}"?\nHành động này không thể hoàn tác.`}
-        confirmText="Xóa vĩnh viễn"
-        cancelText="Hủy"
+        title={t('Delete note?')}
+        message={`"${note.title || t('Untitled Note')}"`}
+        confirmText={t('Delete')}
+        cancelText={t('Cancel')}
         onConfirm={handleConfirmDelete}
         onCancel={() => setIsConfirmOpen(false)}
       />
