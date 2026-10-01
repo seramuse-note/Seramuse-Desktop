@@ -56,7 +56,7 @@ export const commonEn = {
   Graph: 'Knowledge Graph',
   Folders: 'Folders',
   'Other Notes': 'Other Notes',
-  'Empty Folder': 'Empty folder',
+  'Empty Folder': 'Empty Folder',
 
   // Dialogs & Modals
   'Delete note': 'Delete note',

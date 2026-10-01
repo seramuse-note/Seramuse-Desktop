@@ -21,6 +21,7 @@ export interface Note {
   folderId?: string
   status: NoteStatus
   tags: string[]
+  order?: number
 }
 
 export interface Folder {

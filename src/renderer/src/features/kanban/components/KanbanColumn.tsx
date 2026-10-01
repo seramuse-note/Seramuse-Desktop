@@ -2,7 +2,7 @@ import { useAppDispatch } from '@/app/hooks'
 import { Circle, Plus } from 'lucide-react'
 import React, { useState } from 'react'
 import { NoteStatus, Note } from '@/shared/note/types'
-import { createNote, updateNoteStatus } from '@/shared/note/notesSlice'
+import { createNote, reOrderNote } from '@/shared/note/notesSlice'
 import { KanbanCard } from './KanbanCard'
 import { useTranslation } from '@/shared/hooks'
 
@@ -27,6 +27,8 @@ export const KanbanColumn = ({
   const dispatch = useAppDispatch()
   const [isOver, setIsOver] = useState(false)
 
+  const sortedNotes = [...notes].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+
   const handleCreateNoteInColumn = () => {
     dispatch(createNote({ status }))
   }
@@ -46,7 +48,7 @@ export const KanbanColumn = ({
     setIsOver(false)
     const noteId = e.dataTransfer.getData('text/plain')
     if (noteId) {
-      dispatch(updateNoteStatus({ id: noteId, status }))
+      dispatch(reOrderNote({ draggedId: noteId, targetStatus: status }))
     }
   }
 
@@ -83,12 +85,12 @@ export const KanbanColumn = ({
       </div>
 
       <div className="flex-1 overflow-y-auto space-y-2 pr-0.5">
-        {notes.length === 0 ? (
+        {sortedNotes.length === 0 ? (
           <div className="p-6 text-center text-xs text-neutral-400 italic border border-dashed border-neutral-200 rounded-lg">
             {t('No notes yet')}
           </div>
         ) : (
-          notes.map((note) => <KanbanCard key={note.id} note={note} />)
+          sortedNotes.map((note) => <KanbanCard key={note.id} note={note} />)
         )}
       </div>
     </div>

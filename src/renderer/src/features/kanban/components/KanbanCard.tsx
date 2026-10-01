@@ -1,8 +1,9 @@
 import { useAppDispatch } from '@/app/hooks'
-import { selectNote } from '@/shared/note/notesSlice'
+import { reOrderNote, selectNote } from '@/shared/note/notesSlice'
 import { Note } from '@/shared/note/types'
 import { FileText, Calendar } from 'lucide-react'
 import { useTranslation } from '@/shared/hooks'
+import React, { useState } from 'react'
 
 interface KanbanCardProps {
   note: Note
@@ -11,6 +12,13 @@ interface KanbanCardProps {
 export const KanbanCard = ({ note }: KanbanCardProps) => {
   const { t, currentLanguage } = useTranslation()
   const dispatch = useAppDispatch()
+
+  const safeTags = note.tags || []
+  const visibleTags = safeTags.slice(0, 3)
+  const remainingTagsCount = safeTags.length - visibleTags.length
+  const dateLocale = currentLanguage === 'vi' ? 'vi-VN' : 'en-US'
+
+  const [dropPosition, setDropPosition] = useState<'before' | 'after' | null>(null)
 
   const handleClick = () => {
     dispatch(selectNote(note.id))
@@ -21,19 +29,62 @@ export const KanbanCard = ({ note }: KanbanCardProps) => {
     e.dataTransfer.effectAllowed = 'move'
   }
 
-  const safeTags = note.tags || []
-  const visibleTags = safeTags.slice(0, 3)
-  const remainingTagsCount = safeTags.length - visibleTags.length
-  const dateLocale = currentLanguage === 'vi' ? 'vi-VN' : 'en-US'
+  const handleCardDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    e.dataTransfer.dropEffect = 'move'
+
+    const react = e.currentTarget.getBoundingClientRect()
+    const middleY = react.top + react.height / 2
+    const position = e.clientY < middleY ? 'before' : 'after'
+
+    if (dropPosition != position) {
+      setDropPosition(position)
+    }
+  }
+
+  const handleCardDragLeave = () => {
+    setDropPosition(null)
+  }
+
+  const handleCardDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    const draggedId = e.dataTransfer.getData('text/plain')
+
+    if (draggedId && draggedId !== note.id && dropPosition) {
+      dispatch(
+        reOrderNote({
+          draggedId,
+          targetStatus: note.status,
+          targetId: note.id,
+          position: dropPosition
+        })
+      )
+    }
+    setDropPosition(null)
+  }
 
   return (
     <div
       draggable
       onDragStart={handleDragStart}
+      onDragOver={handleCardDragOver}
+      onDragLeave={handleCardDragLeave}
+      onDrop={handleCardDrop}
       onClick={handleClick}
-      className="group flex flex-col gap-2.5  rounded-lg border border-neutral-200/80 bg-white p-3 shadow-xs
+      className="group relative flex flex-col gap-2.5  rounded-lg border border-neutral-200/80 bg-white p-3 shadow-xs
       hover:shadow-md hover:border-blue-300 transition-all duration-200 cursor-pointer select-none"
     >
+      {dropPosition === 'before' && (
+        <div className="absolute left-0 right-0 h-[2px] bg-blue-500 -top-0.5 pointer-events-none z-10"></div>
+      )}
+      {dropPosition === 'after' && (
+        <div className="absolute left-0 right-0 h-[2px] bg-blue-500 -bottom-0.5 pointer-events-none z-10"></div>
+      )}
+
       <div className="flex items-center gap-2">
         {note.icon ? (
           <span className="text-sm shrink-0 leading-none">{note.icon}</span>

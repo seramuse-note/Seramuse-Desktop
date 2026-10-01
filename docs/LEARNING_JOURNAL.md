@@ -65,7 +65,16 @@
 - [10.2. Dispatcher / Gatekeeper Pattern tại Route Gốc (`/`)](#102-dispatcher--gatekeeper-pattern-tại-route-gốc-)
 - [10.3. Bộ đệm Phân giải Module (Module Resolution Cache) của TypeScript Server](#103-bộ-đệm-phân-giải-module-module-resolution-cache-của-typescript-server)
 
-11. [Mẫu ghi nhật ký cho các tính năng tiếp theo (Template)](#11-mẫu-ghi-nhật-ký-cho-các-tính-năng-tiếp-theo-template)
+11. [Thuật toán Sắp xếp Kéo thả Thứ tự Chính xác (Exact Reordering) & Fractional Indexing ($O(1)$) trong Kanban](#11-thuật-toán-sắp-xếp-kéo-thả-thứ-tự-chính-xác-exact-reordering--fractional-indexing-o1-trong-kanban)
+
+- [11.1. Phân tích Vét cạn 6 Trường Hợp (Exhaustive Edge Cases) & Tối ưu Quy gom 3 Nhóm Cốt lõi](#111-phân-tích-vét-cạn-6-trường-hợp-exhaustive-edge-cases--tối-ưu-quy-gom-3-nhóm-cốt-lõi)
+- [11.2. Cạm bẫy Toán học: Tại sao KHÔNG ĐƯỢC dùng Bước nhảy Cố định (`+ 500` / `- 500`)?](#112-cạm-bẫy-toán-học-tại-sao-không-được-dùng-bước-nhảy-cố-định--500---500)
+- [11.3. Bản chất Tham số Action & Toán tử Nullish Coalescing (`??`) trong Lập trình Phòng thủ (Defensive Programming)](#113-bản-chất-tham-số-action--toán-tử-nullish-coalescing--trong-lập-trình-phòng-thủ-defensive-programming)
+- [11.4. Hai Lỗi Tiềm Ẩn Kinh Điển trong Xử Lý Mảng & Độ Ưu Tiên Toán Tử JS](#114-hai-lỗi-tiềm-ẩn-kinh-điển-trong-xử-lý-mảng--độ-ưu-tiên-toán-tử-js)
+- [11.5. Cạm Bẫy Sự Kiện DOM: Tại sao Vạch Chỉ Báo (Drop Indicator) làm Hỏng Sự Kiện Drop nếu Thiếu `pointer-events-none`?](#115-cạm-bẫy-sự-kiện-dom-tại-sao-vạch-chỉ-báo-drop-indicator-làm-hỏng-sự-kiện-drop-nếu-thiếu-pointer-events-none)
+- [11.6. Cạm Bẫy Dữ Liệu Cũ (Legacy Data) & Giải Pháp Migration Tự Động trong `hasLoaded`](#116-cạm-bẫy-dữ-liệu-cũ-legacy-data--giải-pháp-migration-tự-động-trong-hasloaded)
+
+12. [Mẫu ghi nhật ký cho các tính năng tiếp theo (Template)](#12-mẫu-ghi-nhật-ký-cho-các-tính-năng-tiếp-theo-template)
 
 ---
 
@@ -732,7 +741,129 @@ Khi tích hợp `IconPicker` vào giao diện của `NoteEditor.tsx`, ban đầu
 
 ---
 
-## 11. MẪU GHI NHẬT KÝ CHO CÁC TÍNH NĂNG TIẾP THEO (TEMPLATE)
+## 11. Thuật toán Sắp xếp Kéo thả Thứ tự Chính xác (Exact Reordering) & Fractional Indexing ($O(1)$) trong Kanban
+
+- **File liên quan:** [`src/renderer/src/shared/note/notesSlice.ts`](file:///d:/seramuse/Seramuse-Desktop/src/renderer/src/shared/note/notesSlice.ts), [`src/renderer/src/shared/note/types.ts`](file:///d:/seramuse/Seramuse-Desktop/src/renderer/src/shared/note/types.ts)
+- **Vấn đề cần giải quyết:**
+  Ở Kanban Level 1, kéo thả chỉ đổi được trạng thái cột (`status`). Khi muốn sắp xếp thứ tự ưu tiên các thẻ trong cùng một cột hoặc kéo chèn chính xác vào giữa 2 thẻ bất kỳ, nếu dùng mảng số nguyên liên tiếp `0, 1, 2, 3...` ($O(N)$), mỗi lần chèn thẻ ta sẽ phải ghi lại chỉ số của toàn bộ các thẻ còn lại, gây nghẽn I/O khi lưu file JSON. Cần một thuật toán đạt độ phức tạp $O(1)$ chỉ cập nhật duy nhất 1 thẻ.
+
+### 11.1. Phân tích Vét cạn 6 Trường Hợp (Exhaustive Edge Cases) & Tối ưu Quy gom 3 Nhóm Cốt lõi
+
+- **Quá trình phân tích thực tế của Kỹ sư:**
+  Khi bắt tay vào tính toán vị trí mới (`newOrder`) khi kéo thẻ, ban đầu ta phân tách ra 6 trường hợp trực quan:
+  1. `TH1 (Trước First):` Chèn lên trước phần tử đầu tiên (`targetIndex === 0 && position === 'before'`).
+  2. `TH2 (Sau Last):` Chèn xuống sau phần tử cuối cùng (`targetIndex === length - 1 && position === 'after'`).
+  3. `TH3 (Sau First):` Chèn vào ngay sau phần tử đầu tiên (`targetIndex === 0 && position === 'after'`).
+  4. `TH4 (Trước Last):` Chèn vào ngay trước phần tử cuối cùng (`targetIndex === length - 1 && position === 'before'`).
+  5. `TH5 (Giữa):` Chèn vào giữa 2 phần tử bất kỳ ở thân danh sách.
+  6. `TH6 (Cột rỗng / Null):` Thả vào khoảng trống đáy cột hoặc cột chưa có thẻ nào (`!targetId`).
+
+- **Bản chất kỹ thuật rút gọn ("Aha!" moment):**
+  Nhìn sâu vào bản chất toán học, **TH3** (sau con đầu) thực chất chính là chèn vào giữa con 0 và con 1; còn **TH4** (trước con cuối) thực chất chính là chèn vào giữa con kế cuối và con cuối. Do đó, 6 trường hợp trên được thu gọn hoàn hảo về **3 nhóm quy nạp**:
+  - **Nhóm 1 (Không có target hoặc cột rỗng):**
+    - Cột rỗng $\rightarrow$ `newOrder = 1000`.
+    - Thả vào đáy cột $\rightarrow$ `newOrder = lastOrder + 1000`.
+  - **Nhóm 2 (Chèn vượt biên hai đầu):**
+    - Chèn trước con đầu tiên $\rightarrow$ `newOrder = firstOrder / 2` (hoặc `firstOrder - 1000`).
+    - Chèn sau con cuối cùng $\rightarrow$ `newOrder = lastOrder + 1000`.
+  - **Nhóm 3 (Mọi vị trí còn lại ở thân danh sách):**
+    - Đều quy về việc chèn giữa 2 phần tử lân cận $\rightarrow \mathbf{\text{newOrder} = \frac{\text{prevOrder} + \text{nextOrder}}{2}}$.
+
+---
+
+### 11.2. Cạm bẫy Toán học: Tại sao KHÔNG ĐƯỢC dùng Bước nhảy Cố định (`+ 500` / `- 500`)?
+
+- **Ngộ nhận ban đầu:**
+  Khi chèn vào giữa 2 thẻ, nhiều lập trình viên nghĩ đơn giản là lấy thẻ phía trước cộng thêm một khoảng cố định, ví dụ `prevOrder + 500` (hoặc `nextOrder - 500`).
+- **Hiện tượng Đảo ngược Thứ tự (Order Inversion Bug):**
+  - Giả sử Thẻ A có `order = 1000`. Thẻ B có `order = 1200` (do trước đó đã từng chèn thẻ khác vào giữa).
+  - Khi người dùng kéo Thẻ C muốn chèn vào **giữa A và B**:
+    - Nếu dùng công thức `prevOrder + 500`:
+      $$\text{newOrder} = 1000 + 500 = \mathbf{1500}$$
+    - **Hậu quả:** `1500` lại **lớn hơn** `1200` của Thẻ B! Thẻ C vốn dĩ muốn chèn **trước B**, nay lại bị văng ra **sau B**, làm đảo lộn hoàn toàn thứ tự hiển thị của Kanban!
+- **Sức mạnh bất biến của Trung bình cộng $\frac{a + b}{2}$:**
+  - $\frac{1000 + 1200}{2} = \mathbf{1100}$.
+  - Về mặt toán học, giá trị trung bình cộng $\frac{a + b}{2}$ **luôn luôn nằm nghiêm ngặt ở giữa $a$ và $b$**, bất kể khoảng cách giữa chúng là 1000, 200, 1 hay 0.005.
+
+---
+
+### 11.3. Bản chất Tham số Action & Toán tử Nullish Coalescing (`??`) trong Lập trình Phòng thủ (Defensive Programming)
+
+- **Tại sao `targetId?` và `position?` lại là Optional (`?`)?**
+  Khi người dùng thả thẻ vào khoảng trống dưới đáy cột hoặc kéo vào một cột rỗng, con trỏ chuột không đè lên thẻ nào cả. Lúc này không tồn tại `targetId`, cũng không có vị trí `before/after`. Reducer nhận `undefined` để biết rằng cần áp dụng logic chèn vào đáy cột (`lastOrder + 1000`).
+- **Tại sao ở nhánh `else` (đã nằm giữa mảng) vẫn bắt buộc dùng `order ?? 0`?**
+  Nhiều người nghĩ rằng khi `targetIndex !== 0` và `targetIndex !== length - 1`, phần tử `columnNotes[targetIndex]` chắc chắn tồn tại nên không cần `?? 0`. Đây là cái bẫy lớn vì:
+  1. **Dữ liệu lịch sử (Legacy Data Migration):** Ứng dụng là Local-First. Các ghi chú cũ tạo từ Version 1 trước đây chưa từng có trường `order` (khi nạp từ file JSON lên thì `order === undefined`). Nếu không có `?? 0`, phép toán `undefined + 1000` sẽ biến thành `NaN` (Not a Number).
+  2. **Hiệu ứng Domino của `NaN`:** Khi một thẻ bị mang giá trị `order: NaN`, hàm `.sort((a, b) => a.order - b.order)` của JavaScript sẽ bị tê liệt hoàn toàn (vì mọi phép so sánh với `NaN` đều trả về `false`). Cột Kanban sẽ bị vỡ vụn thứ tự.
+  3. **Strict Null Checking:** Kiểu dữ liệu `order?: number` trong TypeScript là `number | undefined`. Trình biên dịch bắt buộc lập trình viên phải có giá trị fallback an toàn để đảm bảo Type-Safety.
+
+---
+
+### 11.4. Hai Lỗi Tiềm Ẩn Kinh Điển trong Xử Lý Mảng & Độ Ưu Tiên Toán Tử JS
+
+1. **Lỗi lọc nhầm đối tượng loại trừ:**
+   - _Viết sai:_ `.filter((n) => n.id !== targetId && ...)`
+   - _Phân tích:_ Khi kéo thẻ A thả vào thẻ B, thẻ cần loại khỏi danh sách tính toán là thẻ **đang được kéo (A - `draggedId`)**, chứ không phải thẻ mục tiêu (B - `targetId`). Nếu loại bỏ `targetId`, hàm `findIndex` tìm B sẽ luôn trả về `-1`.
+   - _Viết đúng:_ `.filter((n) => n.id !== draggedId && ...)`.
+2. **Lỗi độ ưu tiên toán tử (`||` vs `===`):**
+   - _Viết sai:_ `(n.status || NoteStatus.TODO === targetStatus)`
+   - _Phân tích:_ Toán tử so sánh `===` có độ ưu tiên cao hơn toán tử logic `||`. JS sẽ hiểu thành `n.status || (NoteStatus.TODO === targetStatus)`. Vì `n.status` là chuỗi có giá trị (truthy), biểu thức luôn đúng và gom note của mọi cột lại tính toán chung!
+   - _Viết đúng (phải bọc ngoặc):_ `(n.status || NoteStatus.TODO) === targetStatus`.
+
+---
+
+### 11.5. Cạm Bẫy Sự Kiện DOM: Tại sao Vạch Chỉ Báo (Drop Indicator) làm Hỏng Sự Kiện Drop nếu Thiếu `pointer-events-none`?
+
+- **Rào cản thực tế ("Code đúng logic nhưng app không chạy"):**
+  Sau khi hoàn tất toàn bộ logic toán học và reducer, khi chạy thử nghiệm trên UI, người dùng kéo thẻ rê vào mép trên/dưới thấy vạch xanh xuất hiện, nhưng khi nhả chuột ra thì **thẻ không đổi vị trí** (thao tác drop bị hủy bỏ ngầm).
+- **Bản chất kỹ thuật ("Aha!" moment):**
+  - Khi chuột rê vào mép của `KanbanCard`, state `dropPosition` được set thành `'before'` $\rightarrow$ Vạch xanh `<div className="absolute left-0 right-0 h-[2px] bg-blue-500 ...">` xuất hiện.
+  - Vì vạch xanh là phần tử HTML con nằm đè lên trên và **chưa có thuộc tính CSS `pointer-events-none`**, con trỏ chuột lập tức bị "chuyển quyền tiếp xúc" sang vạch xanh thay vì chiếc Card.
+  - Trình duyệt hiểu rằng con chuột đã rời khỏi ranh giới của Card mục tiêu, lập tức kích hoạt sự kiện `onDragLeave` trên Card $\rightarrow$ gọi `setDropPosition(null)`!
+  - Khi người dùng nhả ngón tay ra (`onDrop`), tại đúng thời khắc đó `dropPosition` đã bị chuyển thành `null` $\rightarrow$ Câu lệnh điều kiện `if (draggedId && draggedId !== note.id && dropPosition)` bị đánh giá là **`false`**!
+  - **Kết quả:** Thao tác drop bị hủy bỏ ngầm trong tích tắc mà không ném ra bất kỳ lỗi console nào!
+- **Giải pháp dứt điểm:**
+  Thêm `pointer-events-none` vào vạch chỉ báo. Thuộc tính này biến vạch xanh thành "vật thể tàng hình đối với chuột", con chuột bay xuyên qua vạch xanh và tiếp xúc 100% với Card mục tiêu bên dưới:
+  ```tsx
+  {
+    dropPosition === 'before' && (
+      <div className="absolute left-0 right-0 h-[2px] bg-blue-500 -top-0.5 pointer-events-none z-10" />
+    )
+  }
+  ```
+
+---
+
+### 11.6. Cạm Bẫy Dữ Liệu Cũ (Legacy Data) & Giải Pháp Migration Tự Động trong `hasLoaded`
+
+- **Rào cản thực tế ("Bẫy 0 + 0 = 0"):**
+  Khi khắc phục xong lỗi `pointer-events-none`, thao tác drop đã kích hoạt thành công, nhưng các thẻ vẫn **không chịu đổi chỗ cho nhau**!
+- **Bản chất kỹ thuật ("Aha!" moment):**
+  1. Tất cả các ghi chú cũ được tạo trước khi làm tính năng Fractional Indexing đều có `order === undefined`.
+  2. Khi tính toán trong `reOrderNote`, toán tử `order ?? 0` biến tất cả các thẻ cũ thành tọa độ `0`.
+  3. Khi kéo một thẻ chèn vào giữa 2 thẻ cũ:
+     $$\text{newOrder} = \frac{0 + 0}{2} = \mathbf{0}$$
+  4. Thẻ vừa thả vẫn tiếp tục mang giá trị `order = 0`. Khi hàm `.sort((a, b) => a.order - b.order)` chạy lại, vì các thẻ đều bằng 0 nên thứ tự hiển thị không hề xê dịch một milimet nào!
+- **Giải pháp Phòng vệ 2 Tầng (2-Tier Data Resilience):**
+  - **Tầng 1 (Tại chỗ - Local Fallback):** Viết hàm `getOrder(idx)` tự động sinh tọa độ dựa trên vị trí mảng nếu thẻ chưa có `order`:
+    ```typescript
+    const getOrder = (idx: number) => columnNotes[idx].order ?? (idx + 1) * 1000
+    ```
+    Nhờ vậy, thẻ 0 được coi là 1000, thẻ 1 được coi là 2000 $\rightarrow$ Chèn vào giữa ra ngay $\frac{1000 + 2000}{2} = \mathbf{1500}$ chuẩn xác!
+  - **Tầng 2 (Tự động di chuyển dữ liệu - Cold-Start Migration):** Trong reducer `hasLoaded`, ngay khi app khởi động và nạp file JSON từ ổ cứng lên, tự động duyệt qua toàn bộ kho ghi chú và cấp phát `1000, 2000, 3000...` cho bất kỳ note nào chưa có `order`:
+    ```typescript
+    let defaultOrder = 1000
+    Object.values(state.notes).forEach((note) => {
+      if (note.order === undefined) {
+        note.order = defaultOrder
+        defaultOrder += 1000
+      }
+    })
+    ```
+
+---
+
+## 12. MẪU GHI NHẬT KÝ CHO CÁC TÍNH NĂNG TIẾP THEO (TEMPLATE)
 
 ```markdown
 ## [Số]. Ngày DD/MM/YYYY: Chức năng [Tên chức năng]

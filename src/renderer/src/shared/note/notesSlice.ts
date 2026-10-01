@@ -34,13 +34,20 @@ const notesSlice = createSlice({
         typeof action.payload === 'object' && action.payload?.title?.trim()
           ? action.payload.title.trim()
           : 'Untitled Note'
+
       const content =
         typeof action.payload === 'string' ? action.payload : action.payload?.content || ''
+
       const folderId = typeof action.payload === 'object' ? action.payload?.folderId : undefined
+
       const status =
         typeof action.payload === 'object' && action.payload?.status
           ? action.payload.status
           : NoteStatus.TODO
+
+      const existingOrders = Object.values(state.notes).map((n) => n.order ?? 0)
+
+      const maxOrder = existingOrders.length > 0 ? Math.max(...existingOrders) : 0
 
       const newNote: Note = {
         id,
@@ -50,7 +57,8 @@ const notesSlice = createSlice({
         createdAt: now,
         updatedAt: now,
         status,
-        tags: []
+        tags: [],
+        order: maxOrder + 1000
       }
       state.notes[id] = newNote
       state.activeNoteId = id
@@ -189,6 +197,71 @@ const notesSlice = createSlice({
       if (action.payload.activeView !== undefined) {
         state.activeView = action.payload.activeView
       }
+
+      let defaultOrder = 1000
+      Object.values(state.notes).forEach((note) => {
+        if (note.order === undefined) {
+          note.order = defaultOrder
+          defaultOrder += 1000
+        }
+      })
+    },
+
+    reOrderNote(
+      state,
+      action: PayloadAction<{
+        draggedId: string
+        targetStatus: NoteStatus
+        targetId?: string
+        position?: 'before' | 'after'
+      }>
+    ) {
+      const { draggedId, targetStatus, targetId, position } = action.payload
+      const draggingNote = state.notes[draggedId]
+      if (!draggingNote) return
+
+      const columnNotes = Object.values(state.notes)
+        .filter((n) => n.id !== draggedId && (n.status || NoteStatus.TODO) === targetStatus)
+        .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+
+      let newOrder = 1000
+      if (columnNotes.length === 0) {
+        newOrder = 1000
+      } else if (!targetId) {
+        const lastOrder = columnNotes[columnNotes.length - 1].order ?? 0
+        newOrder = lastOrder + 1000
+      } else {
+        const targetIndex = columnNotes.findIndex((n) => n.id === targetId)
+
+        const getOrder = (idx: number) => columnNotes[idx].order ?? (idx + 1) * 1000
+
+        if (targetIndex === -1) {
+          const lastOrder = columnNotes.length > 0 ? getOrder(columnNotes.length - 1) : 0
+          newOrder = lastOrder + 1000
+        } else if (position === 'before') {
+          if (targetIndex === 0) {
+            const nextOrder = getOrder(0)
+            newOrder = nextOrder > 0 ? nextOrder / 2 : nextOrder - 1000
+          } else {
+            const prevNoteOrder = getOrder(targetIndex - 1)
+            const nextOrder = getOrder(targetIndex)
+            newOrder = (nextOrder + prevNoteOrder) / 2
+          }
+        } else {
+          if (targetIndex === columnNotes.length - 1) {
+            const prevOrder = getOrder(targetIndex)
+            newOrder = prevOrder + 1000
+          } else {
+            const prevOrder = getOrder(targetIndex)
+            const nextOrder = getOrder(targetIndex + 1)
+            newOrder = (prevOrder + nextOrder) / 2
+          }
+        }
+      }
+
+      draggingNote.status = targetStatus
+      draggingNote.order = newOrder
+      draggingNote.updatedAt = new Date().toISOString()
     }
   }
 })
@@ -210,7 +283,8 @@ export const {
   setActiveView,
   updateNoteIcon,
   updateNoteCover,
-  hasLoaded
+  hasLoaded,
+  reOrderNote
 } = notesSlice.actions
 
 export default notesSlice.reducer
