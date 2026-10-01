@@ -16,6 +16,7 @@
 | **Phase 4** | **Tích hợp Tiptap Rich-Text Editor**        |    3    | 🟢 **Hoàn thành** | Headless Editor v3 + key remounting + autofocus           |
 | **Phase 5** | **Cây Thư mục & Bảng Thuộc tính Tri thức**  |    2    | 🟢 **Hoàn thành** | Folder Tree + Status Enum + Notion Properties Table + Tags |
 | **Phase 6** | **Tính năng Nâng cao (Kanban & Graph)**     |    2    | 🟢 **Hoàn thành** | Notion Kanban board + Obsidian SVG Knowledge Graph        |
+| **Phase 7** | **Lưu Trữ Cục Bộ (Local-First Persistence)** |    3    | 🟢 **Hoàn thành** | Electron IPC + Debounced Auto-Save + Store Hydration      |
 
 ---
 
@@ -139,6 +140,39 @@
     - Sử dụng SVG thuần xếp lớp (Edges trước, Nodes sau) không phụ thuộc D3 hay thư viện ngoài.
     - Hoàn thành tương tác làm sáng mạng lưới liên kết cục bộ khi hover (`isHovered`) và click mở ghi chú tức thời qua Redux `selectNote`.
     - Đúc kết toàn bộ kiến thức vào `RADIAL_LAYOUT_AND_GRAPH_MATH.md` và `LEARNING_JOURNAL.md`.
+
+---
+
+### 🟢 PHASE 7: LƯU TRỮ CỤC BỘ (LOCAL-FIRST PERSISTENCE & IPC)
+
+- [x] **Bước 7.1: Xây dựng IPC Handlers & File System ở Main Process (`src/main/index.ts`)**
+  - **Trạng thái:** 🟢 **HOÀN THÀNH**
+  - **File:** `src/main/index.ts`
+  - **Kết quả:**
+    - Sử dụng `fs/promises` bất đồng bộ để tránh chặn Event Loop.
+    - Định vị thư mục an toàn qua `app.getPath('userData')` trỏ tới `%APPDATA%/seramuse-desktop`.
+    - Xử lý ca biên Cold Start (người dùng mở app lần đầu, file chưa tồn tại) bằng `try...catch` trả về `null` an toàn.
+    - Định dạng `JSON.stringify(data, null, 2)` hỗ trợ đọc và sao lưu thủ công dễ dàng.
+
+---
+
+- [x] **Bước 7.2: Mở Cổng Hải Quan Preload Script & Type Definitions (`preload`)**
+  - **Trạng thái:** 🟢 **HOÀN THÀNH**
+  - **File:** `src/preload/index.ts`, `src/preload/index.d.ts`
+  - **Kết quả:**
+    - Tuân thủ nguyên lý đặc quyền tối thiểu (Least Privilege), chỉ mở 2 hàm `loadNotes` và `saveNotes` qua `contextBridge`.
+    - Khai báo Type-safe `loadNotes: () => Promise<NoteState | null>` và `saveNotes: (data: NoteState) => Promise<{ success: boolean; error?: string }>`.
+
+---
+
+- [x] **Bước 7.3: Kỹ Thuật Store Hydration & Debounced Auto-Save (`useAutoSave.ts`, `notesSlice.ts`)**
+  - **Trạng thái:** 🟢 **HOÀN THÀNH**
+  - **File:** `src/renderer/src/shared/hooks/useAutoSave.ts`, `notesSlice.ts`, `HomePage.tsx`
+  - **Kết quả:**
+    - Thêm reducer `hasLoaded` với `Partial<NoteState>` và kiểm tra phòng thủ `!== undefined` chống mất `null` và chống ô nhiễm `undefined`.
+    - Triển khai cờ hiệu `isHydrated` chặn đứng bẫy "Ghi đè dữ liệu rỗng" (Empty State Overwrite Trap).
+    - Sử dụng `useRef(true)` làm cờ hiệu dùng 1 lần (Single-use flag) bỏ qua lần ghi đĩa thừa ngay sau khi vừa nạp dữ liệu, không gây re-render UI.
+    - Cài đặt Debounce 1000ms thuần React với `setTimeout` & `clearTimeout` giúp gom cụm thao tác ghi, bảo vệ tuổi thọ ổ SSD và loại bỏ nghẽn đĩa (Disk Thrashing).
 
 ---
 

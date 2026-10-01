@@ -44,6 +44,7 @@
    * [7.3. Cầu Nối IPC (Inter-Process Communication) & Preload Script](#73-cầu-nối-ipc-inter-process-communication--preload-script)
    * [7.4. Hai Kỹ Thuật Bắt Buộc: Debounced Auto-Save & Store Hydration](#74-hai-kỹ-thuật-bắt-buộc-debounced-auto-save--store-hydration)
    * [7.5. Phương Pháp "3 Không - 3 Bước" để Giữ Não Kỹ Sư khi Học Cùng AI](#75-phương-pháp-3-không---3-bước-để-giữ-não-kỹ-sư-khi-học-cùng-ai)
+   * [7.6. Phỏng Vấn & Thực Chiến: Lập Trình Phòng Thủ (Defensive Programming) & Ca Biên Khởi Động Lần Đầu (Cold Start)](#76-phỏng-vấn--thực-chiến-lập-trình-phòng-thủ-defensive-programming--ca-biên-khởi-động-lần-đầu-cold-start)
 8. [Phản Tỉnh Kỹ Thuật (Gibbs' Reflective Cycle): Thiết Kế IconPicker & Ranh Giới Smart vs Dumb Component](#8-phản-tỉnh-kỹ-thuật-gibbs-reflective-cycle-thiết-kế-iconpicker--ranh-giới-smart-vs-dumb-component)
    * [8.1. Mô tả Thực tế (Description)](#81-mô-tả-thực-tế-description)
    * [8.2. Cảm xúc Ban đầu (Feelings)](#82-cảm-xúc-ban-đầu-feelings)
@@ -483,6 +484,42 @@ Electron chia ứng dụng thành 2 tiến trình độc lập được ngăn c�
 3. **Thực hành có kiểm chứng & Cố tình làm hỏng để hiểu (Deliberate Debugging):**
    * Gõ thử `console.log` ở cả 2 cửa sổ (DevTools của React và Terminal của Electron) để tận mắt thấy gói tin bay qua bức tường IPC.
    * Mở thư mục Windows Explorer (`%APPDATA%/seramuse`) sờ tận tay file `seramuse-data.json`.
+
+### 7.6. Phỏng Vấn & Thực Chiến: Lập Trình Phòng Thủ (Defensive Programming) & Ca Biên Khởi Động Lần Đầu (Cold Start)
+
+* **Ngày thực hiện:** 01/10/2026
+* **File liên quan:** `src/main/index.ts`, `src/preload/index.ts`
+* **Chủ đề:** IPC Handlers, Exception Handling, Defensive Programming, Cold Start UX & Interview Mindset.
+
+#### 1. Rào cản & Ca biên (Edge Case) gặp phải
+Khi người dùng tải app về và mở lần đầu tiên (Cold Start), file lưu trữ dữ liệu `seramuse-data.json` hoàn toàn **chưa tồn tại** trên ổ cứng máy tính.
+- Nếu gọi `fs.readFile(filePath, 'utf-8')` trực tiếp mà không lường trước, Node.js sẽ ném ra ngoại lệ hệ điều hành: `ENOENT: no such file or directory`.
+- Kết quả: Gây ra lỗi không được xử lý (*Unhandled Promise Rejection*), luồng IPC bị ngắt quãng, hoặc React nhận lỗi và bị crash trắng màn hình ngay lần đầu mở ứng dụng.
+
+#### 2. Bản chất kỹ thuật & Tư duy Lập trình phòng thủ (Defensive Programming)
+* **Kỹ sư thiếu kinh nghiệm:** Thường chỉ chú tâm vào kịch bản lý tưởng (*Happy Path*) — giả định dữ liệu luôn có sẵn để đọc.
+* **Kỹ sư chuyên nghiệp (Senior / Tech Lead Mindset):** Luôn áp dụng **Lập trình phòng thủ (Defensive Programming)** — lường trước mọi kịch bản bất thường (*Unhappy Path*):
+  - Bao bọc thao tác đọc file bằng khối `try...catch`.
+  - Khi bắt được lỗi (chưa có file hoặc file bị hỏng), hệ thống không làm sập ứng dụng mà êm đềm trả về giá trị mặc định (`null` hoặc `{ notes: {}, folders: {} }`).
+  - Nhờ đó, Redux Store ở phía React khởi tạo bình thường với dữ liệu ban đầu sạch sẽ mà không hề giật lag hay hiện thông báo lỗi khó hiểu cho người dùng.
+
+#### 3. Câu trả lời phỏng vấn mẫu đạt điểm tối đa (Interview Pitch - STAR Framework)
+> *"Khi xử lý lưu trữ Local-First trên Desktop với Electron, em áp dụng cơ chế **Lập trình phòng thủ (Defensive Programming)** tại Main Process. Với kịch bản người dùng mở app lần đầu (**Cold Start** - file dữ liệu chưa từng tồn tại trên đĩa), thay vì để `fs.readFile` ném ngoại lệ làm crash app, em sử dụng `try/catch` ở IPC handler `notes:load` để bắt lỗi, chủ động trả về trạng thái rỗng an toàn. Nhờ đó, Redux Store khởi tạo mượt mà và bảo đảm trải nghiệm người dùng không hề bị gián đoạn."*
+
+#### 4. Đoạn code chuẩn mực áp dụng:
+```ts
+// src/main/index.ts
+ipcMain.handle('notes:load', async () => {
+  try {
+    const filePath = getDataFilePath()
+    const data = await fs.readFile(filePath, 'utf-8')
+    return JSON.parse(data)
+  } catch {
+    // Phòng thủ Cold Start: Chưa có file -> trả về null an toàn, không ném exception
+    return null
+  }
+})
+```
 
 ---
 

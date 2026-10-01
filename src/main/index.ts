@@ -1,10 +1,10 @@
+import fs from 'fs/promises'
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
 function createWindow(): void {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
@@ -35,6 +35,10 @@ function createWindow(): void {
   }
 }
 
+function getDataFilePath(): string {
+  return join(app.getPath('userData'), 'seramuse-data.json')
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -49,8 +53,26 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
+  ipcMain.handle('notes:load', async () => {
+    try {
+      const filePath = getDataFilePath()
+      const data = await fs.readFile(filePath, 'utf8')
+      return JSON.parse(data)
+    } catch {
+      return null
+    }
+  })
+
+  ipcMain.handle('notes:save', async (_, data) => {
+    try {
+      const filePath = getDataFilePath()
+      await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf8')
+      return { success: true }
+    } catch (error) {
+      console.error('Lỗi khi ghi dữ liệu:', error)
+      return { success: false, error }
+    }
+  })
 
   createWindow()
 

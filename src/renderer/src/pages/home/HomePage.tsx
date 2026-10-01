@@ -6,13 +6,15 @@ import { Sidebar } from '@/features/home/components'
 import { KanbanView } from '@/features/kanban/components'
 import { GraphView } from '@/features/graph/components'
 import { NoteEditor } from '@/features/editor/components'
+import { useAutoSave } from '@/shared/hooks'
 
 export const HomePage = () => {
+  useAutoSave()
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
 
-  const activeNoteId = useAppSelector((state) => state.notes.activeNoteId)
   const activeNote = useAppSelector((state) =>
-    activeNoteId ? state.notes.notes[activeNoteId] : null
+    state.notes.activeNoteId ? state.notes.notes[state.notes.activeNoteId] : null
   )
 
   const folders = useAppSelector((state) => state.notes.folders)

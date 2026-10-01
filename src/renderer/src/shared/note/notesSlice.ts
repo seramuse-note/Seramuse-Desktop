@@ -169,6 +169,24 @@ const notesSlice = createSlice({
         state.notes[id].coverUrl = coverUrl
         state.notes[id].updatedAt = new Date().toISOString()
       }
+    },
+
+    hasLoaded(state, action: PayloadAction<Partial<NoteState>>) {
+      if (action.payload.notes) {
+        state.notes = action.payload.notes
+      }
+
+      if (action.payload.folders) {
+        state.folders = action.payload.folders
+      }
+
+      if (action.payload.activeNoteId !== undefined) {
+        state.activeNoteId = action.payload.activeNoteId
+      }
+
+      if (action.payload.activeView !== undefined) {
+        state.activeView = action.payload.activeView
+      }
     }
   }
 })
@@ -189,7 +207,8 @@ export const {
   removeNoteTag,
   setActiveView,
   updateNoteIcon,
-  updateNoteCover
+  updateNoteCover,
+  hasLoaded
 } = notesSlice.actions
 
 export default notesSlice.reducer

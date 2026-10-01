@@ -1,3 +1,5 @@
 export { useIsMobile } from './useIsMobile'
 export { useDebounce } from './useDebounce'
 export { useTranslation } from './useTranslation'
+export { useClickOutside } from './useClickOutside'
+export { useAutoSave } from './useAutoSave'
