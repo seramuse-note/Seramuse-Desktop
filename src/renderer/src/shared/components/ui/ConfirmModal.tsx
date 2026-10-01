@@ -1,5 +1,6 @@
 import { AlertTriangle } from 'lucide-react'
 import { useEffect } from 'react'
+import { useTranslation } from '@/shared/hooks'
 
 interface ConfirmModalProps {
   isOpen: boolean
@@ -15,11 +16,13 @@ export const ConfirmModal = ({
   isOpen,
   title,
   message,
-  confirmText = 'Xóa vĩnh viễn',
-  cancelText = 'Hủy',
+  confirmText,
+  cancelText,
   onConfirm,
   onCancel
 }: ConfirmModalProps) => {
+  const { t } = useTranslation()
+
   useEffect(() => {
     if (!isOpen) return
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -30,6 +33,9 @@ export const ConfirmModal = ({
   }, [isOpen, onCancel])
 
   if (!isOpen) return null
+
+  const resolvedConfirmText = confirmText || t('Delete permanently')
+  const resolvedCancelText = cancelText || t('Cancel')
 
   return (
     <div
@@ -56,14 +62,14 @@ export const ConfirmModal = ({
             onClick={onCancel}
             className="px-3 py-1.5 text-xs font-medium text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors cursor-pointer"
           >
-            {cancelText}
+            {resolvedCancelText}
           </button>
           <button
             type="button"
             onClick={onConfirm}
             className="px-3.5 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-xs transition-colors cursor-pointer"
           >
-            {confirmText}
+            {resolvedConfirmText}
           </button>
         </div>
       </div>

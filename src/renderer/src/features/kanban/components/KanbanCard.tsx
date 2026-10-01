@@ -2,12 +2,14 @@ import { useAppDispatch } from '@/app/hooks'
 import { selectNote } from '@/shared/note/notesSlice'
 import { Note } from '@/shared/note/types'
 import { FileText, Calendar } from 'lucide-react'
+import { useTranslation } from '@/shared/hooks'
 
 interface KanbanCardProps {
   note: Note
 }
 
 export const KanbanCard = ({ note }: KanbanCardProps) => {
+  const { t, currentLanguage } = useTranslation()
   const dispatch = useAppDispatch()
 
   const handleClick = () => {
@@ -22,6 +24,7 @@ export const KanbanCard = ({ note }: KanbanCardProps) => {
   const safeTags = note.tags || []
   const visibleTags = safeTags.slice(0, 3)
   const remainingTagsCount = safeTags.length - visibleTags.length
+  const dateLocale = currentLanguage === 'vi' ? 'vi-VN' : 'en-US'
 
   return (
     <div
@@ -38,7 +41,7 @@ export const KanbanCard = ({ note }: KanbanCardProps) => {
           <FileText className="w-3.5 h-3.5 text-neutral-400 shrink-0 group-hover:text-blue-600 transition-colors" />
         )}
         <h4 className="text-xs font-semibold text-neutral-800 leading-snug line-clamp-2 overflow-hidden">
-          {note.title.trim() || 'Untitled Note'}
+          {note.title.trim() || t('Untitled Note')}
         </h4>
       </div>
       {safeTags.length > 0 && (
@@ -53,7 +56,7 @@ export const KanbanCard = ({ note }: KanbanCardProps) => {
           ))}
           {remainingTagsCount > 0 && (
             <span className="text-[10px] text-neutral-400 font-medium ">
-              +{remainingTagsCount} {''}more
+              +{remainingTagsCount}
             </span>
           )}
         </div>
@@ -61,7 +64,7 @@ export const KanbanCard = ({ note }: KanbanCardProps) => {
       <div className="flex items-center justify-between pt-1 border-t border-neutral-100 text-[11px] text-neutral-400">
         <div className="flex items-center gap-1">
           <Calendar className="w-3 h-3" />
-          <span>{new Date(note.updatedAt).toLocaleDateString('vi-VN')}</span>
+          <span>{new Date(note.updatedAt).toLocaleDateString(dateLocale)}</span>
         </div>
       </div>
     </div>

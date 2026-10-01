@@ -1,5 +1,6 @@
 import { COVER_PRESETS } from '@/shared/constants/coverPresets'
 import { useClickOutside } from '@/shared/hooks/useClickOutside'
+import { useTranslation } from '@/shared/hooks'
 import { ImageIcon, Palette, X } from 'lucide-react'
 import { useState } from 'react'
 
@@ -10,6 +11,7 @@ interface CoverBannerProps {
 }
 
 export const CoverBanner = ({ currentCover, onSelectCover, onRemoveCover }: CoverBannerProps) => {
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const popoverRef = useClickOutside<HTMLDivElement>(() => {
     setIsOpen(false)
@@ -21,29 +23,29 @@ export const CoverBanner = ({ currentCover, onSelectCover, onRemoveCover }: Cove
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="flex items-center gap-1.5 px-2.5 py-1 text-xs text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 rounded-md transition-colors w-fit"
+          className="flex items-center gap-1.5 px-2.5 py-1 text-xs text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 rounded-md transition-colors w-fit cursor-pointer"
         >
-          <ImageIcon className="w-3.5 h-3.5" /> Thêm ảnh bìa
+          <ImageIcon className="w-3.5 h-3.5" /> {t('Add cover')}
         </button>
       ) : (
         <div
-          className={`  relative w-full h-20 rounded-xl overflow-hidden group shadow-xs transition-all`}
+          className="relative w-full h-20 rounded-xl overflow-hidden group shadow-xs transition-all"
           style={{ background: currentCover }}
         >
           <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 bg-black/40 backdrop-blur-xs p-1 rounded-lg">
             <button
               type="button"
               onClick={() => setIsOpen(true)}
-              className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-white hover:bg-white/20 rounded transition-colors"
+              className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-white hover:bg-white/20 rounded transition-colors cursor-pointer"
             >
-              <Palette className="w-3.5 h-3.5" /> Đổi ảnh bìa
+              <Palette className="w-3.5 h-3.5" /> {t('Change cover')}
             </button>
             <button
               type="button"
               onClick={onRemoveCover}
-              className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-white/90 hover:text-white hover:bg-red-500/80 rounded transition-colors"
+              className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-white/90 hover:text-white hover:bg-red-500/80 rounded transition-colors cursor-pointer"
             >
-              <X className="w-3.5 h-3.5" /> Gỡ
+              <X className="w-3.5 h-3.5" /> {t('Remove')}
             </button>
           </div>
         </div>
@@ -58,7 +60,7 @@ export const CoverBanner = ({ currentCover, onSelectCover, onRemoveCover }: Cove
             right: currentCover ? '12px' : 'auto'
           }}
         >
-          <div className="text-xs font-semibold text-neutral-600 px-1">Chọn màu Gradient</div>
+          <div className="text-xs font-semibold text-neutral-600 px-1">{t('Choose gradient')}</div>
           <div className="grid grid-cols-2 gap-2">
             {COVER_PRESETS.map((preset) => (
               <button
@@ -68,7 +70,7 @@ export const CoverBanner = ({ currentCover, onSelectCover, onRemoveCover }: Cove
                   onSelectCover(preset.gradient)
                   setIsOpen(false)
                 }}
-                className={`h-12 rounded-lg border border-neutral-200/60 hover:scale-[1.02] hover:shadow-md transition-all relative overflow-hidden group/btn ${preset.gradient}`}
+                className={`h-12 rounded-lg border border-neutral-200/60 hover:scale-[1.02] hover:shadow-md transition-all relative overflow-hidden group/btn ${preset.gradient} cursor-pointer`}
                 title={preset.label}
                 style={{ background: preset.gradient }}
               >

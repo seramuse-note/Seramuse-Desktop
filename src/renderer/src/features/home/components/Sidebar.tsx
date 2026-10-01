@@ -74,8 +74,8 @@ export const Sidebar = () => {
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-2 text-neutral-400 hover:text-neutral-600 p-0.5"
-              title="Xóa tìm kiếm"
+              className="absolute right-2 text-neutral-400 hover:text-neutral-600 p-0.5 cursor-pointer"
+              title={t('Clear search')}
             >
               <X className="w-3 h-3" />
             </button>
@@ -87,7 +87,7 @@ export const Sidebar = () => {
         <div className="space-y-0.5">
           {isSearching && (
             <div className="px-2 text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">
-              <span>Kết quả tìm kiếm ({filteredNotes.length})</span>
+              <span>{t('Search results ({{count}})', { count: filteredNotes.length })}</span>
             </div>
           )}
 

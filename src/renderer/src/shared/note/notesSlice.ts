@@ -86,7 +86,7 @@ const notesSlice = createSlice({
       const now = new Date().toISOString()
       const newFolder: Folder = {
         id,
-        name: action.payload.trim() || 'Thư mục mới',
+        name: action.payload.trim() || 'New Folder',
         createdAt: now,
         isOpen: true
       }

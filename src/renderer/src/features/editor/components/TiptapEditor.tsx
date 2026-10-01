@@ -12,6 +12,7 @@ import {
   Quote,
   Strikethrough
 } from 'lucide-react'
+import { useTranslation } from '@/shared/hooks'
 
 interface TiptapEditorProps {
   content: string
@@ -19,11 +20,13 @@ interface TiptapEditorProps {
 }
 
 export const TipTapEditor = ({ content, onContentChange }: TiptapEditorProps) => {
+  const { t } = useTranslation()
+
   const editor = useEditor({
     extensions: [
       StarterKit,
       Placeholder.configure({
-        placeholder: 'Gõ nội dung hoặc dùng Markdown (# Tiêu đề, - Danh sách, > Trích dẫn)...'
+        placeholder: t('Editor placeholder')
       })
     ],
     content: content,
@@ -54,7 +57,7 @@ export const TipTapEditor = ({ content, onContentChange }: TiptapEditorProps) =>
                 ? 'bg-neutral-800 text-blue-400 font-bold'
                 : 'text-neutral-300 hover:bg-neutral-800 hover:text-white'
             }`}
-            title="In đậm (Ctrl+B)"
+            title={t('Bold (Ctrl+B)')}
           >
             <Bold className="w-3.5 h-3.5" />
           </button>
@@ -66,7 +69,7 @@ export const TipTapEditor = ({ content, onContentChange }: TiptapEditorProps) =>
                 ? 'bg-neutral-800 text-blue-400'
                 : 'text-neutral-300 hover:bg-neutral-800 hover:text-white'
             }`}
-            title="In nghiêng (Ctrl+I)"
+            title={t('Italic (Ctrl+I)')}
           >
             <Italic className="w-3.5 h-3.5" />
           </button>
@@ -78,7 +81,7 @@ export const TipTapEditor = ({ content, onContentChange }: TiptapEditorProps) =>
                 ? 'bg-neutral-800 text-blue-400'
                 : 'text-neutral-300 hover:bg-neutral-800 hover:text-white'
             }`}
-            title="Gạch ngang"
+            title={t('Strikethrough')}
           >
             <Strikethrough className="w-3.5 h-3.5" />
           </button>
@@ -90,7 +93,7 @@ export const TipTapEditor = ({ content, onContentChange }: TiptapEditorProps) =>
                 ? 'bg-neutral-800 text-blue-400'
                 : 'text-neutral-300 hover:bg-neutral-800 hover:text-white'
             }`}
-            title="Mã nguồn inline"
+            title={t('Inline code')}
           >
             <Code className="w-3.5 h-3.5" />
           </button>
@@ -103,7 +106,7 @@ export const TipTapEditor = ({ content, onContentChange }: TiptapEditorProps) =>
                 ? 'bg-neutral-800 text-blue-400'
                 : 'text-neutral-300 hover:bg-neutral-800 hover:text-white'
             }`}
-            title="Tiêu đề lớn (H1)"
+            title={t('Heading 1')}
           >
             <Heading1 className="w-3.5 h-3.5" />
           </button>
@@ -115,7 +118,7 @@ export const TipTapEditor = ({ content, onContentChange }: TiptapEditorProps) =>
                 ? 'bg-neutral-800 text-blue-400'
                 : 'text-neutral-300 hover:bg-neutral-800 hover:text-white'
             }`}
-            title="Tiêu đề vừa (H2)"
+            title={t('Heading 2')}
           >
             <Heading2 className="w-3.5 h-3.5" />
           </button>{' '}
@@ -127,7 +130,7 @@ export const TipTapEditor = ({ content, onContentChange }: TiptapEditorProps) =>
                 ? 'bg-neutral-800 text-blue-400'
                 : 'text-neutral-300 hover:bg-neutral-800 hover:text-white'
             }`}
-            title="Tiêu đề nhỏ (H3)"
+            title={t('Heading 3')}
           >
             <Heading3 className="w-3.5 h-3.5" />
           </button>
@@ -139,7 +142,7 @@ export const TipTapEditor = ({ content, onContentChange }: TiptapEditorProps) =>
                 ? 'bg-neutral-800 text-blue-400'
                 : 'text-neutral-300 hover:bg-neutral-800 hover:text-white'
             }`}
-            title="Trích dẫn"
+            title={t('Blockquote')}
           >
             <Quote className="w-3.5 h-3.5" />
           </button>

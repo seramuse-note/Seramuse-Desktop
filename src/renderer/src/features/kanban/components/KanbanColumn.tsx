@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { NoteStatus, Note } from '@/shared/note/types'
 import { createNote, updateNoteStatus } from '@/shared/note/notesSlice'
 import { KanbanCard } from './KanbanCard'
+import { useTranslation } from '@/shared/hooks'
 
 interface KanbanColumnProps {
   status: NoteStatus
@@ -22,6 +23,7 @@ export const KanbanColumn = ({
   headerColor,
   badgeBg
 }: KanbanColumnProps) => {
+  const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const [isOver, setIsOver] = useState(false)
 
@@ -74,7 +76,7 @@ export const KanbanColumn = ({
           type="button"
           onClick={handleCreateNoteInColumn}
           className="p-1 text-neutral-400 hover:text-blue-600 hover:bg-neutral-200/80 rounded transition-colors cursor-pointer"
-          title={`Thêm ghi chú vào "${label}"`}
+          title={t('Add note to column', { column: label })}
         >
           <Plus className="w-4 h-4" />
         </button>
@@ -83,7 +85,7 @@ export const KanbanColumn = ({
       <div className="flex-1 overflow-y-auto space-y-2 pr-0.5">
         {notes.length === 0 ? (
           <div className="p-6 text-center text-xs text-neutral-400 italic border border-dashed border-neutral-200 rounded-lg">
-            Chưa có ghi chú nào
+            {t('No notes yet')}
           </div>
         ) : (
           notes.map((note) => <KanbanCard key={note.id} note={note} />)

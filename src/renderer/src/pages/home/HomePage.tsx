@@ -6,10 +6,11 @@ import { Sidebar } from '@/features/home/components'
 import { KanbanView } from '@/features/kanban/components'
 import { GraphView } from '@/features/graph/components'
 import { NoteEditor } from '@/features/editor/components'
-import { useAutoSave } from '@/shared/hooks'
+import { useAutoSave, useTranslation } from '@/shared/hooks'
 import { WelcomeDashboard } from '@/features/home/components/WelcomeDashboard'
 
 export const HomePage = () => {
+  const { t } = useTranslation()
   useAutoSave()
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
@@ -48,7 +49,7 @@ export const HomePage = () => {
           <div className="flex items-center gap-2.5">
             <button
               onClick={() => setIsSidebarOpen((prev) => !prev)}
-              title={isSidebarOpen ? 'Thu gọn Sidebar (Ctrl+\\)' : 'Mở rộng Sidebar (Ctrl+\\)'}
+              title={isSidebarOpen ? t('Collapse Sidebar (Ctrl+\\)') : t('Expand Sidebar (Ctrl+\\)')}
               className="p-1.5 text-neutral-500 hover:text-neutral-800
              hover:bg-neutral-100 rounded-md transition-colors cursor-pointer"
             >
@@ -56,9 +57,9 @@ export const HomePage = () => {
             </button>
             <div className="flex items-center gap-1.5 text-xs text-neutral-500">
               {activeView === ViewMode.KANBAN ? (
-                <span className="font-medium text-neutral-700">Bảng Kanban</span>
+                <span className="font-medium text-neutral-700">{t('Kanban')}</span>
               ) : activeView === ViewMode.GRAPH ? (
-                <span className="font-medium text-neutral-700">Đồ thị tri thức (Graph)</span>
+                <span className="font-medium text-neutral-700">{t('Graph')}</span>
               ) : activeNote ? (
                 <>
                   {parentFolder && (
@@ -73,12 +74,12 @@ export const HomePage = () => {
                   <div className="flex items-center gap-1 font-medium text-neutral-800">
                     {activeNote.icon && <span>{activeNote.icon}</span>}
                     <span className="truncate max-w-[200px]">
-                      {activeNote.title || 'Untitled Note'}
+                      {activeNote.title || t('Untitled Note')}
                     </span>
                   </div>
                 </>
               ) : (
-                <span>Chưa chọn ghi chú</span>
+                <span>{t('No note selected')}</span>
               )}
             </div>{' '}
           </div>

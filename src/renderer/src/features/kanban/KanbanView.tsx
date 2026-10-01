@@ -1,26 +1,27 @@
+import { useAppSelector } from '@/app/hooks'
+import { NoteStatus } from '@/shared/note/types'
 import { Circle, Clock, CheckCircle2 } from 'lucide-react'
-import { NoteStatus } from '../../shared/note/types'
-import { useAppSelector } from '../../app/hooks'
 import { KanbanColumn } from './components'
+import { useTranslation } from '@/shared/hooks'
 
 const COLUMNS_CONFIG = [
   {
     status: NoteStatus.TODO,
-    label: 'Cần làm',
+    labelKey: 'To Do',
     icon: Circle,
     headerColor: 'text-indigo-600',
     badgeBg: 'bg-indigo-50 border-indigo-200'
   },
   {
     status: NoteStatus.IN_PROGRESS,
-    label: 'Đang làm',
+    labelKey: 'In Progress',
     icon: Clock,
     headerColor: 'text-orange-600',
     badgeBg: 'bg-orange-50 border-orange-200'
   },
   {
     status: NoteStatus.DONE,
-    label: 'Hoàn thành',
+    labelKey: 'Done',
     icon: CheckCircle2,
     headerColor: 'text-green-600',
     badgeBg: 'bg-green-50 border-green-200'
@@ -28,6 +29,7 @@ const COLUMNS_CONFIG = [
 ]
 
 export const KanbanView = () => {
+  const { t } = useTranslation()
   const notes = useAppSelector((state) => state.notes.notes)
   const noteList = Object.values(notes)
 
@@ -40,7 +42,7 @@ export const KanbanView = () => {
           <KanbanColumn
             key={col.status}
             status={col.status}
-            label={col.label}
+            label={t(col.labelKey)}
             icon={col.icon}
             notes={columnNotes}
             headerColor={col.headerColor}

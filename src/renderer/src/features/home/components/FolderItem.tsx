@@ -17,7 +17,7 @@ import { useAppDispatch } from '@/app/hooks'
 import { useState } from 'react'
 import { ConfirmModal } from '@/shared/components/ui/ConfirmModal'
 import { NoteItem } from './NoteItem'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '@/shared/hooks'
 
 interface FolderItemProps {
   folder: Folder
@@ -98,7 +98,7 @@ export const FolderItem = ({ folder, notes, activeNoteId }: FolderItemProps) => 
                 setFolderName(folder.name)
                 setIsEditing(true)
               }}
-              title="Double-click để đổi tên"
+              title={t('Double-click to rename')}
               className="truncate font-medium text-xs text-neutral-600"
             >
               {folder.name}
@@ -109,23 +109,22 @@ export const FolderItem = ({ folder, notes, activeNoteId }: FolderItemProps) => 
 
         <div className="opacity-0 group-hover:opacity-100 flex items-center gap-0.5 transition-opacity">
           <button
-            title="Thêm ghi chú vào thư mục"
+            title={t('Add note to folder')}
             onClick={(e) => {
               e.stopPropagation()
               dispatch(createNote({ folderId: folder.id }))
             }}
-
-            className="p-1 text-neutral-400 hover:text-blue-600 rounded hover:bg-neutral-200"
+            className="p-1 text-neutral-400 hover:text-blue-600 rounded hover:bg-neutral-200 cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
           </button>
           <button
+            title={t('Delete folder')}
             onClick={(e) => {
               e.stopPropagation()
               setIsConfirmFolderOpen(true)
             }}
-
-            className="p-1 text-neutral-400 hover:text-red-600 rounded hover:bg-neutral-200"
+            className="p-1 text-neutral-400 hover:text-red-600 rounded hover:bg-neutral-200 cursor-pointer"
           >
             <Trash2 className="h-3.5 w-3.5" />
           </button>

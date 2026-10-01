@@ -11,12 +11,14 @@ import { TipTapEditor } from './TiptapEditor'
 import { NoteProperties } from './NoteProperties'
 import { CoverBanner } from './CoverBanner'
 import { IconPicker } from './IconPicker'
+import { useTranslation } from '@/shared/hooks'
 
 interface NoteEditorProps {
   activeNote: Note
 }
 
 export const NoteEditor = ({ activeNote }: NoteEditorProps) => {
+  const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -59,7 +61,7 @@ export const NoteEditor = ({ activeNote }: NoteEditorProps) => {
         ref={textareaRef}
         rows={1}
         value={activeNote.title}
-        placeholder="Tiêu đề ghi chú..."
+        placeholder={t('Note title...')}
         onChange={(e) => dispatch(updateNoteTitle({ id: activeNote.id, title: e.target.value }))}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
