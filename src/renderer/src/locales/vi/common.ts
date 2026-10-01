@@ -67,10 +67,17 @@ export const commonVi = {
   'Add note to folder': 'Thêm ghi chú vào thư mục',
   'Double-click to rename': 'Nhấp đúp để đổi tên',
 
-  // Welcome Dashboard
+  // Welcome & Workspace Dashboard
+  Dashboard: 'Tổng quan',
   'Welcome to Seramuse': 'Chào mừng bạn đến với Seramuse',
   'Welcome Description':
     'Không gian kết nối tri thức cá nhân kết hợp giữa tính ngăn nắp của Notion và sức mạnh đồ thị của Obsidian.',
+  'Total Notes': 'Tổng ghi chú',
+  'Recent Notes': 'Ghi chú gần đây',
+  'You have {{count}} notes in progress': 'Bạn có {{count}} ghi chú đang tiến hành',
+  'All tasks are clear for today': 'Hôm nay mọi công việc đều đã thông suốt',
+  'Top Topics': 'Chủ đề quan tâm',
+  'View Kanban': 'Xem Kanban',
   'Rich-Text document editing': 'Soạn thảo tài liệu Rich-Text',
   'Manage workflow and task progress': 'Quản lý tiến độ công việc',
   'Note link and reference network': 'Mạng lưới liên kết ghi chú',

@@ -67,10 +67,17 @@ export const commonEn = {
   'Add note to folder': 'Add note to folder',
   'Double-click to rename': 'Double-click to rename',
 
-  // Welcome Dashboard
+  // Welcome & Workspace Dashboard
+  Dashboard: 'Dashboard',
   'Welcome to Seramuse': 'Welcome to Seramuse',
   'Welcome Description':
     'A personal knowledge management workspace blending Notion’s structure with Obsidian’s graph power.',
+  'Total Notes': 'Total Notes',
+  'Recent Notes': 'Recent Notes',
+  'You have {{count}} notes in progress': 'You have {{count}} notes in progress',
+  'All tasks are clear for today': 'All tasks are clear for today',
+  'Top Topics': 'Top Topics',
+  'View Kanban': 'View Kanban',
   'Rich-Text document editing': 'Rich-Text document editing',
   'Manage workflow and task progress': 'Manage workflow and task progress',
   'Note link and reference network': 'Note link and reference network',

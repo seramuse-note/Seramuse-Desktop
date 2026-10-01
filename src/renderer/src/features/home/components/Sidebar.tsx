@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Columns3, FileText, FolderPlus, Network, Plus, Search, X } from 'lucide-react'
+import { Columns3, FolderPlus, LayoutDashboard, Network, Plus, Search, X } from 'lucide-react'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
 import { ViewMode } from '@/shared/note/types'
 import { createFolder, createNote, selectNote, setActiveView } from '@/shared/note/notesSlice'
@@ -9,7 +9,7 @@ import { useTranslation } from '@/shared/hooks'
 import { LanguageSwitcher } from '@/shared/components/ui/LanguageSwitcher'
 
 const navItems = [
-  { mode: ViewMode.DOCUMENT, label: 'Document', icon: FileText },
+  { mode: ViewMode.DASHBOARD, label: 'Dashboard', icon: LayoutDashboard },
   { mode: ViewMode.KANBAN, label: 'Kanban', icon: Columns3 },
   { mode: ViewMode.GRAPH, label: 'Graph', icon: Network }
 ]
@@ -104,27 +104,33 @@ export const Sidebar = () => {
           <div className="px-2 text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">
             {t('Views')}
           </div>
-          {navItems.map((item) => (
-            <button
-              key={item.mode}
-              onClick={() => {
-                dispatch(setActiveView(item.mode))
-                if (item.mode === ViewMode.DOCUMENT) {
-                  dispatch(selectNote(null))
-                }
-              }}
-              className={`w-full flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors cursor-pointer ${
-                activeView === item.mode
-                  ? 'bg-blue-100 text-blue-900'
-                  : 'text-neutral-700 hover:bg-neutral-200/60'
-              }`}
-            >
-              <item.icon
-                className={`h-3.5 w-3.5 ${activeView === item.mode ? 'text-blue-600' : 'text-neutral-500'}`}
-              />
-              <span>{t(item.label)}</span>
-            </button>
-          ))}
+          {navItems.map((item) => {
+            const isActive =
+              item.label === ViewMode.DASHBOARD
+                ? activeView === ViewMode.DASHBOARD && !activeNoteId
+                : activeView === item.mode
+            return (
+              <button
+                key={item.mode}
+                onClick={() => {
+                  dispatch(setActiveView(item.mode))
+                  if (item.mode === ViewMode.DASHBOARD) {
+                    dispatch(selectNote(null))
+                  }
+                }}
+                className={`w-full flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors cursor-pointer  ${
+                  isActive
+                    ? 'bg-blue-100 text-blue-900 font-semibold'
+                    : 'text-neutral-700 hover:bg-neutral-200/60'
+                }`}
+              >
+                <item.icon
+                  className={`h-3.5 w-3.5 ${isActive ? 'text-blue-600' : 'text-neutral-500'}`}
+                />
+                <span>{t(item.label)}</span>
+              </button>
+            )
+          })}
         </div>
 
         {isEmptyWorkspace && (

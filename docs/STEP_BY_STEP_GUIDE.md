@@ -302,7 +302,7 @@ export function extractHashtagsFromHtml(htmlContent: string): string[] {
   - Cột 1: `Cần làm` (`NoteStatus.TODO`)
   - Cột 2: `Đang làm` (`NoteStatus.IN_PROGRESS`)
   - Cột 3: `Hoàn thành` (`NoteStatus.DONE`)
-- **Tương tác linh hoạt:** Bấm đổi trạng thái trực tiếp hoặc kéo thả để dispatch `updateNoteStatus`. Click vào Card sẽ tự động chuyển về `ViewMode.DOCUMENT` để soạn thảo.
+- **Tương tác linh hoạt:** Bấm đổi trạng thái trực tiếp hoặc kéo thả để dispatch `updateNoteStatus`. Click vào Card sẽ tự động chuyển về `ViewMode.DASHBOARD` để soạn thảo.
 
 > [!TIP]
 > **Ý tưởng Nâng cấp Kiến trúc UX (Contextual Scope Filter & Toggle Sidebar):**

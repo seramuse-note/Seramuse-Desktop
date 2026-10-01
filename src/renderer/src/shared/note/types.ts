@@ -5,7 +5,7 @@ export enum NoteStatus {
 }
 
 export enum ViewMode {
-  DOCUMENT = 'Document',
+  DASHBOARD = 'Dashboard',
   KANBAN = 'Kanban',
   GRAPH = 'Graph'
 }
@@ -36,4 +36,5 @@ export interface NoteState {
   folders: Record<string, Folder>
   activeNoteId: string | null
   activeView: ViewMode
+  searchQuery: string
 }

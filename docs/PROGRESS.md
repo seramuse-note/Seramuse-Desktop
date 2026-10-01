@@ -241,6 +241,30 @@
 
 ---
 
+### 🟢 PHASE 10: WORKSPACE DASHBOARD & ĐIỀU HƯỚNG TƯƠNG TÁC SỐNG
+
+- [x] **Bước 10.1: Nâng Cấp Welcome Screen Thành Dynamic Workspace Dashboard (`WelcomeDashboard.tsx`)**
+  - **Trạng thái:** 🟢 **HOÀN THÀNH**
+  - **File:** `src/renderer/src/features/home/components/WelcomeDashboard.tsx`
+  - **Kết quả:**
+    - Tự động rẽ nhánh: Workspace rỗng (`totalNotes === 0`) hiển thị Onboarding hướng dẫn; Workspace đã có dữ liệu hiển thị Hub làm việc cá nhân.
+    - Thanh **Momentum Bar** tinh giản (Tổng note, Đang làm, Đã xong) với tương tác sống: Click vào thẻ `In Progress` hoặc `Done` để chuyển mượt sang Kanban.
+    - Hợp nhất dòng chảy thành **Recent Notes Stream** (Top 3 note gần nhất) với Badge trạng thái (`NoteStatus`: In Progress 🟡, Done 🟢, To Do ⚪).
+    - Khối **Top Topics** tự động gom 3 tag phổ biến nhất theo triết lý "Tàng hình khi lười, tỏa sáng khi chăm", chuẩn bị cho tính năng lọc tìm kiếm.
+
+---
+
+- [x] **Bước 10.2: Tái Cấu Trúc Điều Hướng Chuẩn Mực Trên Sidebar (`Sidebar.tsx`, `types.ts`, `notesSlice.ts`)**
+  - **Trạng thái:** 🟢 **HOÀN THÀNH**
+  - **File:** `Sidebar.tsx`, `types.ts`, `notesSlice.ts`
+  - **Kết quả:**
+    - Thay thế nút `Document` mơ hồ bằng `Dashboard` (`ViewMode.DASHBOARD`) với icon `LayoutDashboard`.
+    - Phân định rõ ràng: Mục `Views` chứa 3 góc nhìn toàn cảnh (`Dashboard`, `Kanban`, `Graph`); còn tài liệu cụ thể nằm ở cây thư mục `Folders` bên dưới.
+    - Đưa `searchQuery: string` vào Redux store `notesSlice`, sẵn sàng cho tính năng tìm kiếm theo thẻ tag.
+    - Đồng bộ 100% từ điển đa ngôn ngữ (VI 🇻🇳 / EN 🇬🇧) cho toàn bộ Dashboard.
+
+---
+
 ## TÀI LIỆU THAM KHẢO TRONG THƯ MỤC `/docs`
 
 - 📖 [CURRENT_STATE.md](file:///d:/seramuse/Seramuse-Desktop/docs/CURRENT_STATE.md): Lưu trữ toàn bộ tính năng, UI và logic của bản vibe-code để tham khảo ý tưởng.

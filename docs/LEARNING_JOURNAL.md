@@ -1,7 +1,7 @@
 # 📓 NHẬT KÝ HỌC TẬP & ĐÚC KẾT KIẾN THỨC KỸ THUẬT (ENGINEERING LEARNING JOURNAL)
 
-> **Dự án:** Seramuse Desktop  
-> **Mục đích:** Ghi lại toàn bộ hành trình tích lũy kiến thức, tư duy kỹ thuật (engineering mindset), các mẫu thiết kế (design patterns) và những khoảnh khắc "Aha!" từ đầu dự án đến nay.  
+> **Dự án:** Seramuse Desktop
+> **Mục đích:** Ghi lại toàn bộ hành trình tích lũy kiến thức, tư duy kỹ thuật (engineering mindset), các mẫu thiết kế (design patterns) và những khoảnh khắc "Aha!" từ đầu dự án đến nay.
 > **Giá trị:** Đây là bản hồ sơ năng lực (Technical Retrospective / Portfolio) chứng minh khả năng tư duy giải quyết vấn đề thực chiến của kỹ sư phần mềm.
 
 ---
@@ -74,7 +74,15 @@
 - [11.5. Cạm Bẫy Sự Kiện DOM: Tại sao Vạch Chỉ Báo (Drop Indicator) làm Hỏng Sự Kiện Drop nếu Thiếu `pointer-events-none`?](#115-cạm-bẫy-sự-kiện-dom-tại-sao-vạch-chỉ-báo-drop-indicator-làm-hỏng-sự-kiện-drop-nếu-thiếu-pointer-events-none)
 - [11.6. Cạm Bẫy Dữ Liệu Cũ (Legacy Data) & Giải Pháp Migration Tự Động trong `hasLoaded`](#116-cạm-bẫy-dữ-liệu-cũ-legacy-data--giải-pháp-migration-tự-động-trong-hasloaded)
 
-12. [Mẫu ghi nhật ký cho các tính năng tiếp theo (Template)](#12-mẫu-ghi-nhật-ký-cho-các-tính-năng-tiếp-theo-template)
+12. [Kiến Trúc Workspace Dashboard & Tâm Lý Học Nhận Thức Trong Ứng Dụng Ghi Chú (PKM)](#12-kiến-trúc-workspace-dashboard--tâm-lý-học-nhận-thức-trong-ứng-dụng-ghi-chú-pkm)
+
+- [12.1. Phân Tích Tâm Lý Học Nhận Thức & 3 Chế Độ Làm Việc (Capture, Flow, Review)](#121-phân-tích-tâm-lý-học-nhận-thức--3-chế-độ-làm-việc-capture-flow-review)
+- [12.2. Tránh Bẫy "Vanity Metrics" & Nguyên Tắc Tối Giản Tải Nhận Thức (WIP Limit $\le 3$)](#122-tránh-bẫy-vanity-metrics--nguyên-tắc-tối-giản-tải-nhận-thức-wip-limit-le-3)
+- [12.3. Khắc Phục Lỗi Trùng Lặp Nhận Thức (Cognitive Redundancy): Hợp Nhất "Continue Working" và "Recent Notes"](#123-khắc-phục-lỗi-trùng-lặp-nhận-thức-cognitive-redundancy-hợp-nhất-continue-working-và-recent-notes)
+- [12.4. Bản Chất Kiến Trúc Điều Hướng (View Routing): Tại Sao Dashboard Thay Thế "Document" Trên Sidebar?](#124-bản-chất-kiến-trúc-điều-hướng-view-routing-tại-sao-dashboard-thay-thế-document-trên-sidebar)
+- [12.5. Ý Tưởng & Kế Hoạch Tương Lai (Roadmap / Backlog): Hệ Thống Tìm Kiếm Nâng Cao Theo Thẻ Tag (Tag-based Search)](#125-ý-tưởng--kế-hoạch-tương-lai-roadmap--backlog-hệ-thống-tìm-kiếm-nâng-cao-theo-thẻ-tag-tag-based-search)
+
+13. [Mẫu ghi nhật ký cho các tính năng tiếp theo (Template)](#13-mẫu-ghi-nhật-ký-cho-các-tính-năng-tiếp-theo-template)
 
 ---
 
@@ -188,7 +196,7 @@ Khi người dùng bấm vào 1 ghi chú trên Sidebar hoặc Kanban hoặc Grap
 ```ts
 selectNote(state, action: PayloadAction<string>) {
   state.activeNoteId = action.payload
-  state.activeView = ViewMode.DOCUMENT // Tự động chuyển về giao diện soạn thảo
+  state.activeView = ViewMode.DASHBOARD // Tự động chuyển về giao diện soạn thảo
 }
 ```
 
@@ -392,7 +400,7 @@ _(Cộng thêm `centerX, centerY` để dời tâm đồ thị từ góc trên b
   - Khi di chuột vào một nốt, toàn bộ các đường liên kết nối trực tiếp với nốt đó (Ego-Network) sẽ bừng sáng (`stroke="#818cf8"`, dày hơn, opacity cao), còn các dây khác mờ đi. Giúp người dùng nhìn rõ cấu trúc liên kết tri thức cục bộ.
 - **Click mở ghi chú:**
   - Bắt sự kiện `onClick`: dùng `e.stopPropagation()` để tránh nổi bọt sự kiện, sau đó dispatch action `selectNote(node.id)`.
-  - Redux Store lập tức cập nhật `activeNoteId` và chuyển view sang `ViewMode.DOCUMENT`, tạo trải nghiệm liền mạch từ lúc khám phá mạng đồ thị đến lúc bắt tay vào soạn thảo văn bản!
+  - Redux Store lập tức cập nhật `activeNoteId` và chuyển view sang `ViewMode.DASHBOARD`, tạo trải nghiệm liền mạch từ lúc khám phá mạng đồ thị đến lúc bắt tay vào soạn thảo văn bản!
 
 ### 6.7. Kỹ thuật Nền Lưới Điểm (Dot Matrix Grid) & Cái bẫy thẻ `<defs>`
 
@@ -863,7 +871,60 @@ Khi tích hợp `IconPicker` vào giao diện của `NoteEditor.tsx`, ban đầu
 
 ---
 
-## 12. MẪU GHI NHẬT KÝ CHO CÁC TÍNH NĂNG TIẾP THEO (TEMPLATE)
+## 12. KIẾN TRÚC WORKSPACE DASHBOARD & TÂM LÝ HỌC NHẬN THỨC TRONG ỨNG DỤNG GHI CHÚ (PKM)
+
+- **File liên quan:**
+  - `src/renderer/src/features/home/components/WelcomeDashboard.tsx`
+  - `src/renderer/src/features/home/components/Sidebar.tsx`
+  - `src/renderer/src/shared/note/notesSlice.ts`
+  - `src/renderer/src/shared/note/types.ts`
+  - `src/renderer/src/locales/vi/common.ts`, `en/common.ts`
+
+### 12.1. Phân Tích Tâm Lý Học Nhận Thức & 3 Chế Độ Làm Việc (Capture, Flow, Review)
+
+- **Rào cản / Câu hỏi:** Người dùng app note (Obsidian, Notion, Bear, Reflect) thực sự cần nhìn thấy gì khi vừa mở app? Làm thế nào để giao diện Home hữu ích mà không gây áp lực?
+- **Bản chất tâm lý ("Aha!" moment):**
+  - **Capture Mode (Bắt giữ ý tưởng nhanh):** Cần 0 độ trễ, gõ ngay lập tức (phím tắt `Ctrl+N`, ô Search).
+  - **Flow Mode (Tập trung viết sâu):** Cần không gian tĩnh lặng, không có widget nhấp nháy hay thanh chỉ số làm phân tâm.
+  - **Review Mode (Đầu ngày / Cuối ngày):** Đây là chế độ duy nhất mà **Workspace Dashboard** phục vụ. Người dùng cần khôi phục ngữ cảnh (Context Recovery) để trả lời: _"Mình đang làm dở cái gì hôm qua?"_ và _"Tiến độ tổng thể ra sao?"_.
+
+### 12.2. Tránh Bẫy "Vanity Metrics" & Nguyên Tắc Tối Giản Tải Nhận Thức (WIP Limit $\le 3$)
+
+- **Vấn đề:** Ban đầu dễ rơi vào bẫy hiển thị số lượng thư mục, đếm từ, biểu đồ tròn nhiều màu. Đây là những **Vanity Metrics** (chỉ số ảo vô bổ) gây ngợp thị giác (Cognitive Overload).
+- **Giải pháp:**
+  - Giữ lại đúng **3 con số cốt lõi (Momentum Bar)**: `Total Notes` (Quy mô), `In Progress` (Đang chạy), `Done` (Thành tựu).
+  - Áp dụng nguyên tắc **WIP Limit $\le 3$** (Work-In-Progress) từ triết lý Kanban và Định luật Miller (Miller's Law): Chỉ lấy tối đa 3 ghi chú gần đây nhất (`slice(0, 3)`) và 3 tag nổi bật nhất (`slice(0, 3)`). Số 3 là giới hạn nhận thức vàng giúp não bộ không rơi vào trạng thái tê liệt vì đa nhiệm.
+
+### 12.3. Khắc Phục Lỗi Trùng Lặp Nhận Thức (Cognitive Redundancy): Hợp Nhất "Continue Working" và "Recent Notes"
+
+- **Vấn đề phát hiện:** Khi đặt 2 khối tách rời: `Continue Working` (ghi chú có status `IN_PROGRESS`) và `Recent Notes` (ghi chú mới sửa), người dùng bị bối rối vì: _Một ghi chú đang làm dở thì cũng chính là ghi chú vừa sửa gần đây_. Hai khối chữ nhật giống hệt nhau gây cảm giác liệt kê danh sách 2 lần.
+- **Giải pháp ("The Unified Stream"):** Hợp nhất thành **một danh sách duy nhất "Recent Notes"**, trong đó mỗi thẻ được trang bị **Badge Trạng Thái (Status Badge)** trực quan:
+  - 🟡 `In Progress`: Chấm vàng nhấp nháy (`animate-pulse`) kèm viền hổ phách.
+  - 🟢 `Done`: Badge ngọc bích êm dịu (`emerald`).
+  - ⚪ `To Do`: Badge xám tối giản.
+
+### 12.4. Bản Chất Kiến Trúc Điều Hướng (View Routing): Tại Sao Dashboard Thay Thế "Document" Trên Sidebar?
+
+- **Nghịch lý ban đầu:** Mục `Views` trên Sidebar có: `Document`, `Kanban`, `Graph`. Nhưng khi người dùng click vào `Document`, nó lại gọi `selectNote(null)` để mở Dashboard! Trong khi đó, các tài liệu thực tế (Documents) lại nằm trong cây thư mục bên dưới.
+- **Bản chất kiến trúc:** `Document` không phải là một "View độc lập", mà là bản thân từng ghi chú. Ba góc nhìn toàn cảnh (High-level Views) của Seramuse gồm:
+  1. 🏠 **`Dashboard`** (`ViewMode.DASHBOARD`): Bàn làm việc tổng quan & trạm dừng chân.
+  2. 📋 **`Kanban`** (`ViewMode.KANBAN`): Quản lý luồng công việc theo cột.
+  3. 🕸️ **`Graph`** (`ViewMode.GRAPH`): Đồ thị mạng lưới tri thức.
+- Khi người dùng click chọn 1 ghi chú cụ thể, hệ thống chuyển sang chế độ soạn thảo ghi chú đó mà không làm sáng giả tạo một nút "Document" nào trên Sidebar.
+
+### 12.5. Ý Tưởng & Kế Hoạch Tương Lai (Roadmap / Backlog): Hệ Thống Tìm Kiếm Nâng Cao Theo Thẻ Tag (Tag-based Search)
+
+- **Triết lý thiết kế Tag:** _"Tàng hình khi lười — Tỏa sáng khi chăm"_.
+  - Người dùng lười gắn tag: Khối Top Topics tự động ẩn 100%, không tạo cảm giác tội lỗi.
+  - Người dùng chăm gắn tag: Tự động gom Top 3 tag phổ biến nhất để phản chiếu bản đồ mối quan tâm.
+- **Ý tưởng phát triển (Backlog):**
+  - Biến từng tag chip thành nút bấm tương tác (`button`).
+  - Bấm vào tag 👉 Tự động điền chuỗi tìm kiếm vào `searchQuery` trên Redux store.
+  - Nâng cấp bộ lọc tìm kiếm tại Sidebar: Khớp theo cả tiêu đề ghi chú (`note.title`) LẪN mảng thẻ tag (`note.tags.some(...)`), hỗ trợ cú pháp tìm kiếm tiền tố `#` (ví dụ gõ `#ideas` hoặc `#react`).
+
+---
+
+## 13. MẪU GHI NHẬT KÝ CHO CÁC TÍNH NĂNG TIẾP THEO (TEMPLATE)
 
 ```markdown
 ## [Số]. Ngày DD/MM/YYYY: Chức năng [Tên chức năng]

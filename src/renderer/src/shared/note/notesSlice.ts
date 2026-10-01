@@ -5,7 +5,8 @@ const initialState: NoteState = {
   notes: {},
   folders: {},
   activeNoteId: null,
-  activeView: ViewMode.DOCUMENT
+  activeView: ViewMode.DASHBOARD,
+  searchQuery: ''
 }
 
 const notesSlice = createSlice({
@@ -15,7 +16,7 @@ const notesSlice = createSlice({
     selectNote(state, action: PayloadAction<string | null>) {
       state.activeNoteId = action.payload
       if (action.payload) {
-        state.activeView = ViewMode.DOCUMENT
+        state.activeView = ViewMode.DASHBOARD
       }
     },
 
@@ -262,6 +263,9 @@ const notesSlice = createSlice({
       draggingNote.status = targetStatus
       draggingNote.order = newOrder
       draggingNote.updatedAt = new Date().toISOString()
+    },
+    setSearchQuery(state, action: PayloadAction<string>) {
+      state.searchQuery = action.payload
     }
   }
 })
@@ -284,7 +288,8 @@ export const {
   updateNoteIcon,
   updateNoteCover,
   hasLoaded,
-  reOrderNote
+  reOrderNote,
+  setSearchQuery
 } = notesSlice.actions
 
 export default notesSlice.reducer
