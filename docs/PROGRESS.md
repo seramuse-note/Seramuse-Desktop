@@ -17,6 +17,8 @@
 | **Phase 5** | **Cây Thư mục & Bảng Thuộc tính Tri thức**   |    2    | 🟢 **Hoàn thành** | Folder Tree + Status Enum + Notion Properties Table + Tags |
 | **Phase 6** | **Tính năng Nâng cao (Kanban & Graph)**      |    2    | 🟢 **Hoàn thành** | Notion Kanban board + Obsidian SVG Knowledge Graph         |
 | **Phase 7** | **Lưu Trữ Cục Bộ (Local-First Persistence)** |    3    | 🟢 **Hoàn thành** | Electron IPC + Debounced Auto-Save + Store Hydration       |
+| **Phase 8** | **Đa Ngôn Ngữ & Native Desktop Polish**      |    3    | 🟢 **Hoàn thành** | i18n (VI/EN) + ConfirmModal + WelcomeDashboard + App Icon  |
+| **Phase 9** | **Kanban Level 2 (Exact Reordering $O(1)$)** |    4    | 🟢 **Hoàn thành** | Fractional Indexing + Drop Indicator Line + Data Migration |
 
 ---
 
@@ -173,6 +175,69 @@
     - Triển khai cờ hiệu `isHydrated` chặn đứng bẫy "Ghi đè dữ liệu rỗng" (Empty State Overwrite Trap).
     - Sử dụng `useRef(true)` làm cờ hiệu dùng 1 lần (Single-use flag) bỏ qua lần ghi đĩa thừa ngay sau khi vừa nạp dữ liệu, không gây re-render UI.
     - Cài đặt Debounce 1000ms thuần React với `setTimeout` & `clearTimeout` giúp gom cụm thao tác ghi, bảo vệ tuổi thọ ổ SSD và loại bỏ nghẽn đĩa (Disk Thrashing).
+
+---
+
+### 🟢 PHASE 8: ĐA NGÔN NGỮ & NATIVE DESKTOP POLISH (I18N & POLISH)
+
+- [x] **Bước 8.1: Thiết Kế App Icon Độc Quyền & Đóng Gói Resource**
+  - **Trạng thái:** 🟢 **HOÀN THÀNH**
+  - **File:** `resources/icon.png`, `build/icon.png`, `build/icon.ico`
+  - **Kết quả:** Biểu tượng Seramuse phong cách Neon Constellation "S" sắc nét, đa kích thước chuẩn Windows `.ico`.
+
+---
+
+- [x] **Bước 8.2: Hộp Thoại Xác Nhận Xóa Tùy Biến (`ConfirmModal.tsx`) & Màn Hình Chào Mừng (`WelcomeDashboard.tsx`)**
+  - **Trạng thái:** 🟢 **HOÀN THÀNH**
+  - **File:** `src/renderer/src/shared/components/ui/ConfirmModal.tsx`, `src/renderer/src/features/home/components/WelcomeDashboard.tsx`
+  - **Kết quả:**
+    - Thay thế hoàn toàn `window.confirm` xấu xí của trình duyệt bằng Custom ConfirmModal có backdrop-blur, lắng nghe phím `Esc` và click-outside.
+    - Xây dựng WelcomeDashboard với 4 Quick Action Cards và phím tắt tiện ích khi không có note nào đang active.
+
+---
+
+- [x] **Bước 8.3: Hệ Thống Đa Ngôn Ngữ i18n Chuẩn 2-Tier Fallback (`LanguageSwitcher.tsx`, `locales/`)**
+  - **Trạng thái:** 🟢 **HOÀN THÀNH**
+  - **File:** `src/renderer/src/locales/vi/`, `src/renderer/src/locales/en/`, `src/renderer/src/shared/components/ui/LanguageSwitcher.tsx`
+  - **Kết quả:**
+    - Chuẩn hóa 100% tất cả các màn hình, tiêu đề, nút bấm, menu sang Tiếng Việt 🇻🇳 và English 🇬🇧.
+    - Nút chuyển đổi ngôn ngữ cố định tại góc dưới thanh Sidebar, đổi ngôn ngữ tức thì trong micro-giây.
+
+---
+
+### 🟢 PHASE 9: KANBAN CẤP ĐỘ 2 (EXACT REORDERING & FRACTIONAL INDEXING $O(1)$)
+
+- [x] **Bước 9.1: Nâng Cấp Model Dữ Liệu & Khởi Tạo Order (`types.ts`, `notesSlice.ts`)**
+  - **Trạng thái:** 🟢 **HOÀN THÀNH**
+  - **File:** `src/renderer/src/shared/note/types.ts`, `src/renderer/src/shared/note/notesSlice.ts`
+  - **Kết quả:** Thêm trường `order?: number` vào interface `Note` và tự động cấp phát `maxOrder + 1000` khi tạo ghi chú mới.
+
+---
+
+- [x] **Bước 9.2: Reducer `reOrderNote` Với Thuật Toán Fractional Indexing $O(1)$**
+  - **Trạng thái:** 🟢 **HOÀN THÀNH**
+  - **File:** `src/renderer/src/shared/note/notesSlice.ts`
+  - **Kết quả:**
+    - Tính toán vị trí chèn mới bằng trung bình cộng $\frac{\text{prev} + \text{next}}{2}$, độ phức tạp $O(1)$ chỉ cập nhật đúng 1 note.
+    - Xử lý phòng vệ 2 tầng cho dữ liệu cũ (Legacy Data) với `getOrder(idx)` và auto-migration trong `hasLoaded`.
+
+---
+
+- [x] **Bước 9.3: Bắt Tọa Độ Chuột Nửa Trên/Dưới & Vạch Chỉ Báo Trực Quan (`KanbanCard.tsx`)**
+  - **Trạng thái:** 🟢 **HOÀN THÀNH**
+  - **File:** `src/renderer/src/features/kanban/components/KanbanCard.tsx`
+  - **Kết quả:**
+    - So sánh `e.clientY` với đường phân giác `midY` của thẻ để phân biệt `before` vs `after`.
+    - Vẽ vạch xanh phát sáng với thuộc tính `pointer-events-none` chống lỗi cướp sự kiện chuột (Drop cancellation trap).
+
+---
+
+- [x] **Bước 9.4: Sắp Xếp Bất Biến & Xử Lý Thả Vào Khoảng Trống Cột (`KanbanColumn.tsx`)**
+  - **Trạng thái:** 🟢 **HOÀN THÀNH**
+  - **File:** `src/renderer/src/features/kanban/components/KanbanColumn.tsx`
+  - **Kết quả:**
+    - Sử dụng `[...notes].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))` bảo vệ tính bất biến của Redux.
+    - Hỗ trợ thả thẻ vào vùng trống hoặc cột rỗng để đưa thẻ xuống cuối cột.
 
 ---
 
