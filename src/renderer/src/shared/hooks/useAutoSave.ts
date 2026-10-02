@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
 import { useEffect, useRef, useState } from 'react'
-import { hasLoaded } from '../note/notesSlice'
+import { hasLoaded } from '@/shared/note/notesSlice'
 
 export const useAutoSave = () => {
   const dispatch = useAppDispatch()

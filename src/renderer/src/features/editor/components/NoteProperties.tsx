@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { ChevronDown, Circle, Plus, Tag, X } from 'lucide-react'
-import { Note, NoteStatus } from '../../../shared/note/types'
+import { Note, NoteStatus } from '@/shared/note/types'
 import { useAppDispatch } from '@/app/hooks'
-import { addNoteTag, removeNoteTag, updateNoteStatus } from '../../../shared/note/notesSlice'
-import { useClickOutside } from '@/shared/hooks/useClickOutside'
+import { addNoteTag, removeNoteTag, updateNoteStatus } from '@/shared/note/notesSlice'
+import { useClickOutside } from '@/shared/hooks'
 import { useTranslation } from '@/shared/hooks'
 
 const STATUS_CONFIG: Record<

@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react'
 import { ChevronRight, Folder, PanelLeft } from 'lucide-react'
 import { useAppSelector } from '@/app/hooks'
 import { ViewMode } from '@/shared/note/types'
-import { Sidebar } from '@/features/home/components'
-import { KanbanView } from '@/features/kanban/components'
-import { GraphView } from '@/features/graph/components'
-import { NoteEditor } from '@/features/editor/components'
 import { useAutoSave, useTranslation } from '@/shared/hooks'
-import { WelcomeDashboard } from '@/features/home/components/WelcomeDashboard'
+import { Sidebar } from '@/features/sidebar'
+import { KanbanView } from '@/features/kanban'
+import { GraphView } from '@/features/graph'
+import { NoteEditor } from '@/features/editor'
+import { WelcomeDashboard } from '@/features/dashboard'
 
 export const HomePage = () => {
   const { t } = useTranslation()
@@ -75,7 +75,7 @@ export const HomePage = () => {
                   )}
                   <div className="flex items-center gap-1 font-medium text-neutral-800">
                     {activeNote.icon && <span>{activeNote.icon}</span>}
-                    <span className="truncate max-w-[200px]">
+                    <span className="truncate max-w-50">
                       {activeNote.title || t('Untitled Note')}
                     </span>
                   </div>

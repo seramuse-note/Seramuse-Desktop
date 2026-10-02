@@ -79,10 +79,10 @@ export const KanbanCard = ({ note }: KanbanCardProps) => {
       hover:shadow-md hover:border-blue-300 transition-all duration-200 cursor-pointer select-none"
     >
       {dropPosition === 'before' && (
-        <div className="absolute left-0 right-0 h-[2px] bg-blue-500 -top-0.5 pointer-events-none z-10"></div>
+        <div className="absolute left-0 right-0 h-0.5 bg-blue-500 -top-0.5 pointer-events-none z-10"></div>
       )}
       {dropPosition === 'after' && (
-        <div className="absolute left-0 right-0 h-[2px] bg-blue-500 -bottom-0.5 pointer-events-none z-10"></div>
+        <div className="absolute left-0 right-0 h-0.5 bg-blue-500 -bottom-0.5 pointer-events-none z-10"></div>
       )}
 
       <div className="flex items-center gap-2">
