@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react'
 import { ChevronRight, Folder, PanelLeft } from 'lucide-react'
 import { useAppSelector } from '@/app/hooks'
-import { ViewMode } from '@/shared/note/types'
-import { useAutoSave, useTranslation } from '@/shared/hooks'
-import { Sidebar } from '@/features/sidebar'
-import { KanbanView } from '@/features/kanban'
-import { GraphView } from '@/features/graph'
+import { useAutoSave } from '@/app/hooks/useAutoSave'
+import { ViewMode } from '@/app/store/types'
 import { NoteEditor } from '@/features/editor'
+import { KanbanView } from '@/features/kanban/components/KanbanView'
+import { GraphView } from '@/features/graph/components/GraphView'
 import { WelcomeDashboard } from '@/features/dashboard'
+import { Sidebar } from '@/features/layout/components/Sidebar'
+import { useTranslation } from '@/shared/hooks'
 
 export const HomePage = () => {
   const { t } = useTranslation()

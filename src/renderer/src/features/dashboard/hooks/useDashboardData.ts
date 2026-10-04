@@ -1,5 +1,5 @@
 import { useAppSelector } from '@/app/hooks'
-import { NoteStatus } from '@/shared/note/types'
+import { NoteStatus } from '@/app/store/types'
 import { useMemo } from 'react'
 
 export const useDashboardData = () => {

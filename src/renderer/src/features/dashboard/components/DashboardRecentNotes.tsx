@@ -1,6 +1,6 @@
 import { useAppDispatch } from '@/app/hooks'
-import { selectNote } from '@/shared/note/notesSlice'
-import { Note } from '@/shared/note/types'
+import { selectNote } from '@/app/store/notesSlice'
+import { Note } from '@/app/store/types'
 import { useTranslation } from '@/shared/hooks'
 import { ArrowRight, FileText } from 'lucide-react'
 import { StatusBadge } from './StatusBadge'

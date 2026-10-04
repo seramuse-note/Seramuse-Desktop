@@ -1,5 +1,5 @@
 import { useAppSelector } from '@/app/hooks'
-import { NoteStatus } from '@/shared/note/types'
+import { NoteStatus } from '@/app/store/types'
 import { Circle, Clock, CheckCircle2 } from 'lucide-react'
 import { KanbanColumn } from './KanbanColumn'
 import { useTranslation } from '@/shared/hooks'

@@ -1,4 +1,4 @@
-import { NoteStatus } from '@/shared/note/types'
+import { NoteStatus } from '@/app/store/types'
 import { useTranslation } from '@/shared/hooks'
 
 interface StatusBadgeProps {

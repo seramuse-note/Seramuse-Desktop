@@ -1,5 +1,5 @@
 import { createRootRoute, Outlet } from '@tanstack/react-router'
-import { environment } from '@/shared/lib/environment'
+import { environment } from '@/app/config/environment'
 import { Toaster } from '@/shared/components/ui/Toaster'
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 

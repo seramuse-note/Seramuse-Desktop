@@ -1,4 +1,4 @@
-import { COVER_PRESETS } from '@/shared/constants/coverPresets'
+import { COVER_PRESETS } from '@/features/editor/constants/coverPresets'
 import { useClickOutside } from '@/shared/hooks/useClickOutside'
 import { useTranslation } from '@/shared/hooks'
 import { ImageIcon, Palette, X } from 'lucide-react'

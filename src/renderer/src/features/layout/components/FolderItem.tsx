@@ -1,4 +1,4 @@
-import { Folder, Note } from '@/shared/note/types'
+import { Folder, Note } from '@/app/store/types'
 import {
   ChevronDown,
   ChevronRight,
@@ -7,7 +7,7 @@ import {
   Plus,
   Trash2
 } from 'lucide-react'
-import { createNote, deleteFolder, toggleFolder, updateFolderName } from '@/shared/note/notesSlice'
+import { createNote, deleteFolder, toggleFolder, updateFolderName } from '@/app/store/notesSlice'
 import { useAppDispatch } from '@/app/hooks'
 import { useState } from 'react'
 import { ConfirmModal } from '@/shared/components/ui/ConfirmModal'

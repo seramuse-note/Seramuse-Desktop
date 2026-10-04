@@ -1,6 +1,6 @@
 import { useAppDispatch } from '@/app/hooks'
-import { reOrderNote, selectNote } from '@/shared/note/notesSlice'
-import { Note } from '@/shared/note/types'
+import { reOrderNote, selectNote } from '@/app/store/notesSlice'
+import { Note } from '@/app/store/types'
 import { FileText, Calendar } from 'lucide-react'
 import { useTranslation } from '@/shared/hooks'
 import React, { useState } from 'react'

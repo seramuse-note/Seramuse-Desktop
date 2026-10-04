@@ -1,11 +1,11 @@
-import { Note } from '@/shared/note/types'
+import { Note } from '@/app/store/types'
 import { useAppDispatch } from '@/app/hooks'
 import {
   updateNoteContent,
   updateNoteCover,
   updateNoteIcon,
   updateNoteTitle
-} from '@/shared/note/notesSlice'
+} from '@/app/store/notesSlice'
 import { useEffect, useRef } from 'react'
 import { TipTapEditor } from './TiptapEditor'
 import { NoteProperties } from './NoteProperties'
