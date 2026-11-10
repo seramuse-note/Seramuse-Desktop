@@ -1,0 +1,942 @@
+# 📓 NHẬT KÝ HỌC TẬP & ĐÚC KẾT KIẾN THỨC KỸ THUẬT (ENGINEERING LEARNING JOURNAL)
+
+> **Dự án:** Seramuse Desktop
+> **Mục đích:** Ghi lại toàn bộ hành trình tích lũy kiến thức, tư duy kỹ thuật (engineering mindset), các mẫu thiết kế (design patterns) và những khoảnh khắc "Aha!" từ đầu dự án đến nay.
+> **Giá trị:** Đây là bản hồ sơ năng lực (Technical Retrospective / Portfolio) chứng minh khả năng tư duy giải quyết vấn đề thực chiến của kỹ sư phần mềm.
+
+---
+
+## 📑 MỤC LỤC KIẾN THỨC THEO CHỦ ĐỀ & CHỨC NĂNG
+
+1. [Tư duy Mô hình hóa Dữ liệu & Kiểu Dữ Liệu TypeScript (`types.ts`)](#1-tư-duy-mô-hình-hóa-dữ-liệu--kiểu-dữ-liệu-typescript-typests)
+   - [1.1. Enum vs String Literal: Tại sao nên dùng Enum cho trạng thái?](#11-enum-vs-string-literal-tại-sao-nên-dùng-enum-cho-trạng-thái)
+   - [1.2. Chuẩn hóa State (Normalized State): Tại sao chọn `Record<string, T>` thay vì Mảng `T[]`?](#12-chuẩn-hóa-state-normalized-state-tại-sao-chọn-recordstring-t-thay-vì-mảng-t)
+   - [1.3. Kiểu dữ liệu Phòng vệ (Defensive Typing) & Optional Chaining](#13-kiểu-dữ-liệu-phòng-vệ-defensive-typing--optional-chaining)
+2. [Kiến trúc Clean Redux Slice & Quản lý State Chuẩn Mực (`notesSlice.ts`)](#2-kiến-trúc-clean-redux-slice--quản-lý-state-chuẩn-mực-notesslicets)
+   - [2.1. Tìm kiếm và Cập nhật $O(1)$ thay vì $O(N)$](#21-tìm-kiếm-và-cập-nhật-o1-thay-vì-on)
+   - [2.2. Xử lý an toàn con trỏ Active Note (Tránh lỗi mồ côi ID)](#22-xử-lý-an-toàn-con-trỏ-active-note-tránh-lỗi-mồ-côi-id)
+   - [2.3. Single Source of Truth cho Chế độ Xem (View Mode)](#23-single-source-of-truth-cho-chế-độ-xem-view-mode)
+3. [Thiết kế Clean Component & Phân tách Trách nhiệm trong React](#3-thiết-kế-clean-component--phân-tách-trách-nhiệm-trong-react)
+   - [3.1. Container Component (Smart) vs Presentational Component (Dumb)](#31-container-component-smart-vs-presentational-component-dumb)
+   - [3.2. Controlled Component vs Uncontrolled Component](#32-controlled-component-vs-uncontrolled-component)
+   - [3.3. Type-Safe Redux Hooks (`useAppDispatch`, `useAppSelector`)](#33-type-safe-redux-hooks-useappdispatch-useappselector)
+4. [Tích hợp Trình Soạn Thảo Rich-Text Tiptap (`TiptapEditor.tsx`)](#4-tích-hợp-trình-soạn-thảo-rich-text-tiptap-tiptapeditortsx)
+   - [4.1. Kiến trúc Headless v3: Tự do hoàn toàn về UI với Tailwind CSS](#41-kiến-trúc-headless-v3-tự-do-hoàn-toàn-về-ui-với-tailwind-css)
+   - [4.2. Tuyệt chiêu "Key Remounting Pattern" (`key={activeNote.id}`)](#42-tuyệt-chiêu-key-remounting-pattern-keyactivenoteid)
+   - [4.3. Đồng bộ hai chiều (Two-Way Sync) và Autofocus mượt mà](#43-đồng-bộ-hai-chiều-two-way-sync-và-autofocus-mượt-mà)
+5. [Kỹ thuật Kéo Thả (Drag & Drop) Native trong Bảng Kanban (`kanban/`)](#5-kỹ-thuật-kéo-thả-drag--drop-native-trong-bảng-kanban-kanban)
+   - [5.1. HTML5 Drag and Drop API thuần: Zero Dependency, siêu nhẹ](#51-html5-drag-and-drop-api-thuần-zero-dependency-siêu-nhẹ)
+   - [5.2. Chỉ truyền `id` qua `dataTransfer` (Tối ưu bộ nhớ)](#52-chỉ-truyền-id-qua-datatransfer-tối-ưu-bộ-nhớ)
+   - [5.3. Bắt buộc `e.preventDefault()` trong `onDragOver` (Cái bẫy kinh điển)](#53-bắt-buộc-epreventdefault-trong-ondragover-cái-bẫy-kinh-điển)
+   - [5.4. Trạng thái phản hồi thị giác `isOver` cho trải nghiệm UX đỉnh cao](#54-trạng-thái-phản-hồi-thị-giác-isover-cho-trải-nghiệm-ux-đỉnh-cao)
+6. [Lượng giác & Đồ họa SVG trong Đồ Thị Tri Thức (Knowledge Graph)](#6-lượng-giác--đồ-họa-svg-trong-đồ-thị-tri-thức-knowledge-graph)
+   - [6.1. Tại sao X dùng Cos, Y dùng Sin? (Tam giác vuông chiếu 2 trục)](#61-tại-sao-x-dùng-cos-y-dùng-sin-tam-giác-vuông-chiếu-2-trục)
+   - [6.2. Trực giác đời thường vs Quy ước Toán học Quốc tế (Trục X dương)](#62-trực-giác-đời-thường-vs-quy-ước-toán-học-quốc-tế-trục-x-dương)
+   - [6.3. Kỹ thuật bù góc `- Math.PI / 2` để đưa nốt về đỉnh 12 giờ](#63-kỹ-thuật-bù-góc---mathpi--2-để-đưa-nốt-về-đỉnh-12-giờ)
+   - [6.4. Thuật toán tìm và nối dây liên kết (`graphEdges`): Tại sao `j = i + 1`?](#64-thuật-toán-tìm-và-nối-dây-liên-kết-graphedges-tại-sao-j--i--1)
+   - [6.5. Bản chất xếp lớp trong SVG: Tại sao `<line>` phải vẽ trước `<circle>`?](#65-bản-chất-xếp-lớp-trong-svg-tại-sao-line-phải-vẽ-trước-circle)
+   - [6.6. Tương tác Mạng Lưới (Ego-Network Hover & Click Navigation)](#66-tương-tác-mạng-lưới-ego-network-hover--click-navigation)
+   - [6.7. Kỹ thuật Nền Lưới Điểm (Dot Matrix Grid) & Cái bẫy thẻ `<defs>`](#67-kỹ-thuật-nền-lưới-điểm-dot-matrix-grid--cái-bẫy-thẻ-defs)
+   - [6.8. Kỹ thuật Dây Nối Laser Đa Lớp (Dual-Layer Glow Lines) & Bộ Lọc Neon](#68-kỹ-thuật-dây-nối-laser-đa-lớp-dual-layer-glow-lines--bộ-lọc-neon)
+7. [Lưu Trữ Dữ Liệu Ổ Cứng (Local-First Persistence) & Cầu Nối IPC trong Electron](#7-lưu-trữ-dữ-liệu-ổ-cứng-local-first-persistence--cầu-nối-ipc-trong-electron)
+   - [7.1. Tại sao chọn Local-First Ổ Cứng cho Người Dùng Thật?](#71-tại-sao-chọn-local-first-ổ-cứng-cho-người-dùng-thật)
+   - [7.2. Kiến Trúc 2 Thế Giới trong Electron: Main Process vs Renderer Process](#72-kiến-trúc-2-thế-giới-trong-electron-main-process-vs-renderer-process)
+   - [7.3. Cầu Nối IPC (Inter-Process Communication) & Preload Script](#73-cầu-nối-ipc-inter-process-communication--preload-script)
+   - [7.4. Hai Kỹ Thuật Bắt Buộc: Debounced Auto-Save & Store Hydration](#74-hai-kỹ-thuật-bắt-buộc-debounced-auto-save--store-hydration)
+   - [7.5. Phương Pháp "3 Không - 3 Bước" để Giữ Não Kỹ Sư khi Học Cùng AI](#75-phương-pháp-3-không---3-bước-để-giữ-não-kỹ-sư-khi-học-cùng-ai)
+   - [7.6. Phỏng Vấn & Thực Chiến: Lập Trình Phòng Thủ (Defensive Programming) & Ca Biên Khởi Động Lần Đầu (Cold Start)](#76-phỏng-vấn--thực-chiến-lập-trình-phòng-thủ-defensive-programming--ca-biên-khởi-động-lần-đầu-cold-start)
+8. [Phản Tỉnh Kỹ Thuật (Gibbs' Reflective Cycle): Thiết Kế IconPicker & Ranh Giới Smart vs Dumb Component](#8-phản-tỉnh-kỹ-thuật-gibbs-reflective-cycle-thiết-kế-iconpicker--ranh-giới-smart-vs-dumb-component)
+   - [8.1. Mô tả Thực tế (Description)](#81-mô-tả-thực-tế-description)
+   - [8.2. Cảm xúc Ban đầu (Feelings)](#82-cảm-xúc-ban-đầu-feelings)
+   - [8.3. Đánh giá Khách quan (Evaluation)](#83-đánh-giá-khách-quan-evaluation)
+   - [8.4. Phân tích Cốt lõi (Analysis)](#84-phân-tích-cốt-lõi-analysis)
+   - [8.5. Kết luận Rút ra (Conclusion)](#85-kết-luận-rút-ra-conclusion)
+   - [8.6. Kế hoạch Hành động (Action Plan)](#86-kế-hoạch-hành-động-action-plan)
+9. [Phản Tỉnh Kỹ Thuật (Gibbs' Reflective Cycle): Cạm Bẫy State Cục Bộ (`useState`) vs Global Store (Single Source of Truth)](#9-phản-tỉnh-kỹ-thuật-gibbs-reflective-cycle-cạm-bẫy-state-cục-bộ-usestate-vs-global-store-single-source-of-truth)
+   - [9.1. Mô tả Thực tế (Description)](#91-mô-tả-thực-tế-description)
+   - [9.2. Cảm xúc Ban đầu (Feelings)](#92-cảm-xúc-ban-đầu-feelings)
+   - [9.3. Đánh giá Khách quan (Evaluation)](#93-đánh-giá-khách-quan-evaluation)
+   - [9.4. Phân tích Cốt lõi (Analysis)](#94-phân-tích-cốt-lõi-analysis)
+   - [9.5. Kết luận Rút ra (Conclusion)](#95-kết-luận-rút-ra-conclusion)
+   - [9.6. Kế hoạch Hành động (Action Plan)](#96-kế-hoạch-hành-động-action-plan)
+10. [Kiến Trúc Định Tuyến TanStack Router & Phân Tầng Feature-Based](#10-kiến-trúc-định-tuyến-tanstack-router--phân-tầng-feature-based)
+
+- [10.1. Phân biệt Bản chất: Route ID vs. Navigation Path trong TanStack Router](#101-phân-biệt-bản-chất-route-id-vs-navigation-path-trong-tanstack-router)
+- [10.2. Dispatcher / Gatekeeper Pattern tại Route Gốc (`/`)](#102-dispatcher--gatekeeper-pattern-tại-route-gốc-)
+- [10.3. Bộ đệm Phân giải Module (Module Resolution Cache) của TypeScript Server](#103-bộ-đệm-phân-giải-module-module-resolution-cache-của-typescript-server)
+
+11. [Thuật toán Sắp xếp Kéo thả Thứ tự Chính xác (Exact Reordering) & Fractional Indexing ($O(1)$) trong Kanban](#11-thuật-toán-sắp-xếp-kéo-thả-thứ-tự-chính-xác-exact-reordering--fractional-indexing-o1-trong-kanban)
+
+- [11.1. Phân tích Vét cạn 6 Trường Hợp (Exhaustive Edge Cases) & Tối ưu Quy gom 3 Nhóm Cốt lõi](#111-phân-tích-vét-cạn-6-trường-hợp-exhaustive-edge-cases--tối-ưu-quy-gom-3-nhóm-cốt-lõi)
+- [11.2. Cạm bẫy Toán học: Tại sao KHÔNG ĐƯỢC dùng Bước nhảy Cố định (`+ 500` / `- 500`)?](#112-cạm-bẫy-toán-học-tại-sao-không-được-dùng-bước-nhảy-cố-định--500---500)
+- [11.3. Bản chất Tham số Action & Toán tử Nullish Coalescing (`??`) trong Lập trình Phòng thủ (Defensive Programming)](#113-bản-chất-tham-số-action--toán-tử-nullish-coalescing--trong-lập-trình-phòng-thủ-defensive-programming)
+- [11.4. Hai Lỗi Tiềm Ẩn Kinh Điển trong Xử Lý Mảng & Độ Ưu Tiên Toán Tử JS](#114-hai-lỗi-tiềm-ẩn-kinh-điển-trong-xử-lý-mảng--độ-ưu-tiên-toán-tử-js)
+- [11.5. Cạm Bẫy Sự Kiện DOM: Tại sao Vạch Chỉ Báo (Drop Indicator) làm Hỏng Sự Kiện Drop nếu Thiếu `pointer-events-none`?](#115-cạm-bẫy-sự-kiện-dom-tại-sao-vạch-chỉ-báo-drop-indicator-làm-hỏng-sự-kiện-drop-nếu-thiếu-pointer-events-none)
+- [11.6. Cạm Bẫy Dữ Liệu Cũ (Legacy Data) & Giải Pháp Migration Tự Động trong `hasLoaded`](#116-cạm-bẫy-dữ-liệu-cũ-legacy-data--giải-pháp-migration-tự-động-trong-hasloaded)
+
+12. [Kiến Trúc Workspace Dashboard & Tâm Lý Học Nhận Thức Trong Ứng Dụng Ghi Chú (PKM)](#12-kiến-trúc-workspace-dashboard--tâm-lý-học-nhận-thức-trong-ứng-dụng-ghi-chú-pkm)
+
+- [12.1. Phân Tích Tâm Lý Học Nhận Thức & 3 Chế Độ Làm Việc (Capture, Flow, Review)](#121-phân-tích-tâm-lý-học-nhận-thức--3-chế-độ-làm-việc-capture-flow-review)
+- [12.2. Tránh Bẫy "Vanity Metrics" & Nguyên Tắc Tối Giản Tải Nhận Thức (WIP Limit $\le 3$)](#122-tránh-bẫy-vanity-metrics--nguyên-tắc-tối-giản-tải-nhận-thức-wip-limit-le-3)
+- [12.3. Khắc Phục Lỗi Trùng Lặp Nhận Thức (Cognitive Redundancy): Hợp Nhất "Continue Working" và "Recent Notes"](#123-khắc-phục-lỗi-trùng-lặp-nhận-thức-cognitive-redundancy-hợp-nhất-continue-working-và-recent-notes)
+- [12.4. Bản Chất Kiến Trúc Điều Hướng (View Routing): Tại Sao Dashboard Thay Thế "Document" Trên Sidebar?](#124-bản-chất-kiến-trúc-điều-hướng-view-routing-tại-sao-dashboard-thay-thế-document-trên-sidebar)
+- [12.5. Ý Tưởng & Kế Hoạch Tương Lai (Roadmap / Backlog): Hệ Thống Tìm Kiếm Nâng Cao Theo Thẻ Tag (Tag-based Search)](#125-ý-tưởng--kế-hoạch-tương-lai-roadmap--backlog-hệ-thống-tìm-kiếm-nâng-cao-theo-thẻ-tag-tag-based-search)
+
+13. [Mẫu ghi nhật ký cho các tính năng tiếp theo (Template)](#13-mẫu-ghi-nhật-ký-cho-các-tính-năng-tiếp-theo-template)
+
+---
+
+## 1. Tư duy Mô hình hóa Dữ liệu & Kiểu Dữ Liệu TypeScript (`types.ts`)
+
+- **File:** [`src/renderer/src/features/notes/types.ts`](file:///d:/seramuse/Seramuse-Desktop/src/renderer/src/features/notes/types.ts)
+
+### 1.1. Enum vs String Literal: Tại sao nên dùng Enum cho trạng thái?
+
+- **Vấn đề:** Nếu dùng chuỗi tự do (`status: string`), lập trình viên rất dễ gõ sai chính tả (`'in_progress'` vs `'In Progress'`), dẫn đến bug ngầm lúc runtime mà compiler không bắt được.
+- **Giải pháp:** Sử dụng `TypeScript Enum`:
+  ```ts
+  export enum NoteStatus {
+    TODO = 'To Do',
+    IN_PROGRESS = 'In Progress',
+    DONE = 'Done'
+  }
+
+  export enum ViewMode {
+    DOCUMENT = 'Document',
+    KANBAN = 'Kanban',
+    GRAPH = 'Graph'
+  }
+  ```
+- **Lợi ích:**
+  1. Hỗ trợ tự động gợi ý (IntelliSense autocomplete).
+  2. Khi đổi tên trạng thái, chỉ cần sửa ở 1 nơi duy nhất (Single Source of Truth).
+  3. Trình biên dịch báo lỗi ngay lập tức nếu truyền giá trị không hợp lệ.
+
+### 1.2. Chuẩn hóa State (Normalized State): Tại sao chọn `Record<string, T>` thay vì Mảng `T[]`?
+
+- **Thói quen thông thường:** Lưu danh sách ghi chú dạng mảng `notes: Note[]`.
+  - Muốn tìm 1 note theo ID: phải chạy `notes.find(n => n.id === id)` $\rightarrow$ Độ phức tạp thời gian là **$O(N)$**. Khi có hàng ngàn ghi chú, app sẽ bị giật lag!
+  - Muốn cập nhật 1 note: phải dùng `notes.map(...)` để tạo mảng mới $\rightarrow$ Tốn CPU duyệt qua toàn bộ danh sách.
+- **Tư duy Kiến trúc sư (Normalized State):** Lưu dưới dạng Từ điển / Hash Map:
+  ```ts
+  export interface NoteState {
+    notes: Record<string, Note>
+    folders: Record<string, Folder>
+    activeNoteId: string | null
+    activeView: ViewMode
+  }
+  ```
+- **Khoảnh khắc "Aha!":**
+  - Lấy note bất kỳ: `notes[id]` $\rightarrow$ Tốc độ tức thì **$O(1)$**!
+  - Cập nhật note: `notes[id].title = newTitle` $\rightarrow$ Tức thì **$O(1)$**!
+  - Xóa note: `delete notes[id]` $\rightarrow$ Tức thì **$O(1)$**!
+
+### 1.3. Kiểu dữ liệu Phòng vệ (Defensive Typing) & Optional Chaining
+
+- Các trường có thể chưa có giá trị được đánh dấu rõ bằng dấu `?`:
+  ```ts
+  export interface Note {
+    id: string
+    title: string
+    content: string
+    createdAt: string
+    updatedAt: string
+    folderId?: string // 👈 Note có thể không thuộc thư mục nào
+    status: NoteStatus
+    tags: string[]
+  }
+  ```
+- Trong code component, luôn xử lý phòng vệ để app không bao giờ bị crash trắng trang:
+  ```ts
+  const safeTags = note.tags || []
+  const title = note.title.trim() || 'Untitled Note'
+  ```
+
+---
+
+## 2. Kiến trúc Clean Redux Slice & Quản lý State Chuẩn Mực (`notesSlice.ts`)
+
+- **File:** [`src/renderer/src/features/notes/notesSlice.ts`](file:///d:/seramuse/Seramuse-Desktop/src/renderer/src/features/notes/notesSlice.ts)
+
+### 2.1. Tìm kiếm và Cập nhật $O(1)$ thay vì $O(N)$
+
+Nhờ cấu trúc `Record<string, Note>` và thư viện **Immer** tích hợp sẵn trong Redux Toolkit, code cập nhật cực kỳ ngắn gọn, dễ đọc và đạt hiệu năng tối đa:
+
+```ts
+updateNoteTitle(state, action: PayloadAction<{ id: string; title: string }>) {
+  const { id, title } = action.payload
+  if (state.notes[id]) {
+    state.notes[id].title = title
+    state.notes[id].updatedAt = new Date().toISOString()
+  }
+}
+```
+
+### 2.2. Xử lý an toàn con trỏ Active Note (Tránh lỗi mồ côi ID)
+
+- **Kịch bản nguy hiểm:** Người dùng đang mở ghi chú A để soạn thảo, sau đó bấm nút **Xóa ghi chú A**. Nếu chỉ xóa `delete state.notes[id]`, biến `activeNoteId` vẫn trỏ vào ID vừa bị xóa $\rightarrow$ Màn hình soạn thảo sẽ văng lỗi `undefined`!
+- **Cách xử lý Clean trong Redux:**
+  ```ts
+  deleteNote(state, action: PayloadAction<string>) {
+    const id = action.payload
+    delete state.notes[id]
+
+    // Nếu xóa đúng note đang mở -> Chuyển active sang note đầu tiên còn lại hoặc null
+    if (state.activeNoteId === id) {
+      const remainingIds = Object.keys(state.notes)
+      state.activeNoteId = remainingIds.length > 0 ? remainingIds[0] : null
+    }
+  }
+  ```
+
+### 2.3. Single Source of Truth cho Chế độ Xem (View Mode)
+
+Khi người dùng bấm vào 1 ghi chú trên Sidebar hoặc Kanban hoặc Graph, ta muốn ứng dụng tự động mở ghi chú đó trong màn hình tài liệu. Action `selectNote` đảm nhiệm 2 việc cùng lúc:
+
+```ts
+selectNote(state, action: PayloadAction<string>) {
+  state.activeNoteId = action.payload
+  state.activeView = ViewMode.DASHBOARD // Tự động chuyển về giao diện soạn thảo
+}
+```
+
+---
+
+## 3. Thiết kế Clean Component & Phân tách Trách nhiệm trong React
+
+### 3.1. Container Component (Smart) vs Presentational Component (Dumb)
+
+- **Nguyên lý Đơn nhiệm (Single Responsibility Principle):**
+  - `NoteEditor.tsx` (Container): Chịu trách nhiệm kết nối Redux Store, dispatch action `updateNoteContent`, quản lý layout chung.
+  - `TipTapEditor.tsx` (Presentational / Dumb): Chỉ nhận `content` và callback `onContentChange` qua Props. Nó không cần biết Redux là gì!
+- **Lợi ích:** `TipTapEditor` trở nên độc lập, dễ test và có thể tái sử dụng ở bất kỳ nơi nào trong dự án.
+
+### 3.2. Controlled Component vs Uncontrolled Component
+
+- **Controlled (Tiêu đề Note):** Thẻ `<input>` nhận `value={activeNote.title}` và gọi `onChange` đẩy thẳng lên Redux. Mọi ký tự gõ vào đều được Redux kiểm soát.
+- **Hybrid / Uncontrolled (Tiptap Editor):** Trình soạn thảo văn bản phong phú cần DOM nội bộ để xử lý con trỏ (selection/caret), format in đậm/nghiêng... Nếu bắt Tiptap thành Controlled component thuần túy thì mỗi lần gõ phím sẽ gây re-render toàn bộ DOM, làm giật lag và nhảy con trỏ. Ta dùng sự kiện `onUpdate` của Tiptap để đồng bộ HTML ra ngoài.
+
+### 3.3. Type-Safe Redux Hooks (`useAppDispatch`, `useAppSelector`)
+
+Thay vì dùng `useDispatch` và `useSelector` thuần của react-redux (vốn không biết kiểu dữ liệu của RootState):
+
+```ts
+// src/renderer/src/app/hooks.ts
+export const useAppDispatch = () => useDispatch<AppDispatch>()
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
+```
+
+👉 Khi component gọi `useAppSelector((state) => state.notes.notes)`, TypeScript tự động hiểu `notes` là kiểu `Record<string, Note>`, hỗ trợ gõ code siêu nhanh và không lo lỗi runtime.
+
+---
+
+## 4. Tích hợp Trình Soạn Thảo Rich-Text Tiptap (`TiptapEditor.tsx`)
+
+- **File:** [`src/renderer/src/features/notes/components/TiptapEditor.tsx`](file:///d:/seramuse/Seramuse-Desktop/src/renderer/src/features/notes/components/TiptapEditor.tsx)
+
+### 4.1. Kiến trúc Headless v3: Tự do hoàn toàn về UI với Tailwind CSS
+
+- Các editor truyền thống (như TinyMCE, CKEditor) áp đặt sẵn giao diện, toolbar, stylesheet rất khó can thiệp.
+- **Tiptap là Headless Editor:** Nó chỉ cung cấp logic soạn thảo ngầm bên dưới (dựa trên ProseMirror). Giao diện bên ngoài hoàn toàn do lập trình viên thiết kế bằng Tailwind CSS qua `editorProps.attributes`:
+  ```ts
+  editorProps: {
+    attributes: {
+      class: 'w-full min-h-full flex-1 resize-none border-none outline-none text-neutral-700 leading-relaxed placeholder:text-neutral-300 bg-transparent text-base'
+    }
+  }
+  ```
+
+### 4.2. Tuyệt chiêu "Key Remounting Pattern" (`key={activeNote.id}`)
+
+- **Vấn đề cực kỳ đau đầu:** Tiptap khởi tạo instance editor một lần duy nhất lúc mount. Khi người dùng click chọn một ghi chú khác trên Sidebar, Prop `content` thay đổi nhưng editor bên trong **không tự động cập nhật nội dung mới**! (Nó vẫn giữ nội dung ghi chú cũ hoặc làm lệch vị trí con trỏ).
+- **Giải pháp Senior ("Aha!" Moment):** Thêm thuộc tính `key` bằng ID của ghi chú:
+  ```tsx
+  // Trong NoteEditor.tsx
+  <TipTapEditor
+    key={activeNote.id}
+    content={activeNote.content}
+    onContentChange={handleContentChange}
+  />
+  ```
+- **Cơ chế:** Khi `activeNote.id` thay đổi, React hiểu đây là một component hoàn toàn khác $\rightarrow$ React sẽ tự động hủy (unmount) instance cũ và dựng (mount) instance mới toanh với nội dung của ghi chú vừa chọn. Đơn giản mà giải quyết triệt để 100% bug đồng bộ!
+
+### 4.3. Đồng bộ hai chiều (Two-Way Sync) và Autofocus mượt mà
+
+- Lắng nghe sự kiện `onUpdate` để phát ra HTML:
+  ```ts
+  onUpdate: ({ editor }) => {
+    onContentChange(editor.getHTML())
+  }
+  ```
+- Thiết lập `autofocus: 'end'` giúp người dùng vừa mở note là có thể gõ tiếp ngay ở cuối văn bản mà không cần click chuột thêm lần nữa.
+
+---
+
+## 5. Kỹ thuật Kéo Thả (Drag & Drop) Native trong Bảng Kanban (`kanban/`)
+
+- **Files:** [`KanbanCard.tsx`](file:///d:/seramuse/Seramuse-Desktop/src/renderer/src/features/notes/components/kanban/KanbanCard.tsx), [`KanbanColumn.tsx`](file:///d:/seramuse/Seramuse-Desktop/src/renderer/src/features/notes/components/kanban/KanbanColumn.tsx)
+
+### 5.1. HTML5 Drag and Drop API thuần: Zero Dependency, siêu nhẹ
+
+Không cần cài đặt thư viện nặng nề hàng chục KB như `react-dnd` hay `dnd-kit`, ta tận dụng trực tiếp API kéo thả có sẵn của trình duyệt.
+
+### 5.2. Chỉ truyền `id` qua `dataTransfer` (Tối ưu bộ nhớ)
+
+- **Kỹ thuật tại Card (`KanbanCard.tsx`):**
+  1. Đặt thuộc tính `draggable={true}` lên thẻ bao bọc card.
+  2. Bắt sự kiện `onDragStart`:
+     ```ts
+     const handleDragStart = (e: React.DragEvent) => {
+       e.dataTransfer.setData('text/plain', note.id) // 👈 Chỉ truyền duy nhất ID của note
+       e.dataTransfer.effectAllowed = 'move'
+     }
+     ```
+  - _Tại sao không truyền cả Object note?_ $\rightarrow$ Dữ liệu Redux đã nằm tập trung trong Store. Truyền nguyên object qua `dataTransfer` gây tốn bộ nhớ, serialize chậm và dễ sinh lỗi dữ liệu cũ (stale data).
+
+### 5.3. Bắt buộc `e.preventDefault()` trong `onDragOver` (Cái bẫy kinh điển)
+
+- **Cột tiếp nhận (`KanbanColumn.tsx`):**
+  ```ts
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault() // 👈 BẮT BUỘC!
+    e.dataTransfer.dropEffect = 'move'
+    if (!isOver) setIsOver(true)
+  }
+  ```
+- **Cái bẫy:** Mặc định của trình duyệt là **KHÔNG CHO PHÉP DROP**. Nếu quên gọi `e.preventDefault()` trong hàm `onDragOver`, sự kiện `onDrop` sẽ **KHÔNG BAO GIỜ ĐƯỢC KÍCH HOẠT**!
+- Khi thả tay ra (`handleDrop`):
+  ```ts
+  const handleDrop = (e: React.DragEvent): void => {
+    e.preventDefault()
+    setIsOver(false)
+    const noteId = e.dataTransfer.getData('text/plain')
+    if (noteId) {
+      dispatch(updateNoteStatus({ id: noteId, status }))
+    }
+  }
+  ```
+
+### 5.4. Trạng thái phản hồi thị giác `isOver` cho trải nghiệm UX đỉnh cao
+
+Sử dụng state `isOver` kết hợp `onDragOver` và `onDragLeave` để đổi màu viền, nền cột khi card lướt qua:
+
+```tsx
+className={`... ${
+  isOver
+    ? 'border-blue-500 bg-blue-50/80 ring-2 ring-blue-500/20 shadow-md'
+    : 'border-neutral-200/80 bg-neutral-100/70 shadow-none'
+}`}
+```
+
+---
+
+## 6. Lượng giác & Đồ họa SVG trong Đồ Thị Tri Thức (Knowledge Graph)
+
+- **File:** [`GraphView.tsx`](file:///d:/seramuse/Seramuse-Desktop/src/renderer/src/features/notes/components/graph/GraphView.tsx)
+- **Tài liệu chuyên sâu:** [`RADIAL_LAYOUT_AND_GRAPH_MATH.md`](file:///d:/seramuse/Seramuse-Desktop/docs/RADIAL_LAYOUT_AND_GRAPH_MATH.md)
+
+### 6.1. Tại sao X dùng Cos, Y dùng Sin? (Tam giác vuông chiếu 2 trục)
+
+Chiếu điểm nốt $M(x, y)$ lên 2 trục tọa độ tạo tam giác vuông $\Delta OHM$:
+
+- Đoạn nằm ngang $\Delta x$ là **CẠNH KỀ** với góc $\alpha$:
+  $$\cos(\alpha) = \frac{\text{Cạnh kề}}{\text{Cạnh huyền}} = \frac{\Delta x}{R} \implies \mathbf{\Delta x = R \times \cos(\alpha)}$$
+- Đoạn dựng đứng $\Delta y$ là **CẠNH ĐỐI** diện nhìn thẳng vào góc $\alpha$:
+  $$\sin(\alpha) = \frac{\text{Cạnh đối}}{\text{Cạnh huyền}} = \frac{\Delta y}{R} \implies \mathbf{\Delta y = R \times \sin(\alpha)}$$
+
+### 6.2. Trực giác đời thường vs Quy ước Toán học Quốc tế (Trục X dương)
+
+- **Trực giác:** Con người quen với đồng hồ (số 12 ở đỉnh $Y$) và la bàn (hướng Bắc $0^\circ$ ở trên), nên bản năng luôn nghĩ góc xuất phát từ trục $Y$.
+- **Toán học & Máy tính (`Math.cos`, `Math.sin`):** Lấy trục số thực 1D nằm ngang làm gốc, quy ước tia xuất phát $0$ radian nằm ở **trục hoành dương $Ox$ (hướng 3 giờ)**.
+  - `Math.cos(0) = 1` ($x=1$)
+  - `Math.sin(0) = 0` ($y=0$)
+- **Quy tắc vàng:** _"Góc xuất phát từ trục nào, thì trục đó là cạnh kề ($\cos$). Trục còn lại là cạnh đối ($\sin$)"._
+
+### 6.3. Kỹ thuật bù góc `- Math.PI / 2` để đưa nốt về đỉnh 12 giờ
+
+Để thỏa mãn thị giác con người (nốt đầu tiên nằm ở đỉnh 12h như đồng hồ), ta chỉ việc lấy góc trừ đi $90^\circ$ ($\frac{\pi}{2}$ radians):
+
+```ts
+const angle = (index / total) * 2 * Math.PI - Math.PI / 2
+const x = centerX + radius * Math.cos(angle)
+const y = centerY + radius * Math.sin(angle)
+```
+
+_(Cộng thêm `centerX, centerY` để dời tâm đồ thị từ góc trên bên trái $(0, 0)$ ra chính giữa màn hình)._
+
+### 6.4. Thuật toán tìm và nối dây liên kết (`graphEdges`): Tại sao `j = i + 1`?
+
+- **Bài toán:** Cho danh sách các nốt, tìm xem nốt nào có quan hệ với nốt nào để vẽ đường nối:
+  - Hai nốt có chung thư mục (`noteA.folderId === noteB.folderId`), hoặc
+  - Có ít nhất 1 thẻ tag chung (`noteA.tags.some(t => noteB.tags.includes(t))`).
+- **Kỹ thuật tối ưu $O(1)$ với `nodeMap`:**
+  - Dùng `new Map(graphNodes.map(n => [n.id, n]))` để tạo danh bạ tra cứu tọa độ nhanh $O(1)$ thay vì dùng `.find()` quét mảng chậm chạp.
+- **Cú "Aha!" về 2 vòng lặp lồng nhau:**
+  ```ts
+  for (let i = 0; i < graphNodes.length; i++) {
+    for (let j = i + 1; j < graphNodes.length; j++) { // 👈 Bắt đầu từ i + 1
+  ```
+  - **Nếu $j = 0$:**
+    1. Khi $j = i$: Nốt $A$ trùng với nốt $B \rightarrow$ tự thấy mình chung folder với chính mình $\rightarrow$ sinh ra **đường nối tự thân (self-loop)** lãng phí!
+    2. Khi $j < i$: Đồ thị là vô hướng (A nối B cũng là B nối A), chạy từ $j = 0$ sẽ sinh ra **2 đường kẻ đè khít lên nhau** $\rightarrow$ tốn gấp đôi DOM và GPU render.
+  - **Giải pháp:** Cho $j = i + 1$ vừa **triệt tiêu self-loop**, vừa **đảm bảo mỗi cặp nốt chỉ xét đúng 1 lần duy nhất**!
+
+### 6.5. Bản chất xếp lớp trong SVG: Tại sao `<line>` phải vẽ trước `<circle>`?
+
+- **Điểm khác biệt chí mạng giữa HTML/CSS và SVG:**
+  - Trong CSS thông thường, ta có thể dùng `z-index: 10` để ép phần tử nổi lên trên.
+  - Trong SVG: **Không có thuộc tính `z-index`!** Thứ tự khai báo trong code quyết định thứ tự vẽ lên màn hình (Painter's Algorithm): **Cái gì viết trước sẽ nằm ở đáy, cái gì viết sau sẽ đè lên trên.**
+- **Ứng dụng thực tế:**
+  - Ta bắt buộc phải đặt `<g className="edges">` (vẽ các đường `<line>`) **TRƯỚC** `<g className="node">` (vẽ các nốt `<circle>`).
+  - Nhờ đó, các đường dây nối sẽ luồn ra phía sau lưng các nốt tròn, không bao giờ bị gạch ngang qua mặt nốt!
+
+### 6.6. Tương tác Mạng Lưới (Ego-Network Hover & Click Navigation)
+
+- **Nhận diện dây nối khi Hover một nốt:**
+  ```tsx
+  const isHovered =
+    hoveredNoteId && (edge.sourceId === hoveredNoteId || edge.targetId === hoveredNoteId)
+  ```
+  - Khi di chuột vào một nốt, toàn bộ các đường liên kết nối trực tiếp với nốt đó (Ego-Network) sẽ bừng sáng (`stroke="#818cf8"`, dày hơn, opacity cao), còn các dây khác mờ đi. Giúp người dùng nhìn rõ cấu trúc liên kết tri thức cục bộ.
+- **Click mở ghi chú:**
+  - Bắt sự kiện `onClick`: dùng `e.stopPropagation()` để tránh nổi bọt sự kiện, sau đó dispatch action `selectNote(node.id)`.
+  - Redux Store lập tức cập nhật `activeNoteId` và chuyển view sang `ViewMode.DASHBOARD`, tạo trải nghiệm liền mạch từ lúc khám phá mạng đồ thị đến lúc bắt tay vào soạn thảo văn bản!
+
+### 6.7. Kỹ thuật Nền Lưới Điểm (Dot Matrix Grid) & Cái bẫy thẻ `<defs>`
+
+- **Mục tiêu:** Tạo không gian canvas vô cực với các chấm ma trận tinh xảo giống Figma và Linear.
+- **Cú pháp định nghĩa trong `<defs>`:**
+  ```xml
+  <defs>
+    <pattern id="dot-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#404040" opacity="0.4" />
+    </pattern>
+  </defs>
+  ```
+- **Vẽ nền lên màn hình:**
+  ```xml
+  <rect width="100%" height="100%" fill="url(#dot-grid)" />
+  ```
+- **Cái bẫy kinh điển (SVG Pitfall):**
+  - Thẻ `<defs>` (definitions) chỉ là **kho chứa các định nghĩa trừu tượng** (patterns, filters, gradients). Bất kỳ phần tử nào nằm BÊN TRONG `<defs>` đều bị trình duyệt ẩn đi, không bao giờ được vẽ ra màn hình!
+  - 👉 **Quy tắc:** Thẻ `<rect fill="url(#dot-grid)">` **bắt buộc phải nằm NGOÀI `<defs>`** thì lưới điểm mới hiển thị.
+  - **Lưu ý cú pháp:** `id` khai báo và `url(#id)` gọi ra phải khớp nhau từng ký tự, mã màu hex phải luôn có dấu thăng `#` (`fill="#404040"` thay vì `"404040"`).
+
+### 6.8. Kỹ thuật Dây Nối Laser Đa Lớp (Dual-Layer Glow Lines) & Bộ Lọc Neon
+
+- **Bí kíp đồ họa Cyberpunk / Game UI:** Để một đường kẻ trông như một sợi dây laser phát sáng, ta không chỉ đổi màu đơn thuần mà vẽ **2 lớp đè lên nhau (Dual-Layer)**:
+  1. **Lớp hào quang bên ngoài (Outer Glow):** Nét dày (`strokeWidth={6}`), mờ (`strokeOpacity={0.35}`), áp dụng `filter="url(#glow)"` để tạo quầng khói phát quang sương mù.
+  2. **Lớp lõi năng lượng bên trong (Inner Core):** Nét mảnh (`strokeWidth={2}`), màu sáng rực (`strokeOpacity={1}`) tạo độ sắc nét trung tâm.
+- **Đoạn code minh họa:**
+  ```tsx
+  {
+    isHovered && (
+      <line
+        x1={edge.sourceX}
+        y1={edge.sourceY}
+        x2={edge.targetX}
+        y2={edge.targetY}
+        stroke="#818cf8"
+        strokeWidth={6}
+        strokeOpacity={0.35}
+        filter="url(#glow)"
+      />
+    )
+  }
+  ;<line
+    x1={edge.sourceX}
+    y1={edge.sourceY}
+    x2={edge.targetX}
+    y2={edge.targetY}
+    stroke={isHovered ? '#a5b4fc' : '#334155'}
+    strokeWidth={isHovered ? 2 : 1}
+    strokeOpacity={isHovered ? 1 : 0.4}
+  />
+  ```
+- **Bản chất của SVG Filter (`feGaussianBlur` & `feMerge`):**
+  - `<feGaussianBlur stdDeviation="6" result="blur" />`: Làm nhòe đối tượng gốc ra 6px theo mọi hướng.
+  - `<feMerge>`: Ghép lớp ảnh nhòe (`blur`) và ảnh gốc (`SourceGraphic`) đè lên nhau $\rightarrow$ Vật thể vừa có quầng hào quang vừa giữ được độ sắc cạnh ở tâm.
+- **Quầng sáng nốt tròn (Halo Circle):** Đặt thêm một `<circle>` to hơn (`node.radius + 8`) có `opacity={0.3}` và `filter="url(#glow)"` ngay sau nốt tròn khi active hoặc hover.
+
+---
+
+## 7. Lưu Trữ Dữ Liệu Ổ Cứng (Local-First Persistence) & Cầu Nối IPC trong Electron
+
+- **File liên quan:** `src/main/index.ts`, `src/preload/index.ts`, `src/renderer/src/app/store.ts`
+- **Vấn đề cốt lõi:** Làm sao để ứng dụng Desktop lưu trữ dữ liệu vĩnh viễn trên máy người dùng mà không cần thuê server backend, không bị giới hạn dung lượng, và bảo mật tuyệt đối?
+
+### 7.1. Tại sao chọn Local-First Ổ Cứng cho Người Dùng Thật?
+
+Khi xây dựng sản phẩm đưa đến tay người dùng thật, ta phải cân nhắc 4 phương án:
+
+| Phương án                                     | Đặc điểm                           | Phân tích lý do Chọn / Loại                                                                                                                                                                                                                                                                                                                                                                                  |
+| :-------------------------------------------- | :--------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`localStorage`**                            | Lưu trong sandbox trình duyệt      | ❌ **LOẠI BỎ NGAY:** Giới hạn ngặt nghèo ~5MB. Viết vài chục bài là tràn bộ nhớ (`QuotaExceededError`). Xóa cache trình duyệt là mất sạch dữ liệu.                                                                                                                                                                                                                                                           |
+| **Cloud Server** (PostgreSQL/NodeJS)          | Dữ liệu lưu trên đám mây           | ❌ **CHƯA NÊN DÙNG:** Chi phí server hàng tháng tăng theo số lượng người dùng (dễ phá sản khi chưa có doanh thu). Mất mạng Internet là ứng dụng tê liệt.                                                                                                                                                                                                                                                     |
+| **Embedded DB** (SQLite)                      | 1 file database `.sqlite` trên máy | ⚠️ **CÂN NHẮC SAU:** Rất mạnh nhưng việc compile native addon C++ (`better-sqlite3`) trong Electron cực kỳ dễ lỗi khi đóng gói `.exe` đa nền tảng.                                                                                                                                                                                                                                                           |
+| **Local-First File System** (JSON / Markdown) | Lưu trực tiếp vào ổ cứng máy tính  | ✅ **LỰA CHỌN TỐI ƯU SỐ 1 (Chuẩn Obsidian):**<br>1. **Chi phí $0:** Máy người dùng là server, 1 triệu người dùng tiền server vẫn là 0đ.<br>2. **Dung lượng vô hạn:** Thoải mái lưu hàng trăm ngàn ghi chú theo dung lượng ổ cứng.<br>3. **Quyền riêng tư & Tin cậy:** Dữ liệu thuộc về người dùng, có thể tự backup vào Google Drive/USB.<br>4. **Tốc độ 0.1s & Offline 100%:** Không có vòng xoay chờ mạng. |
+
+### 7.2. Kiến Trúc 2 Thế Giới trong Electron: Main Process vs Renderer Process
+
+Electron chia ứng dụng thành 2 tiến trình độc lập được ngăn cách bởi bức tường bảo mật:
+
+```
+┌──────────────────────────────────────┐               ┌──────────────────────────────────────┐
+│       RENDERER PROCESS (React)       │               │        MAIN PROCESS (Node.js)        │
+│                                      │   CẦU NỐI IPC │                                      │
+│ • Chạy giao diện, Redux, sự kiện DOM │ ────────────► │ • Chạy môi trường Node.js đầy đủ     │
+│ • BỊ CẤM chạm trực tiếp vào ổ cứng   │ ◄──────────── │ • Có chìa khóa đọc/ghi ổ cứng (fs)   │
+│   (để hacker không đọc trộm máy tính)│  (Bất đồng bộ)│ • Quản lý cửa sổ sổ hệ điều hành     │
+└──────────────────────────────────────┘               └──────────────────────────────────────┘
+                   ▲                                                      │
+                   │           ┌──────────────────────────────┐           │
+                   └────────── │ PRELOAD SCRIPT (Hải quan)    │ ──────────┘
+                               │ • contextBridge              │
+                               │ • Chỉ mở các API an toàn     │
+                               └──────────────────────────────┘
+```
+
+1. **Renderer Process (`src/renderer`):** Nơi React chạy. Vì chạy trong môi trường Chromium webview, Renderer **không có quyền** gọi `fs.writeFile` trực tiếp.
+2. **Main Process (`src/main`):** Tiến trình cha chạy bằng Node.js thật. Có toàn quyền truy cập hệ điều hành qua `fs` và `app.getPath('userData')`.
+3. **Preload Script (`src/preload`):** Đóng vai trò là "cửa khẩu hải quan" an toàn. Dùng `contextBridge.exposeInMainWorld` để chỉ cho phép React gọi những hàm được cấp phép.
+
+### 7.3. Cầu Nối IPC (Inter-Process Communication) & Preload Script
+
+- **Gửi yêu cầu từ React:**
+  ```ts
+  // Renderer gọi
+  const result = await window.api.saveNotes(notesData)
+  ```
+- **Chuyển tiếp qua Preload:**
+  ```ts
+  // preload/index.ts
+  contextBridge.exposeInMainWorld('api', {
+    saveNotes: (data) => ipcRenderer.invoke('notes:save', data),
+    loadNotes: () => ipcRenderer.invoke('notes:load')
+  })
+  ```
+- **Main đón nhận và ghi ổ cứng:**
+  ```ts
+  // main/index.ts
+  ipcMain.handle('notes:save', async (_, data) => {
+    const filePath = join(app.getPath('userData'), 'seramuse-data.json')
+    await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8')
+    return { success: true }
+  })
+  ```
+- 👉 **Kết luận:** File `seramuse-data.json` chính là **Database** của ứng dụng! Không cần bất kỳ backend server hay database engine riêng biệt nào.
+
+### 7.4. Hai Kỹ Thuật Bắt Buộc: Debounced Auto-Save & Store Hydration
+
+1. **Kỹ thuật Debounced Auto-Save (Chống nghẽn ổ đĩa):**
+   - Người dùng gõ 1 câu văn dài có thể nhấn phím 50 lần trong 5 giây.
+   - Nếu mỗi lần nhấn phím mà ép ổ SSD ghi file 1 lần $\rightarrow$ App sẽ bị giật lag và hao mòn ổ cứng.
+   - **Giải pháp:** Sử dụng hàm Debounce (500ms – 1000ms). Người dùng gõ liên tục thì Redux cứ nhận trên RAM, chỉ khi họ **ngừng gõ 500ms** thì mới gom toàn bộ dữ liệu ghi xuống ổ cứng một lần duy nhất!
+2. **Kỹ thuật Store Hydration (Hồi sinh dữ liệu lúc khởi động):**
+   - Khi app vừa bật lên: Main Process đọc file `seramuse-data.json`.
+   - Gửi dữ liệu về cho React $\rightarrow$ Dispatch action `setInitialState(data)` vào Redux.
+   - Toàn bộ cây thư mục, danh sách ghi chú, trạng thái Kanban và đồ thị Graph hiện lên nguyên vẹn 100%.
+
+### 7.5. Phương Pháp "3 Không - 3 Bước" để Giữ Não Kỹ Sư khi Học Cùng AI
+
+1. **Không tự bơi mù quáng trên Google:** Tránh lạc vào các bài viết lỗi thời (như dùng `remote module` đã bị Electron khai tử vì lỗ hổng bảo mật).
+2. **Không chép code máy móc từ AI:** Luôn nắm bản đồ luồng đi (Ai gửi $\rightarrow$ Qua đâu $\rightarrow$ Ai nhận) trước khi gõ phím.
+3. **Thực hành có kiểm chứng & Cố tình làm hỏng để hiểu (Deliberate Debugging):**
+   - Gõ thử `console.log` ở cả 2 cửa sổ (DevTools của React và Terminal của Electron) để tận mắt thấy gói tin bay qua bức tường IPC.
+   - Mở thư mục Windows Explorer (`%APPDATA%/seramuse`) sờ tận tay file `seramuse-data.json`.
+
+### 7.6. Phỏng Vấn & Thực Chiến: Lập Trình Phòng Thủ (Defensive Programming) & Ca Biên Khởi Động Lần Đầu (Cold Start)
+
+- **Ngày thực hiện:** 01/10/2026
+- **File liên quan:** `src/main/index.ts`, `src/preload/index.ts`
+- **Chủ đề:** IPC Handlers, Exception Handling, Defensive Programming, Cold Start UX & Interview Mindset.
+
+#### 1. Rào cản & Ca biên (Edge Case) gặp phải
+
+Khi người dùng tải app về và mở lần đầu tiên (Cold Start), file lưu trữ dữ liệu `seramuse-data.json` hoàn toàn **chưa tồn tại** trên ổ cứng máy tính.
+
+- Nếu gọi `fs.readFile(filePath, 'utf-8')` trực tiếp mà không lường trước, Node.js sẽ ném ra ngoại lệ hệ điều hành: `ENOENT: no such file or directory`.
+- Kết quả: Gây ra lỗi không được xử lý (_Unhandled Promise Rejection_), luồng IPC bị ngắt quãng, hoặc React nhận lỗi và bị crash trắng màn hình ngay lần đầu mở ứng dụng.
+
+#### 2. Bản chất kỹ thuật & Tư duy Lập trình phòng thủ (Defensive Programming)
+
+- **Kỹ sư thiếu kinh nghiệm:** Thường chỉ chú tâm vào kịch bản lý tưởng (_Happy Path_) — giả định dữ liệu luôn có sẵn để đọc.
+- **Kỹ sư chuyên nghiệp (Senior / Tech Lead Mindset):** Luôn áp dụng **Lập trình phòng thủ (Defensive Programming)** — lường trước mọi kịch bản bất thường (_Unhappy Path_):
+  - Bao bọc thao tác đọc file bằng khối `try...catch`.
+  - Khi bắt được lỗi (chưa có file hoặc file bị hỏng), hệ thống không làm sập ứng dụng mà êm đềm trả về giá trị mặc định (`null` hoặc `{ notes: {}, folders: {} }`).
+  - Nhờ đó, Redux Store ở phía React khởi tạo bình thường với dữ liệu ban đầu sạch sẽ mà không hề giật lag hay hiện thông báo lỗi khó hiểu cho người dùng.
+
+#### 3. Câu trả lời phỏng vấn mẫu đạt điểm tối đa (Interview Pitch - STAR Framework)
+
+> _"Khi xử lý lưu trữ Local-First trên Desktop với Electron, em áp dụng cơ chế **Lập trình phòng thủ (Defensive Programming)** tại Main Process. Với kịch bản người dùng mở app lần đầu (**Cold Start** - file dữ liệu chưa từng tồn tại trên đĩa), thay vì để `fs.readFile` ném ngoại lệ làm crash app, em sử dụng `try/catch` ở IPC handler `notes:load` để bắt lỗi, chủ động trả về trạng thái rỗng an toàn. Nhờ đó, Redux Store khởi tạo mượt mà và bảo đảm trải nghiệm người dùng không hề bị gián đoạn."_
+
+#### 4. Đoạn code chuẩn mực áp dụng:
+
+```ts
+// src/main/index.ts
+ipcMain.handle('notes:load', async () => {
+  try {
+    const filePath = getDataFilePath()
+    const data = await fs.readFile(filePath, 'utf-8')
+    return JSON.parse(data)
+  } catch {
+    // Phòng thủ Cold Start: Chưa có file -> trả về null an toàn, không ném exception
+    return null
+  }
+})
+```
+
+---
+
+## 8. Phản Tỉnh Kỹ Thuật (Gibbs' Reflective Cycle): Thiết Kế IconPicker & Ranh Giới Smart vs Dumb Component
+
+- **Ngày thực hiện:** 22/09/2026
+- **File liên quan:** `src/renderer/src/features/notes/components/IconPicker.tsx`, `NoteEditor.tsx`
+- **Chủ đề:** Tái cấu trúc tư duy thiết kế Component (Component Architecture, Reusability & Single Responsibility Principle)
+
+### 8.1. Mô tả Thực tế (Description)
+
+Khi xây dựng tính năng chọn biểu tượng cho ghi chú (`IconPicker`), tôi đã chủ động đề xuất giải pháp: để `IconPicker` tự kết nối thẳng vào Redux Store (đọc `activeNoteId` và tự dispatch action thêm/xóa icon). Ý định ban đầu của tôi là muốn "đóng gói toàn bộ logic vào component con" để component cha (`NoteEditor`) hoàn toàn rảnh tay và sạch sẽ. Tuy nhiên, sau khi được Mentor / AI code review, giải pháp này bị chỉ ra nhiều điểm trừ nghiêm trọng về mặt kiến trúc.
+
+### 8.2. Cảm xúc Ban đầu (Feelings)
+
+- **Trước khi review:** Rất tự tin vì nghĩ rằng cách làm của mình đã đạt chuẩn "Clean Code" (ai làm việc nấy).
+- **Sau khi review:** Ban đầu có chút hụt hẫng vì giải pháp tâm đắc bị bác bỏ. Nhưng sau khi nghe giải thích về bài toán mở rộng trong tương lai, tôi cảm thấy hoàn toàn bị thuyết phục và có một khoảnh khắc "Aha!" mở rộng tư duy kiến trúc.
+
+### 8.3. Đánh giá Khách quan (Evaluation)
+
+- **Mặt tích cực (Cái được):**
+  - Đã có ý thức về tính đóng gói (Encapsulation) và chủ động đưa ra giải pháp thay vì thụ động chờ AI viết hộ.
+  - Quá trình phản biện giúp phát hiện lỗ hổng kiến trúc ngay từ giai đoạn thiết kế, tiết kiệm hàng giờ debug và refactor sau này.
+- **Mặt hạn chế (Cái chưa tốt):**
+  - **Gắn kết quá chặt (Tight Coupling):** Component bị trói cứng vào `activeNoteId` của Redux.
+  - **Khả năng tái sử dụng bằng 0 (Zero Reusability):** Không thể dùng lại bộ chọn này cho Thư mục (Folder), Nhãn dán (Tag) hay Profile User.
+  - **Vi phạm nguyên lý đơn nhiệm (Single Responsibility Principle):** Biến một UI Widget thuần túy thành một component ôm đồm nghiệp vụ (Business Logic).
+  - **Rủi ro lỗi runtime (Edge Case):** Nếu `activeNoteId` bị `null` (khi xóa hết ghi chú), component sẽ truy cập thuộc tính của `null` và làm sập (crash) trắng ứng dụng.
+
+### 8.4. Phân tích Cốt lõi (Analysis)
+
+- **Nguyên nhân gốc rễ:** Tôi đã nhầm lẫn giữa **"Gom gọn code"** và **"Phân tách trách nhiệm (Separation of Concerns)"**. Tôi chưa phân biệt rạch ròi ranh giới giữa **Smart Component (Container)** và **Dumb Component (Presentational)**.
+- **Bản chất vấn đề:** Các thư viện picker nổi tiếng (như DatePicker, ColorPicker) không bao giờ tự ý lưu dữ liệu vào database hay Redux. Nhiệm vụ duy nhất của một "Picker" là: **Hiển thị giao diện và trả về giá trị người dùng vừa chọn qua sự kiện `onChange`**. Việc dùng giá trị đó làm gì phải do component cha quyết định.
+
+### 8.5. Kết luận Rút ra (Conclusion)
+
+1. **Thiết kế UI Widget phải có tính trừu tượng:** Đã là "Picker" dùng chung thì tuyệt đối không được phụ thuộc vào dữ liệu của một đối tượng cụ thể (như `activeNoteId`).
+2. **Tư duy Dumb Component:** Nhận dữ liệu qua `props` (`currentIcon`) và phát sự kiện ra ngoài qua `callback` (`onSelectIcon`, `onRemoveIcon`). Nhờ đó, sau này tính năng đổi icon cho Thư mục hay Kanban có thể tái sử dụng 100% component này mà không phải viết lại 1 dòng code nào.
+3. **Cảnh giác với Edge Cases:** Phải luôn lường trước các trường hợp state rỗng (`null` / `undefined`) khi gắn kết component với Global State.
+
+### 8.6. Kế hoạch Hành động (Action Plan)
+
+- **Hành động tức thì:** Áp dụng ngay kiến trúc **Dumb Component** cho `IconPicker.tsx`: chỉ nhận `props` và phát `callback`, đưa logic dispatch Redux về đúng vị trí của nó tại component cha (`NoteEditor.tsx`).
+- **Nguyên tắc cho các tính năng tiếp theo:** Trước khi tạo bất kỳ component mới nào, luôn tự vấn bộ 3 câu hỏi:
+  1. _Component này là Smart (xử lý logic) hay Dumb (chỉ hiển thị UI)?_
+  2. _Nó có thể tái sử dụng cho đối tượng khác trong tương lai không?_
+  3. _Nó có đang ôm đồm việc của component cha không?_
+
+---
+
+## 9. Phản Tỉnh Kỹ Thuật (Gibbs' Reflective Cycle): Cạm Bẫy State Cục Bộ (`useState`) vs Global Store (Single Source of Truth)
+
+- **Ngày thực hiện:** 22/09/2026
+- **File liên quan:** [`src/renderer/src/features/notes/components/NoteEditor.tsx`](file:///d:/seramuse/Seramuse-Desktop/src/renderer/src/features/notes/components/NoteEditor.tsx), [`src/renderer/src/features/notes/notesSlice.ts`](file:///d:/seramuse/Seramuse-Desktop/src/renderer/src/features/notes/notesSlice.ts)
+- **Chủ đề:** Quản lý State trong React & Redux Toolkit (Local State vs Global State, Single Source of Truth, React Component Lifecycle & Re-render Trap)
+
+### 9.1. Mô tả Thực tế (Description)
+
+Khi tích hợp `IconPicker` vào giao diện của `NoteEditor.tsx`, ban đầu tôi đã sử dụng hook `useState` cục bộ bên trong `NoteEditor` để quản lý biểu tượng được chọn.
+**Hiện tượng lỗi phát sinh:** Khi chuyển qua lại giữa các ghi chú khác nhau (ví dụ từ Note A sang Note B), biểu tượng không hề được lưu lại đúng theo từng ghi chú. Biểu tượng của ghi chú này bị rò rỉ (state bleeding) sang ghi chú kia, hoặc khi chọn icon mới rồi chuyển sang note khác quay lại thì icon bị mất/reset, không giữ được dữ liệu riêng biệt của từng note.
+
+### 9.2. Cảm xúc Ban đầu (Feelings)
+
+- **Trước review:** Cảm thấy tự tin vì đã tự tay gõ xong code, thấy picker bật lên và chọn được icon thì đinh ninh là mình đã hoàn thành tốt mà không cần đến review hay trợ giúp.
+- **Sau review & kiểm thử chuyển note:** Có một thoáng giật mình và nhận ra sự thiếu sót lớn. Tôi nhận ra mình đã quá vội vã dùng `useState` theo thói quen phản xạ mà quên mất rằng dự án đã có sẵn Redux Store và action `updateNoteIcon` được thiết kế chuyên biệt để quản lý dữ liệu toàn cục.
+
+### 9.3. Đánh giá Khách quan (Evaluation)
+
+- **Mặt tích cực (Cái được):**
+  - **Tư duy độc lập (Autonomous Mindset):** Tự suy nghĩ và tự code theo tư duy cá nhân, không hình thành thói quen thụ động dựa dẫm hay copy-paste mù quáng từ AI.
+  - **Học từ phản biện thực tế (Deliberate Practice):** Nhờ có quy trình review và góc nhìn kiểm thử ca biên (Edge Case: chuyển đổi qua lại giữa các items), tôi lập tức nhìn thấy ngay lỗi sai, hiểu được tại sao lỗi xuất hiện và sửa lại kịp thời.
+- **Mặt hạn chế (Cái chưa tốt):**
+  - **Thiếu chú ý về vòng đời Component (Component Lifecycle):** Chưa tính đến việc khi người dùng đổi ghi chú, component `NoteEditor` không hề bị unmount/mount lại mà chỉ nhận `props` mới. Dẫn đến `useState` cục bộ bị "kẹt" giá trị cũ (Stale State).
+  - **Vi phạm nguyên lý nguồn chân lý duy nhất (Dual State / Split-Brain):** Vô tình duy trì 2 nguồn dữ liệu cho cùng 1 thuộc tính: một ở Redux và một ở `useState`.
+
+### 9.4. Phân tích Cốt lõi (Analysis)
+
+- **Bản chất kỹ thuật (Mental Model):**
+  - **State UI tạm thời (Ephemeral / Transient UI State):** Chỉ nên dùng `useState` cho những trạng thái hiển thị mang tính nhất thời, không gắn liền với bản ghi dữ liệu (ví dụ: menu/popover đang mở hay đóng `isOpen`, tab nào đang focus, con trỏ đang hover). Vòng đời của chúng gắn chặt với component UI.
+  - **State Dữ liệu Thực thể (Persistent Domain / Entity State):** Thuộc tính của một ghi chú (`title`, `content`, `icon`, `status`, `tags`) thuộc về **Mô hình Dữ liệu (Data Model)**. Chúng bắt buộc phải nằm trong Redux Store (hoặc Database), được định danh bởi `id` của bản ghi để đảm bảo tính độc lập và bền vững (Persistence).
+- **Cái bẫy React Lifecycle kinh điển:**
+  - Khi người dùng click chọn một ghi chú khác, Redux cập nhật `activeNoteId`. `NoteEditor` nhận `activeNote` mới nhưng **DOM node của `NoteEditor` vẫn được giữ nguyên (không unmount)**.
+  - Trong React, `useState(initialValue)` **chỉ khởi tạo đúng một lần duy nhất** khi component mount lần đầu. Khi component re-render với props mới, React sẽ hoàn toàn **bỏ qua** đối số `initialValue` đó! Kết quả là state cục bộ tiếp tục giữ giá trị của note trước đó, gây ra lỗi "rò rỉ icon" giữa các note.
+
+### 9.5. Kết luận Rút ra (Conclusion)
+
+1. **Dữ liệu thuộc về Model phải luôn có Single Source of Truth:** Bất kỳ thuộc tính nào của `Note` đều phải được đọc trực tiếp từ `activeNote` trong Redux Store (`activeNote.icon || ''`). Không bao giờ tạo bản sao trung gian bằng `useState`.
+2. **Luồng dữ liệu một chiều rõ ràng (Unidirectional Data Flow):**
+   - **Đọc:** `activeNote.icon` từ Redux Store $\rightarrow$ truyền làm `currentIcon` cho `IconPicker`.
+   - **Ghi:** Khi người dùng chọn/xóa icon $\rightarrow$ `dispatch(updateNoteIcon({ id: activeNote.id, icon }))` cập nhật thẳng vào Redux $O(1)$.
+3. **Phân biệt rạch ròi trước khi code:** Dữ liệu này có cần tồn tại sau khi chuyển note hoặc đóng mở popup không? Nếu CÓ $\rightarrow$ Redux Store. Nếu KHÔNG $\rightarrow$ `useState`.
+
+### 9.6. Kế hoạch Hành động (Action Plan)
+
+- **Hành động đã hoàn thành:** Đã chỉnh sửa lại `NoteEditor.tsx`, loại bỏ hoàn toàn `useState` dư thừa, kết nối trực tiếp `activeNote.icon` và `dispatch(updateNoteIcon)`. Kiểm thử thực tế chuyển qua lại giữa 5 ghi chú khác nhau: icon hiển thị chính xác, lưu độc lập và mượt mà 100%!
+- **Nguyên tắc rèn luyện:**
+  - **Quy tắc 30 giây:** Luôn dừng lại 30 giây để phân tích phạm vi lưu trữ state (Local vs Global) trước khi quyết định viết `useState`.
+  - **Bài test chuyển đổi thực tế (Multi-item Switch Test):** Sau khi hoàn thành bất kỳ trường dữ liệu mới nào, luôn tạo ít nhất 2 items và chuyển đổi qua lại để kiểm tra tính toàn vẹn dữ liệu trước khi coi là hoàn thành.
+
+## 10. Kiến Trúc Định Tuyến TanStack Router & Phân Tầng Feature-Based
+
+- **Ngày thực hiện:** 30/09/2026
+- **File liên quan:** [`src/renderer/src/routes/index.tsx`](file:///d:/seramuse/Seramuse-Desktop/src/renderer/src/routes/index.tsx), [`src/renderer/src/routes/home/index.tsx`](file:///d:/seramuse/Seramuse-Desktop/src/renderer/src/routes/home/index.tsx), [`src/renderer/src/routes/__root.tsx`](file:///d:/seramuse/Seramuse-Desktop/src/renderer/src/routes/__root.tsx), [`routeTree.gen.ts`](file:///d:/seramuse/Seramuse-Desktop/src/renderer/src/routeTree.gen.ts), [`tsconfig.web.json`](file:///d:/seramuse/Seramuse-Desktop/tsconfig.web.json)
+- **Chủ đề:** Type-Safe Routing (TanStack Router), File-based Routing, Gatekeeper / Dispatcher Pattern & Separation of Concerns trong Desktop App.
+
+### 10.1. Phân biệt Bản chất: Route ID vs. Navigation Path trong TanStack Router
+
+- **Rào cản / Bối rối ban đầu:**
+  Khi tạo file route `routes/home/index.tsx`, file sinh tự động `routeTree.gen.ts` xuất hiện đoạn khai báo gây nhầm lẫn:
+  - `id: '/home/'` (kèm dấu gạch chéo cuối).
+  - `path: '/home'` (không kèm dấu gạch chéo).
+  - Thuộc tính `to` của `<Link to="...">` chỉ chấp nhận `'/home'` mà từ chối `'/home/'`.
+- **Bản chất kỹ thuật (Mental Model):**
+  1. **Route ID nội bộ (`createFileRoute('/home/')`):** Gắn liền với cấu trúc cây thư mục file-system. Trong TanStack Router, bất kỳ file `index.tsx` nào nằm trong thư mục con đều được gán route ID kết thúc bằng dấu `/` để phân biệt với route lá thông thường.
+  2. **Navigation Path (`to: '/home'`):** Là chuỗi URL ngữ nghĩa dùng để điều hướng. TanStack Router loại bỏ trailing slash mặc định khi tạo Type cho `FileRoutesByTo`. Nếu gõ nhầm `<Link to="/home/">`, hệ thống type-safe sẽ chặn ngay ở lúc compile để tránh phân mảnh URL.
+  3. **Nguyên tắc vàng:** File `routeTree.gen.ts` là **Auto-generated artifact**. Tuyệt đối không sửa tay vào file này vì Vite Router Plugin sẽ tự động ghi đè mỗi khi lưu code route.
+
+### 10.2. Dispatcher / Gatekeeper Pattern tại Route Gốc (`/`)
+
+- **Bối cảnh kiến trúc:**
+  Dự án áp dụng mô hình phân tầng:
+  - `features/`: Nghiệp vụ độc lập (`editor`, `kanban`, `graph`, `login`).
+  - `pages/`: Hợp thành giao diện màn hình hoàn chỉnh (`pages/home/HomePage.tsx`, `pages/auth/LoginPage.tsx`).
+  - `routes/`: **Tầng mỏng nhất (Thinnest layer)**, chỉ chịu trách nhiệm định tuyến, gom route guards và nhúng Page.
+- **Vấn đề khi xóa route `"/"` để chuyển sang `routes/home/index.tsx`:**
+  - Ứng dụng Desktop khi khởi động luôn trỏ về URL gốc `"/"`. Nếu không có route `"/"`, app sẽ rơi vào Not Found / màn hình trắng.
+  - Các liên kết `<Link to="/">` trên thanh điều hướng bị gãy và báo lỗi TypeScript (`Type '"/"' is not assignable to type ...`).
+- **Khoảnh khắc "Aha!" - Áp dụng Gatekeeper Pattern:**
+  Thay vì biến route `"/"` thành một trang hiển thị cụ thể, ta biến `src/renderer/src/routes/index.tsx` thành một **Trạm điều phối giao thông (Dispatcher / Gatekeeper)** không render UI:
+  ```tsx
+  // src/renderer/src/routes/index.tsx
+  import { createFileRoute, redirect } from '@tanstack/react-router'
+
+  export const Route = createFileRoute('/')({
+    beforeLoad: () => {
+      // 1. Kiểm tra trạng thái đăng nhập đồng bộ từ Local Storage (Chuẩn Local-First Desktop)
+      const isAuthenticated = Boolean(localStorage.getItem('token'))
+
+      // 2. Chuyển hướng tức thì trước khi render DOM
+      if (!isAuthenticated) {
+        throw redirect({ to: '/login' })
+      }
+      throw redirect({ to: '/home' })
+    }
+  })
+  ```
+- **Lợi ích kiến trúc:**
+  - **Zero Latency & Tránh FOUC (Flash of Unauthenticated Content):** Hook `beforeLoad` chặn render và chuyển hướng ngay trong micro-giây, giao diện mượt mà không nhấp nháy.
+  - **Single Responsibility:** `HomePage` và `LoginPage` hoàn toàn trong sạch (pure), không bị ô nhiễm logic "tự kiểm tra auth rồi tự redirect".
+
+### 10.3. Bộ đệm Phân giải Module (Module Resolution Cache) của TypeScript Server
+
+- **Rào cản:**
+  Sau khi di chuyển file sang thư mục mới `src/renderer/src/shared/note/types.ts`, dòng lệnh `tsc` và `eslint` báo kết quả pass 100% nhưng trên IDE vẫn hiện vạch đỏ:
+  `Cannot find module '@/shared/note/types' or its corresponding type declarations`.
+- **Bản chất kỹ thuật:**
+  - TypeScript Language Server chạy ngầm trong IDE duy trì một bảng băm (In-memory Cache Map) các đường dẫn file.
+  - Khi xóa/tạo mới thư mục trong lúc IDE đang mở, cache này chưa tự động cập nhật alias `@/*` tới các file mới tạo.
+- **Cách xử lý chuẩn:**
+  1. Sử dụng lệnh `Ctrl + Shift + P` $\rightarrow$ `TypeScript: Restart TS Server` để làm mới bộ đệm phân giải module.
+  2. Đảm bảo cấu hình JSON chuẩn (loại bỏ trailing comma trong `tsconfig.web.json`).
+
+---
+
+## 11. Thuật toán Sắp xếp Kéo thả Thứ tự Chính xác (Exact Reordering) & Fractional Indexing ($O(1)$) trong Kanban
+
+- **File liên quan:** [`src/renderer/src/shared/note/notesSlice.ts`](file:///d:/seramuse/Seramuse-Desktop/src/renderer/src/shared/note/notesSlice.ts), [`src/renderer/src/shared/note/types.ts`](file:///d:/seramuse/Seramuse-Desktop/src/renderer/src/shared/note/types.ts)
+- **Vấn đề cần giải quyết:**
+  Ở Kanban Level 1, kéo thả chỉ đổi được trạng thái cột (`status`). Khi muốn sắp xếp thứ tự ưu tiên các thẻ trong cùng một cột hoặc kéo chèn chính xác vào giữa 2 thẻ bất kỳ, nếu dùng mảng số nguyên liên tiếp `0, 1, 2, 3...` ($O(N)$), mỗi lần chèn thẻ ta sẽ phải ghi lại chỉ số của toàn bộ các thẻ còn lại, gây nghẽn I/O khi lưu file JSON. Cần một thuật toán đạt độ phức tạp $O(1)$ chỉ cập nhật duy nhất 1 thẻ.
+
+### 11.1. Phân tích Vét cạn 6 Trường Hợp (Exhaustive Edge Cases) & Tối ưu Quy gom 3 Nhóm Cốt lõi
+
+- **Quá trình phân tích thực tế của Kỹ sư:**
+  Khi bắt tay vào tính toán vị trí mới (`newOrder`) khi kéo thẻ, ban đầu ta phân tách ra 6 trường hợp trực quan:
+  1. `TH1 (Trước First):` Chèn lên trước phần tử đầu tiên (`targetIndex === 0 && position === 'before'`).
+  2. `TH2 (Sau Last):` Chèn xuống sau phần tử cuối cùng (`targetIndex === length - 1 && position === 'after'`).
+  3. `TH3 (Sau First):` Chèn vào ngay sau phần tử đầu tiên (`targetIndex === 0 && position === 'after'`).
+  4. `TH4 (Trước Last):` Chèn vào ngay trước phần tử cuối cùng (`targetIndex === length - 1 && position === 'before'`).
+  5. `TH5 (Giữa):` Chèn vào giữa 2 phần tử bất kỳ ở thân danh sách.
+  6. `TH6 (Cột rỗng / Null):` Thả vào khoảng trống đáy cột hoặc cột chưa có thẻ nào (`!targetId`).
+
+- **Bản chất kỹ thuật rút gọn ("Aha!" moment):**
+  Nhìn sâu vào bản chất toán học, **TH3** (sau con đầu) thực chất chính là chèn vào giữa con 0 và con 1; còn **TH4** (trước con cuối) thực chất chính là chèn vào giữa con kế cuối và con cuối. Do đó, 6 trường hợp trên được thu gọn hoàn hảo về **3 nhóm quy nạp**:
+  - **Nhóm 1 (Không có target hoặc cột rỗng):**
+    - Cột rỗng $\rightarrow$ `newOrder = 1000`.
+    - Thả vào đáy cột $\rightarrow$ `newOrder = lastOrder + 1000`.
+  - **Nhóm 2 (Chèn vượt biên hai đầu):**
+    - Chèn trước con đầu tiên $\rightarrow$ `newOrder = firstOrder / 2` (hoặc `firstOrder - 1000`).
+    - Chèn sau con cuối cùng $\rightarrow$ `newOrder = lastOrder + 1000`.
+  - **Nhóm 3 (Mọi vị trí còn lại ở thân danh sách):**
+    - Đều quy về việc chèn giữa 2 phần tử lân cận $\rightarrow \mathbf{\text{newOrder} = \frac{\text{prevOrder} + \text{nextOrder}}{2}}$.
+
+---
+
+### 11.2. Cạm bẫy Toán học: Tại sao KHÔNG ĐƯỢC dùng Bước nhảy Cố định (`+ 500` / `- 500`)?
+
+- **Ngộ nhận ban đầu:**
+  Khi chèn vào giữa 2 thẻ, nhiều lập trình viên nghĩ đơn giản là lấy thẻ phía trước cộng thêm một khoảng cố định, ví dụ `prevOrder + 500` (hoặc `nextOrder - 500`).
+- **Hiện tượng Đảo ngược Thứ tự (Order Inversion Bug):**
+  - Giả sử Thẻ A có `order = 1000`. Thẻ B có `order = 1200` (do trước đó đã từng chèn thẻ khác vào giữa).
+  - Khi người dùng kéo Thẻ C muốn chèn vào **giữa A và B**:
+    - Nếu dùng công thức `prevOrder + 500`:
+      $$\text{newOrder} = 1000 + 500 = \mathbf{1500}$$
+    - **Hậu quả:** `1500` lại **lớn hơn** `1200` của Thẻ B! Thẻ C vốn dĩ muốn chèn **trước B**, nay lại bị văng ra **sau B**, làm đảo lộn hoàn toàn thứ tự hiển thị của Kanban!
+- **Sức mạnh bất biến của Trung bình cộng $\frac{a + b}{2}$:**
+  - $\frac{1000 + 1200}{2} = \mathbf{1100}$.
+  - Về mặt toán học, giá trị trung bình cộng $\frac{a + b}{2}$ **luôn luôn nằm nghiêm ngặt ở giữa $a$ và $b$**, bất kể khoảng cách giữa chúng là 1000, 200, 1 hay 0.005.
+
+---
+
+### 11.3. Bản chất Tham số Action & Toán tử Nullish Coalescing (`??`) trong Lập trình Phòng thủ (Defensive Programming)
+
+- **Tại sao `targetId?` và `position?` lại là Optional (`?`)?**
+  Khi người dùng thả thẻ vào khoảng trống dưới đáy cột hoặc kéo vào một cột rỗng, con trỏ chuột không đè lên thẻ nào cả. Lúc này không tồn tại `targetId`, cũng không có vị trí `before/after`. Reducer nhận `undefined` để biết rằng cần áp dụng logic chèn vào đáy cột (`lastOrder + 1000`).
+- **Tại sao ở nhánh `else` (đã nằm giữa mảng) vẫn bắt buộc dùng `order ?? 0`?**
+  Nhiều người nghĩ rằng khi `targetIndex !== 0` và `targetIndex !== length - 1`, phần tử `columnNotes[targetIndex]` chắc chắn tồn tại nên không cần `?? 0`. Đây là cái bẫy lớn vì:
+  1. **Dữ liệu lịch sử (Legacy Data Migration):** Ứng dụng là Local-First. Các ghi chú cũ tạo từ Version 1 trước đây chưa từng có trường `order` (khi nạp từ file JSON lên thì `order === undefined`). Nếu không có `?? 0`, phép toán `undefined + 1000` sẽ biến thành `NaN` (Not a Number).
+  2. **Hiệu ứng Domino của `NaN`:** Khi một thẻ bị mang giá trị `order: NaN`, hàm `.sort((a, b) => a.order - b.order)` của JavaScript sẽ bị tê liệt hoàn toàn (vì mọi phép so sánh với `NaN` đều trả về `false`). Cột Kanban sẽ bị vỡ vụn thứ tự.
+  3. **Strict Null Checking:** Kiểu dữ liệu `order?: number` trong TypeScript là `number | undefined`. Trình biên dịch bắt buộc lập trình viên phải có giá trị fallback an toàn để đảm bảo Type-Safety.
+
+---
+
+### 11.4. Hai Lỗi Tiềm Ẩn Kinh Điển trong Xử Lý Mảng & Độ Ưu Tiên Toán Tử JS
+
+1. **Lỗi lọc nhầm đối tượng loại trừ:**
+   - _Viết sai:_ `.filter((n) => n.id !== targetId && ...)`
+   - _Phân tích:_ Khi kéo thẻ A thả vào thẻ B, thẻ cần loại khỏi danh sách tính toán là thẻ **đang được kéo (A - `draggedId`)**, chứ không phải thẻ mục tiêu (B - `targetId`). Nếu loại bỏ `targetId`, hàm `findIndex` tìm B sẽ luôn trả về `-1`.
+   - _Viết đúng:_ `.filter((n) => n.id !== draggedId && ...)`.
+2. **Lỗi độ ưu tiên toán tử (`||` vs `===`):**
+   - _Viết sai:_ `(n.status || NoteStatus.TODO === targetStatus)`
+   - _Phân tích:_ Toán tử so sánh `===` có độ ưu tiên cao hơn toán tử logic `||`. JS sẽ hiểu thành `n.status || (NoteStatus.TODO === targetStatus)`. Vì `n.status` là chuỗi có giá trị (truthy), biểu thức luôn đúng và gom note của mọi cột lại tính toán chung!
+   - _Viết đúng (phải bọc ngoặc):_ `(n.status || NoteStatus.TODO) === targetStatus`.
+
+---
+
+### 11.5. Cạm Bẫy Sự Kiện DOM: Tại sao Vạch Chỉ Báo (Drop Indicator) làm Hỏng Sự Kiện Drop nếu Thiếu `pointer-events-none`?
+
+- **Rào cản thực tế ("Code đúng logic nhưng app không chạy"):**
+  Sau khi hoàn tất toàn bộ logic toán học và reducer, khi chạy thử nghiệm trên UI, người dùng kéo thẻ rê vào mép trên/dưới thấy vạch xanh xuất hiện, nhưng khi nhả chuột ra thì **thẻ không đổi vị trí** (thao tác drop bị hủy bỏ ngầm).
+- **Bản chất kỹ thuật ("Aha!" moment):**
+  - Khi chuột rê vào mép của `KanbanCard`, state `dropPosition` được set thành `'before'` $\rightarrow$ Vạch xanh `<div className="absolute left-0 right-0 h-[2px] bg-blue-500 ...">` xuất hiện.
+  - Vì vạch xanh là phần tử HTML con nằm đè lên trên và **chưa có thuộc tính CSS `pointer-events-none`**, con trỏ chuột lập tức bị "chuyển quyền tiếp xúc" sang vạch xanh thay vì chiếc Card.
+  - Trình duyệt hiểu rằng con chuột đã rời khỏi ranh giới của Card mục tiêu, lập tức kích hoạt sự kiện `onDragLeave` trên Card $\rightarrow$ gọi `setDropPosition(null)`!
+  - Khi người dùng nhả ngón tay ra (`onDrop`), tại đúng thời khắc đó `dropPosition` đã bị chuyển thành `null` $\rightarrow$ Câu lệnh điều kiện `if (draggedId && draggedId !== note.id && dropPosition)` bị đánh giá là **`false`**!
+  - **Kết quả:** Thao tác drop bị hủy bỏ ngầm trong tích tắc mà không ném ra bất kỳ lỗi console nào!
+- **Giải pháp dứt điểm:**
+  Thêm `pointer-events-none` vào vạch chỉ báo. Thuộc tính này biến vạch xanh thành "vật thể tàng hình đối với chuột", con chuột bay xuyên qua vạch xanh và tiếp xúc 100% với Card mục tiêu bên dưới:
+  ```tsx
+  {
+    dropPosition === 'before' && (
+      <div className="absolute left-0 right-0 h-[2px] bg-blue-500 -top-0.5 pointer-events-none z-10" />
+    )
+  }
+  ```
+
+---
+
+### 11.6. Cạm Bẫy Dữ Liệu Cũ (Legacy Data) & Giải Pháp Migration Tự Động trong `hasLoaded`
+
+- **Rào cản thực tế ("Bẫy 0 + 0 = 0"):**
+  Khi khắc phục xong lỗi `pointer-events-none`, thao tác drop đã kích hoạt thành công, nhưng các thẻ vẫn **không chịu đổi chỗ cho nhau**!
+- **Bản chất kỹ thuật ("Aha!" moment):**
+  1. Tất cả các ghi chú cũ được tạo trước khi làm tính năng Fractional Indexing đều có `order === undefined`.
+  2. Khi tính toán trong `reOrderNote`, toán tử `order ?? 0` biến tất cả các thẻ cũ thành tọa độ `0`.
+  3. Khi kéo một thẻ chèn vào giữa 2 thẻ cũ:
+     $$\text{newOrder} = \frac{0 + 0}{2} = \mathbf{0}$$
+  4. Thẻ vừa thả vẫn tiếp tục mang giá trị `order = 0`. Khi hàm `.sort((a, b) => a.order - b.order)` chạy lại, vì các thẻ đều bằng 0 nên thứ tự hiển thị không hề xê dịch một milimet nào!
+- **Giải pháp Phòng vệ 2 Tầng (2-Tier Data Resilience):**
+  - **Tầng 1 (Tại chỗ - Local Fallback):** Viết hàm `getOrder(idx)` tự động sinh tọa độ dựa trên vị trí mảng nếu thẻ chưa có `order`:
+    ```typescript
+    const getOrder = (idx: number) => columnNotes[idx].order ?? (idx + 1) * 1000
+    ```
+    Nhờ vậy, thẻ 0 được coi là 1000, thẻ 1 được coi là 2000 $\rightarrow$ Chèn vào giữa ra ngay $\frac{1000 + 2000}{2} = \mathbf{1500}$ chuẩn xác!
+  - **Tầng 2 (Tự động di chuyển dữ liệu - Cold-Start Migration):** Trong reducer `hasLoaded`, ngay khi app khởi động và nạp file JSON từ ổ cứng lên, tự động duyệt qua toàn bộ kho ghi chú và cấp phát `1000, 2000, 3000...` cho bất kỳ note nào chưa có `order`:
+    ```typescript
+    let defaultOrder = 1000
+    Object.values(state.notes).forEach((note) => {
+      if (note.order === undefined) {
+        note.order = defaultOrder
+        defaultOrder += 1000
+      }
+    })
+    ```
+
+---
+
+## 12. KIẾN TRÚC WORKSPACE DASHBOARD & TÂM LÝ HỌC NHẬN THỨC TRONG ỨNG DỤNG GHI CHÚ (PKM)
+
+- **File liên quan:**
+  - `src/renderer/src/features/home/components/WelcomeDashboard.tsx`
+  - `src/renderer/src/features/home/components/Sidebar.tsx`
+  - `src/renderer/src/shared/note/notesSlice.ts`
+  - `src/renderer/src/shared/note/types.ts`
+  - `src/renderer/src/locales/vi/common.ts`, `en/common.ts`
+
+### 12.1. Phân Tích Tâm Lý Học Nhận Thức & 3 Chế Độ Làm Việc (Capture, Flow, Review)
+
+- **Rào cản / Câu hỏi:** Người dùng app note (Obsidian, Notion, Bear, Reflect) thực sự cần nhìn thấy gì khi vừa mở app? Làm thế nào để giao diện Home hữu ích mà không gây áp lực?
+- **Bản chất tâm lý ("Aha!" moment):**
+  - **Capture Mode (Bắt giữ ý tưởng nhanh):** Cần 0 độ trễ, gõ ngay lập tức (phím tắt `Ctrl+N`, ô Search).
+  - **Flow Mode (Tập trung viết sâu):** Cần không gian tĩnh lặng, không có widget nhấp nháy hay thanh chỉ số làm phân tâm.
+  - **Review Mode (Đầu ngày / Cuối ngày):** Đây là chế độ duy nhất mà **Workspace Dashboard** phục vụ. Người dùng cần khôi phục ngữ cảnh (Context Recovery) để trả lời: _"Mình đang làm dở cái gì hôm qua?"_ và _"Tiến độ tổng thể ra sao?"_.
+
+### 12.2. Tránh Bẫy "Vanity Metrics" & Nguyên Tắc Tối Giản Tải Nhận Thức (WIP Limit $\le 3$)
+
+- **Vấn đề:** Ban đầu dễ rơi vào bẫy hiển thị số lượng thư mục, đếm từ, biểu đồ tròn nhiều màu. Đây là những **Vanity Metrics** (chỉ số ảo vô bổ) gây ngợp thị giác (Cognitive Overload).
+- **Giải pháp:**
+  - Giữ lại đúng **3 con số cốt lõi (Momentum Bar)**: `Total Notes` (Quy mô), `In Progress` (Đang chạy), `Done` (Thành tựu).
+  - Áp dụng nguyên tắc **WIP Limit $\le 3$** (Work-In-Progress) từ triết lý Kanban và Định luật Miller (Miller's Law): Chỉ lấy tối đa 3 ghi chú gần đây nhất (`slice(0, 3)`) và 3 tag nổi bật nhất (`slice(0, 3)`). Số 3 là giới hạn nhận thức vàng giúp não bộ không rơi vào trạng thái tê liệt vì đa nhiệm.
+
+### 12.3. Khắc Phục Lỗi Trùng Lặp Nhận Thức (Cognitive Redundancy): Hợp Nhất "Continue Working" và "Recent Notes"
+
+- **Vấn đề phát hiện:** Khi đặt 2 khối tách rời: `Continue Working` (ghi chú có status `IN_PROGRESS`) và `Recent Notes` (ghi chú mới sửa), người dùng bị bối rối vì: _Một ghi chú đang làm dở thì cũng chính là ghi chú vừa sửa gần đây_. Hai khối chữ nhật giống hệt nhau gây cảm giác liệt kê danh sách 2 lần.
+- **Giải pháp ("The Unified Stream"):** Hợp nhất thành **một danh sách duy nhất "Recent Notes"**, trong đó mỗi thẻ được trang bị **Badge Trạng Thái (Status Badge)** trực quan:
+  - 🟡 `In Progress`: Chấm vàng nhấp nháy (`animate-pulse`) kèm viền hổ phách.
+  - 🟢 `Done`: Badge ngọc bích êm dịu (`emerald`).
+  - ⚪ `To Do`: Badge xám tối giản.
+
+### 12.4. Bản Chất Kiến Trúc Điều Hướng (View Routing): Tại Sao Dashboard Thay Thế "Document" Trên Sidebar?
+
+- **Nghịch lý ban đầu:** Mục `Views` trên Sidebar có: `Document`, `Kanban`, `Graph`. Nhưng khi người dùng click vào `Document`, nó lại gọi `selectNote(null)` để mở Dashboard! Trong khi đó, các tài liệu thực tế (Documents) lại nằm trong cây thư mục bên dưới.
+- **Bản chất kiến trúc:** `Document` không phải là một "View độc lập", mà là bản thân từng ghi chú. Ba góc nhìn toàn cảnh (High-level Views) của Seramuse gồm:
+  1. 🏠 **`Dashboard`** (`ViewMode.DASHBOARD`): Bàn làm việc tổng quan & trạm dừng chân.
+  2. 📋 **`Kanban`** (`ViewMode.KANBAN`): Quản lý luồng công việc theo cột.
+  3. 🕸️ **`Graph`** (`ViewMode.GRAPH`): Đồ thị mạng lưới tri thức.
+- Khi người dùng click chọn 1 ghi chú cụ thể, hệ thống chuyển sang chế độ soạn thảo ghi chú đó mà không làm sáng giả tạo một nút "Document" nào trên Sidebar.
+
+### 12.5. Ý Tưởng & Kế Hoạch Tương Lai (Roadmap / Backlog): Hệ Thống Tìm Kiếm Nâng Cao Theo Thẻ Tag (Tag-based Search)
+
+- **Triết lý thiết kế Tag:** _"Tàng hình khi lười — Tỏa sáng khi chăm"_.
+  - Người dùng lười gắn tag: Khối Top Topics tự động ẩn 100%, không tạo cảm giác tội lỗi.
+  - Người dùng chăm gắn tag: Tự động gom Top 3 tag phổ biến nhất để phản chiếu bản đồ mối quan tâm.
+- **Ý tưởng phát triển (Backlog):**
+  - Biến từng tag chip thành nút bấm tương tác (`button`).
+  - Bấm vào tag 👉 Tự động điền chuỗi tìm kiếm vào `searchQuery` trên Redux store.
+  - Nâng cấp bộ lọc tìm kiếm tại Sidebar: Khớp theo cả tiêu đề ghi chú (`note.title`) LẪN mảng thẻ tag (`note.tags.some(...)`), hỗ trợ cú pháp tìm kiếm tiền tố `#` (ví dụ gõ `#ideas` hoặc `#react`).
+
+---
+
+## 13. MẪU GHI NHẬT KÝ CHO CÁC TÍNH NĂNG TIẾP THEO (TEMPLATE)
+
+```markdown
+## [Số]. Ngày DD/MM/YYYY: Chức năng [Tên chức năng]
+
+- **File liên quan:** `src/...`
+- **Vấn đề cần giải quyết:** ...
+
+### [Số].1. [Vấn đề / Thắc mắc gặp phải]
+
+- **Rào cản / Câu hỏi:** ...
+- **Bản chất kỹ thuật ("Aha!" moment):** ...
+- **Đoạn code minh họa:** ...
+```
+
+---
