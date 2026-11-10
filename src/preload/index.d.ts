@@ -1,4 +1,4 @@
-import { NoteState } from '@/app/store/types'
+import { NoteState } from '@/app/types'
 import { ElectronAPI } from '@electron-toolkit/preload'
 
 export interface CustomAPI {

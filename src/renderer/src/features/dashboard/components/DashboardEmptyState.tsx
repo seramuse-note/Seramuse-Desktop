@@ -1,6 +1,6 @@
 import { useAppDispatch } from '@/app/hooks'
 import { createFolder, createNote, setActiveView } from '@/app/store/notesSlice'
-import { ViewMode } from '@/app/store/types'
+import { ViewMode } from '@/app/types'
 import { useTranslation } from '@/shared/hooks'
 import { Columns3, FileText, FolderPlus, Network, Sparkles } from 'lucide-react'
 

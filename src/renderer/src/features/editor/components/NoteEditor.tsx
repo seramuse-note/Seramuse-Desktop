@@ -1,4 +1,4 @@
-import { Note } from '@/app/store/types'
+import { Note } from '@/app/types'
 import { useAppDispatch } from '@/app/hooks'
 import {
   updateNoteContent,
@@ -7,11 +7,11 @@ import {
   updateNoteTitle
 } from '@/app/store/notesSlice'
 import { useEffect, useRef } from 'react'
-import { TipTapEditor } from './TiptapEditor'
-import { NoteProperties } from './NoteProperties'
-import { CoverBanner } from './CoverBanner'
 import { IconPicker } from './IconPicker'
-import { useTranslation } from '@/shared/hooks'
+import { CoverBanner } from './CoverBanner'
+import { NoteProperties } from './NoteProperties'
+import { TiptapEditor } from './TiptapEditor'
+import { useTranslation } from 'react-i18next'
 
 interface NoteEditorProps {
   activeNote: Note
@@ -71,7 +71,7 @@ export const NoteEditor = ({ activeNote }: NoteEditorProps) => {
         className="w-full text-3xl font-bold tracking-tight border-none outline-none placeholder:text-neutral-300 bg-transparent resize-none overflow-hidden leading-tight"
       />
       <NoteProperties note={activeNote} />
-      <TipTapEditor
+      <TiptapEditor
         key={activeNote.id}
         content={activeNote.content}
         onContentChange={handleContentChange}

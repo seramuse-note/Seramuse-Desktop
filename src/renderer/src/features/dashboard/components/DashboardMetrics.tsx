@@ -1,6 +1,6 @@
 import { useAppDispatch } from '@/app/hooks'
 import { setActiveView } from '@/app/store/notesSlice'
-import { ViewMode } from '@/app/store/types'
+import { ViewMode } from '@/app/types'
 import { useTranslation } from '@/shared/hooks'
 import { CheckCircle2, Clock, FileText } from 'lucide-react'
 

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Columns3, FolderPlus, LayoutDashboard, Network, Plus, Search, X } from 'lucide-react'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
-import { ViewMode } from '@/app/store/types'
+import { ViewMode } from '@/app/types'
 import { createFolder, createNote, selectNote, setActiveView } from '@/app/store/notesSlice'
 import { NoteItem } from './NoteItem'
 import { FolderItem } from './FolderItem'

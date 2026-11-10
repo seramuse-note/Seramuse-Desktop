@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ChevronDown, Circle, Plus, Tag, X } from 'lucide-react'
-import { Note, NoteStatus } from '@/app/store/types'
+import { Note, NoteStatus } from '@/app/types'
 import { useAppDispatch } from '@/app/hooks'
 import { addNoteTag, removeNoteTag, updateNoteStatus } from '@/app/store/notesSlice'
 import { useClickOutside } from '@/shared/hooks'

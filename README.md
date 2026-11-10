@@ -4,6 +4,30 @@
 
 ---
 
+## 📸 Giao Diện & Tính Năng Nổi Bật (Preview & Features)
+
+### 1. Dashboard Tổng Quan & Thống Kê (Overview Dashboard)
+> Theo dõi trực quan tiến độ ghi chú (`To Do`, `In Progress`, `Done`), truy cập nhanh các bài viết mới chỉnh sửa và phân loại chủ đề (Top Topics).
+
+![Dashboard Overview](./docs/screenshots/dashboard-overview.png)
+
+### 2. Trình Soạn Thảo Rich-Text Chuẩn Notion (Note Editor & Properties)
+> Tích hợp Tiptap v3 headless editor, hỗ trợ ảnh bìa (Cover Image), hệ thống Tag phân loại, trạng thái làm việc và định dạng tài liệu mượt mà.
+
+![Note Editor](./docs/screenshots/note-editor.png)
+
+### 3. Mạng Lưới Đồ Thị Tri Thức (Obsidian-Style Knowledge Graph)
+> Trực quan hóa mối liên kết hai chiều giữa các ghi chú dưới dạng mạng lưới tương tác (Interactive Graph), kích thích khả năng liên tưởng và tư duy đa chiều.
+
+![Knowledge Graph](./docs/screenshots/knowledge-graph.png)
+
+### 4. Màn Hình Chào Mừng & Lối Tắt Nhanh (Welcome & Quick Actions)
+> Màn hình khởi động tối giản với các phím tắt tiện lợi (`Ctrl + \`, `Esc`) và các hành động nhanh giúp vào guồng làm việc tức thì.
+
+![Welcome Screen](./docs/screenshots/welcome-screen.png)
+
+---
+
 ## 🚀 Công Nghệ Cốt Lõi (Tech Stack)
 
 - **Platform:** Electron + Vite (TypeScript)

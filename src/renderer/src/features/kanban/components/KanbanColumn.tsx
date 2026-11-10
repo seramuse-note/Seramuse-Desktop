@@ -1,7 +1,7 @@
 import { useAppDispatch } from '@/app/hooks'
 import { Circle, Plus } from 'lucide-react'
 import React, { useState } from 'react'
-import { NoteStatus, Note } from '@/app/store/types'
+import type { Note, NoteStatus } from '@/app/types'
 import { createNote, reOrderNote } from '@/app/store/notesSlice'
 import { KanbanCard } from './KanbanCard'
 import { useTranslation } from '@/shared/hooks'

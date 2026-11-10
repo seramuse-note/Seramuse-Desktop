@@ -1,4 +1,4 @@
-import { Folder, Note } from '@/app/store/types'
+import { Folder, Note } from '@/app/types'
 import {
   ChevronDown,
   ChevronRight,

@@ -1,6 +1,6 @@
 import { FileText, Trash2 } from 'lucide-react'
 import { useAppDispatch } from '@/app/hooks'
-import { Note } from '@/app/store/types'
+import { Note } from '@/app/types'
 import { deleteNote, selectNote } from '@/app/store/notesSlice'
 import { ConfirmModal } from '@/shared/components/ui/ConfirmModal'
 import { useState } from 'react'

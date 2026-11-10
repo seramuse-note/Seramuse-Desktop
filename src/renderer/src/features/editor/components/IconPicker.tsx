@@ -21,6 +21,7 @@ export const IconPicker = ({ currentIcon, onRemoveIcon, onSelectIcon }: IconPick
     <div ref={popoverRef} className="relative inline-block">
       {currentIcon ? (
         <button
+          type="button"
           onClick={() => setIsOpen(!isOpen)}
           title={t('Choose icon')}
           className="text-2xl bg-white/90 shadow-xs border border-neutral-200/50 hover:opacity-80 transition-opacity cursor-pointer p-1 rounded-lg hover:bg-neutral-100"
@@ -29,6 +30,7 @@ export const IconPicker = ({ currentIcon, onRemoveIcon, onSelectIcon }: IconPick
         </button>
       ) : (
         <button
+          type="button"
           onClick={() => setIsOpen(!isOpen)}
           className="flex items-center gap-1.5 text-xs text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 px-2 py-1 rounded-md transition-colors cursor-pointer"
         >
@@ -42,6 +44,7 @@ export const IconPicker = ({ currentIcon, onRemoveIcon, onSelectIcon }: IconPick
           <div className="flex items-center justify-between pb-2 mb-2 border-b border-neutral-100 text-xs text-neutral-500 font-medium">
             <span>{t('Choose icon')}</span>
             <button
+              type="button"
               onClick={() => {
                 onRemoveIcon()
                 setIsOpen(false)
@@ -55,6 +58,7 @@ export const IconPicker = ({ currentIcon, onRemoveIcon, onSelectIcon }: IconPick
           <div className="grid grid-cols-6 gap-1.5">
             {COMMON_EMOJIS.map((emoji) => (
               <button
+                type="button"
                 key={emoji}
                 onClick={() => {
                   onSelectIcon(emoji)

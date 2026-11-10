@@ -54,11 +54,7 @@ export const CoverBanner = ({ currentCover, onSelectCover, onRemoveCover }: Cove
       {isOpen && (
         <div
           ref={popoverRef}
-          className="absolute z-30 mt-2 p-3 bg-white rounded-xl shadow-xl border border-neutral-200 w-72 flex flex-col gap-2"
-          style={{
-            top: currentCover ? '48px' : '32px',
-            right: currentCover ? '12px' : 'auto'
-          }}
+          className={`absolute z-30 mt-2 p-3 bg-white rounded-xl shadow-xl border border-neutral-200 w-72 flex flex-col gap-2  ${currentCover ? 'top-12' : 'top-8'}`}
         >
           <div className="text-xs font-semibold text-neutral-600 px-1">{t('Choose gradient')}</div>
           <div className="grid grid-cols-2 gap-2">
@@ -70,11 +66,13 @@ export const CoverBanner = ({ currentCover, onSelectCover, onRemoveCover }: Cove
                   onSelectCover(preset.gradient)
                   setIsOpen(false)
                 }}
-                className={`h-12 rounded-lg border border-neutral-200/60 hover:scale-[1.02] hover:shadow-md transition-all relative overflow-hidden group/btn ${preset.gradient} cursor-pointer`}
+                className={`h-12 rounded-lg border border-neutral-200/60 hover:scale-[1.02] hover:shadow-md transition-all relative overflow-hidden group/btn cursor-pointer`}
                 title={preset.label}
-                style={{ background: preset.gradient }}
               >
-                <span className="absolute inset-0 bg-black/20 opacity-0 group-hover/btn:opacity-100 transition-opacity flex items-center justify-center text-[10px] font-medium text-white">
+                <span
+                  className="absolute inset-0 opacity-0 group-hover/btn:opacity-100 transition-opacity flex items-center justify-center text-[10px] font-medium text-white"
+                  style={{ background: preset.gradient }}
+                >
                   {preset.label}
                 </span>
               </button>

@@ -19,7 +19,7 @@ interface TiptapEditorProps {
   onContentChange: (html: string) => void
 }
 
-export const TipTapEditor = ({ content, onContentChange }: TiptapEditorProps) => {
+export const TiptapEditor = ({ content, onContentChange }: TiptapEditorProps) => {
   const { t } = useTranslation()
 
   const editor = useEditor({
